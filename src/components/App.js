@@ -126,7 +126,7 @@ const App = () => {
   };
 
   const sumComments = useMemo(() => getSumComments(stories), [stories]);
-  console.log("HEllo World")
+  
 
   return (
     <SC.StyledContainer>
