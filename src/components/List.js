@@ -2,6 +2,7 @@ import { ReactComponent as Check } from "../svg/checked-mark.svg";
 import * as SC from "./style";
 import React from "react";
 import { sortBy } from "lodash";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const SORTS = {
   NONE: (list) => list,
@@ -11,7 +12,7 @@ const SORTS = {
   POINTS: (list) => sortBy(list, "points").reverse(),
 };
 
-export const List = React.memo(({ list, onRemoveItem }) => {
+export const List = React.memo(({ list, onRemoveItem, onFetchMore }) => {
   const [sort, setSort] = React.useState({
     sortKey: "NONE",
     isReversed: false,
@@ -70,11 +71,22 @@ export const List = React.memo(({ list, onRemoveItem }) => {
           </SC.StyledButtonSmall>
         </SC.StyledItem>
       </div>
-      <div id="list">
+  
+      <InfiniteScroll   //Infinite Scroll Fetch API
+        id="list"
+        dataLength={sortedList.length}
+        next={onFetchMore}
+        hasMore={true}
+        endMessage={
+          <p style={{ textAlign: 'center' }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+      >
         {sortedList.map((item) => (
           <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
         ))}
-      </div>
+      </InfiniteScroll>
     </div>
   );
 });

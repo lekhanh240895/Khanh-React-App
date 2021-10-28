@@ -103,13 +103,10 @@ const App = () => {
     setSearchTerm(searchTerm);
   };
 
-  const handleSearch = useCallback(
-    (searchTerm, page) => {
-      const url = getUrl(searchTerm, page);
-      setUrls(urls.concat(url));
-    },
-    [urls]
-  );
+  const handleSearch = (searchTerm, page) => {
+    const url = getUrl(searchTerm, page);
+    setUrls(urls.concat(url));
+  };
 
   const handleMore = () => {
     const lastUrl = urls[urls.length - 1];
@@ -117,7 +114,7 @@ const App = () => {
     handleSearch(searchTerm, stories.page + 1);
   };
 
-  //useMemo get sum ... of stories
+   //useMemo get sum ... of stories
   const getSumComments = (stories) => {
     return stories.data.reduce(
       (result, value) => result + value.num_comments,
@@ -126,7 +123,6 @@ const App = () => {
   };
 
   const sumComments = useMemo(() => getSumComments(stories), [stories]);
-  
 
   return (
     <SC.StyledContainer>
@@ -144,7 +140,11 @@ const App = () => {
 
       <LastSearches lastSearchs={lastSearchs} onLastSearch={handleLastSearch} />
 
-      <List list={stories.data} onRemoveItem={handleRemoveStory} />
+      <List
+        list={stories.data}
+        onRemoveItem={handleRemoveStory}
+        onFetchMore={handleMore}
+      />
 
       {stories.isError && (
         <p>
@@ -157,10 +157,9 @@ const App = () => {
           <strong>Loading...</strong>
         </p>
       ) : (
-        <button type="button" onClick={handleMore}>
-          More
-        </button>
+        <p>Scroll down to see more stories</p>
       )}
+
     </SC.StyledContainer>
   );
 };
