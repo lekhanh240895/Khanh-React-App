@@ -1,19 +1,6 @@
 import styled from "styled-components";
 
 //CSS
-const StyledContainer = styled.div`
-  padding: 20px;
-  color: #171212;
-  background: #83a4d4; /* Fallback for older browser */
-  background: linear-gradient(to left, #b6fbff, #83a4d4);
- 
-`;
-const StyledHeadlinePrimary = styled.h1`
-  text-align: center;
-  font-weight: 500;
-  font-size: 48px;
-  letter-spacing: 2px;
-`;
 
 const StyledItem = styled.div`
   padding-bottom: 20px;
@@ -84,9 +71,14 @@ const StyledInput = styled.input`
   padding-left: 5px;
 `;
 
+const StyledNavbar = styled.nav`
+  background: inherit;
+  color: #067ded;
+  fontweight: 600;
+  fontsize: 18px;
+`;
+
 export {
-  StyledContainer,
-  StyledHeadlinePrimary,
   StyledInput,
   StyledLabel,
   StyledSearchForm,
@@ -95,4 +87,5 @@ export {
   StyledButton,
   StyledButtonSmall,
   StyledButtonLarge,
+  StyledNavbar,
 };
