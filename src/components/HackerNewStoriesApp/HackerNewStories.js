@@ -14,7 +14,7 @@ const API_SEARCH = "/search";
 const PARAM_SEARCH = "query=";
 const PARAM_PAGE = "page=";
 const PARAM_PAGESIZE = "hitsPerPage=";
-let pageSize = 5;
+let pageSize = 15;
 
 const getUrl = (searchTerm, page) =>
   `${API_BASE}${API_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_PAGESIZE}${pageSize}`;

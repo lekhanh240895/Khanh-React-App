@@ -5,7 +5,6 @@ import { todoReducer } from "./reducer";
 import axios from "axios";
 import * as SC from "./style";
 import Pagination from "./Pagination";
-import ScrollTopArrow from "../ScrollTopArrow";
 
 let PageSize = 20;
 const API_ENDPOINT = "https://jsonplaceholder.typicode.com/todos";
@@ -33,11 +32,12 @@ const TodoApp = () => {
     isError: false,
   });
 
+  const [userId, setUserId] = useState(1);
   const sum_todos = todos.data.length;
   const [unCompletedTodo, setUnCompletedTodo] = useState(0);
   const [addTodoQuery, setAddTodoQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [searchId, setSearchId] = useSemiPersistentState("IdSearch", 1);
+  const [searchId, setSearchId] = useSemiPersistentState("IdSearch", userId);
   const [urls, setUrls] = useState([getUrlByUserId(searchId, page)]);
   const [isShowedAll, setIsShowedAll] = useState(false);
   const [isOver, setIsOver] = useState(false);
@@ -129,6 +129,7 @@ const TodoApp = () => {
     setUrls(urls.concat(url));
     e.preventDefault();
     setIsOver(false);
+    setUserId(searchId)
   };
 
   const handleShowAll = () => {
@@ -194,7 +195,7 @@ const TodoApp = () => {
 
   console.log(isOver, isShowedAll);
   return (
-    <div >
+    <div>
       <h1>My Todo App with {sum_todos} works.</h1>
 
       <SC.StyledMessage>{unCompletedTodo} Works uncompleted!</SC.StyledMessage>
@@ -246,7 +247,7 @@ const TodoApp = () => {
         onRemoveTodo={handleRemoveTodo}
         onCheckedTodo={handleCheckedTodo}
         onCheckboxChange={handleCheckboxChange}
-        UserId={searchId}
+        UserId={userId}
       />
 
       {todos.isError && (
@@ -260,7 +261,7 @@ const TodoApp = () => {
           More
         </button>
       ) : isOver ? (
-        <SC.StyledMessage>No more works</SC.StyledMessage>
+        <SC.StyledMessage>No works</SC.StyledMessage>
       ) : (
         <Pagination
           onPageChange={(page) => {
@@ -277,8 +278,6 @@ const TodoApp = () => {
         onAddTodoInput={handleAddTodoInput}
         onAddTodoSubmit={handleAddTodoSubmit}
       />
-
-      <ScrollTopArrow />
     </div>
   );
 };

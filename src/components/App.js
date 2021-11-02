@@ -5,6 +5,7 @@ import HackerNewStories from "./HackerNewStoriesApp/HackerNewStories";
 import Home from "./Home/Home";
 import "./FontAwesome";
 import "./App.css";
+import ScrollTopArrow from "./ScrollTopArrow";
 
 export const App = () => {
   return (
@@ -12,17 +13,17 @@ export const App = () => {
       <nav className="navbar navbar-expands-sm d-flex justify-content-end ">
         <ul className="nav">
           <li className="nav-item">
-            <Link to="/" style={{textDecoration: "none"}}>
+            <Link to="/" style={{ textDecoration: "none" }}>
               <span className="nav-link">Home</span>
             </Link>
           </li>
           <li className="nav-item">
-            <Link to="/todo-app" style={{textDecoration: "none"}}>
+            <Link to="/todo-app" style={{ textDecoration: "none" }}>
               <span className="nav-link">Todo App</span>
             </Link>
           </li>
           <li className="nav-item">
-            <Link to="/stories-app" style={{textDecoration: "none"}}>
+            <Link to="/stories-app" style={{ textDecoration: "none" }}>
               <span className="nav-link">Hacker News Stories App</span>
             </Link>
           </li>
@@ -42,6 +43,8 @@ export const App = () => {
           </Route>
         </Switch>
       </div>
+
+      <ScrollTopArrow />
     </Router>
   );
 };
