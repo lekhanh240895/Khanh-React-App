@@ -35,7 +35,7 @@ export const List = ({
           type="button"
           onClick={() => handleSort("TITLE")}
           style={{
-            width: "85%",
+            width: "75%",
             textTransform: "uppercase",
             fontSize: "24px",
             fontWeight: "700",
@@ -46,7 +46,7 @@ export const List = ({
         <button
           className="btn btn-success"
           style={{
-            width: "15%",
+            width: "25%",
             textTransform: "uppercase",
             fontSize: "24px",
             fontWeight: "700",
@@ -129,7 +129,7 @@ const Item = ({ todo, onRemoveTodo, onCheckedTodo }) => {
           overflow: "hidden",
           textOverflow: "ellipsis",
           textTransform: "capitalize",
-          width: "80%",
+          width: "70%",
         }}
       >
         <label className="form-check-label" htmlFor={todo.id}>
@@ -137,7 +137,7 @@ const Item = ({ todo, onRemoveTodo, onCheckedTodo }) => {
         </label>
       </span>
 
-      <span style={{ width: "15%", textAlign: "center" }}>
+      <span style={{ width: "25%", textAlign: "center" }}>
         <button
           className="btn btn-primary"
           type="button"
