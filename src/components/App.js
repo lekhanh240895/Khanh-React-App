@@ -5,67 +5,88 @@ import HackerNewStories from "./HackerNewStoriesApp";
 import Home from "./Home";
 import Login from "./Login";
 import SignUp from "./SignUp";
+import PrivateRoute from "./PrivateRoute";
 import "./FontAwesome";
 import "./App.css";
 import ScrollTopArrow from "./ScrollTopArrow";
-import { Navbar } from "react-bootstrap";
+import { Navbar, Alert } from "react-bootstrap";
 import { AuthProvider } from "../contexts/AuthContext";
+import ForgotPassWord from "./ForgotPassword";
+import UpdateProfile from "./UpdateProfile";
+import Topics from "./topics";
 
 export const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <Navbar className="d-flex justify-content-end ">
-          <ul className="nav">
-            <li className="nav-item">
-              <Link to="/" style={{ textDecoration: "none" }}>
-                <span className="nav-link">Home</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/login" style={{ textDecoration: "none" }}>
-                <span className="nav-link">Login</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/sign-up" style={{ textDecoration: "none" }}>
-                <span className="nav-link">Sign Up</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/todo-app" style={{ textDecoration: "none" }}>
-                <span className="nav-link">Todo App</span>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/stories-app" style={{ textDecoration: "none" }}>
-                <span className="nav-link">Hacker News Stories App</span>
-              </Link>
-            </li>
-          </ul>
-        </Navbar>
+    <Router>
+      <Navbar className="d-flex justify-content-end ">
+        <ul className="nav">
+          <li className="nav-item">
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <span className="nav-link">Home</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/todo-app" style={{ textDecoration: "none" }}>
+              <span className="nav-link">Todo App</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/stories-app" style={{ textDecoration: "none" }}>
+              <span className="nav-link">Hacker News Stories App</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/topics" style={{ textDecoration: "none" }}>
+              <span className="nav-link">Topics</span>
+            </Link>
+          </li>
+        </ul>
+      </Navbar>
 
+      <AuthProvider>
         <Switch>
-          <Route path="/todo-app">
+          <PrivateRoute exact path="/">
+            <Home />
+          </PrivateRoute>
+
+          <PrivateRoute path="/todo-app">
             <TodoApp />
-          </Route>
-          <Route path="/stories-app">
+          </PrivateRoute>
+
+          <PrivateRoute path="/stories-app">
             <HackerNewStories />
-          </Route>
-          <Route exact path="/login">
+          </PrivateRoute>
+
+          <Route path="/login">
             <Login />
           </Route>
-          <Route path="/sign-up">
+
+          <Route path="/signup">
             <SignUp />
           </Route>
-          <Route path="/">
-            <Home />
+
+          <Route path="/forgot-password">
+            <ForgotPassWord />
+          </Route>
+
+          <Route path="/update-profile">
+            <UpdateProfile />
+          </Route>
+
+          <Route path="/topics">
+            <Topics />
+          </Route>
+
+          <Route path="*">
+            <Alert variant="danger" className="text-center">
+              Nothing to do here!
+            </Alert>
           </Route>
         </Switch>
+      </AuthProvider>
 
-        <ScrollTopArrow />
-      </Router>
-    </AuthProvider>
+      <ScrollTopArrow />
+    </Router>
   );
 };
 

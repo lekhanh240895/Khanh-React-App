@@ -3,41 +3,50 @@ import { Form, Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
-export const SignUp = () => {
+export const UpdateProfile = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signup } = useAuth();
-  const history = useHistory();
+  const { updateUserEmail, updateUserPassword, currentUser } = useAuth();
   const [isSucced, setIsSucced] = useState(false);
+  const history = useHistory();
 
-  const handleSignUpSubmit = async (e) => {
+  const handleSignUpSubmit = (e) => {
     e.preventDefault();
 
     if (passwordConfirmRef.current.value !== passwordRef.current.value) {
       return setError("Password does not match!");
     }
-    try {
-      setError("");
-      setIsLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
-      setTimeout(() => history.push("/"));
-      setIsSucced(true);
-    } catch (error) {
-      const errMessage = error.message.replace("Firebase: ", "");
-      setError(errMessage);
+
+    const promises = [];
+    setError("");
+    setIsLoading(true);
+
+    if (passwordRef.current.value) {
+      promises.push(updateUserPassword(passwordRef.current.value));
     }
 
-    setIsLoading(false);
+    if (emailRef.current.value !== currentUser.email) {
+      promises.push(updateUserEmail(emailRef.current.value));
+    }
+
+    Promise.all(promises)
+      .then(() => {
+        setIsSucced(true);
+        setTimeout(() => history.push("/"), 1500);
+      })
+      .catch((error) => {
+        const errMessage = error.message.replace("Firebase: ", "");
+        return setError(errMessage);
+      })
+      .finally(() => setIsLoading(false));
   };
   return (
     <Card>
       <Card.Body>
-        <h1>My App</h1>
-
-        {error && <Alert variant="danger">{error}</Alert>}
+        <h1>Update Profile</h1>
 
         {isSucced && (
           <Alert
@@ -45,43 +54,47 @@ export const SignUp = () => {
             className="text-center"
             style={{ fontWeight: "600", fontSize: "1.5rem" }}
           >
-            Signup Successfull. Redirecting....
+            Update Successfull. Redirecting....
           </Alert>
         )}
+
+        {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleSignUpSubmit}>
           <Form.Group>
             <Form.Label>Your Email:</Form.Label>
-            <Form.Control type="email" ref={emailRef} required></Form.Control>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Your Password:</Form.Label>
             <Form.Control
-              type="password"
-              ref={passwordRef}
+              type="email"
+              ref={emailRef}
               required
+              defaultValue={currentUser?.email}
             ></Form.Control>
           </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Your Password:</Form.Label>
+            <Form.Control type="password" ref={passwordRef}></Form.Control>
+          </Form.Group>
+
           <Form.Group>
             <Form.Label>Confirm Your Password:</Form.Label>
             <Form.Control
               type="password"
               ref={passwordConfirmRef}
-              required
             ></Form.Control>
           </Form.Group>
 
           <Button disabled={isLoading} type="submit" className="w-100 my-3">
-            Sign Up
+            Update
           </Button>
         </Form>
 
-        <div className="">
-          Already have an account? <Link to="/login">Login</Link>
+        <div className="text-center">
+          <Link to="/">Cancel</Link>
         </div>
       </Card.Body>
     </Card>
   );
 };
 
-export default SignUp;
+export default UpdateProfile;
