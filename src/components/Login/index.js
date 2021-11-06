@@ -1,18 +1,31 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Form, Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { addDocument } from "../../firebase/services";
 
 export const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login, loginWithFacebook, loginWithGoogle } = useAuth();
+  const { user, login, loginWithFacebook, loginWithGoogle } = useAuth();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
   const location = useLocation();
   const { from } = location.state || { from: { pathname: "/" } };
   const [isSucced, setIsSucced] = useState(false);
+
+  useEffect(() => {
+    if (user !== null) {
+      addDocument("users", {
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        uid: user.displayName,
+        providerID: user.providerData[0].providerId,
+      });
+    }
+  }, [user]);
 
   const handleLoginByPassword = async (e) => {
     e.preventDefault();

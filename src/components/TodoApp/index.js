@@ -1,4 +1,10 @@
-import React, { useEffect, useReducer, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useReducer,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import { List } from "./List";
 import { AddTodoForm } from "./AddForm";
 import { todoReducer } from "./reducer";
@@ -17,10 +23,14 @@ const getUrlByUserId = (searchId, page) =>
 // Storage SearchId Hook
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = useState(localStorage.getItem(key) || initialState);
-
+  const isMounted = useRef(false);
   useEffect(() => {
-    localStorage.setItem(key, value);
-  });
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      localStorage.setItem(key, value);
+    }
+  }, [key, value]);
 
   return [value, setValue];
 };

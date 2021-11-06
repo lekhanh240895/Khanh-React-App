@@ -1,5 +1,5 @@
 import { Route, useRouteMatch, useParams, NavLink } from "react-router-dom";
-import { Navbar } from "react-bootstrap";
+import { Navbar, Container, Nav } from "react-bootstrap";
 
 const topics = [
   {
@@ -92,20 +92,20 @@ function Topic() {
   const topic = topics.find(({ id }) => id === topicId);
 
   return (
-    <div>
+    <div className="d-flex flex-column justify-content-center align-items-center">
       <h1>{topic.name}</h1>
       <p>{topic.description}</p>
 
-      <Navbar className="d-flex flex-column justify-content-end ">
-        <ul classname="nav">
+      <Navbar>
+        <Nav>
           {topic.resources.map(({ name, id }) => (
-            <li key={id} className="nav-item">
+            <Nav.Link key={id}>
               <NavLink to={`${url}/${id}`} activeClassName="text-white">
                 {name}
               </NavLink>
-            </li>
+            </Nav.Link>
           ))}
-        </ul>
+        </Nav>
       </Navbar>
 
       <Route path={`${path}/:subId`}>
@@ -118,17 +118,20 @@ function Topic() {
 function Topics() {
   const { url, path } = useRouteMatch();
   return (
-    <div>
-      <Navbar className="d-flex flex-column justify-content-end ">
-        <ul classname="nav">
-          {topics.map(({ name, id }) => (
-            <li key={id} className="nav-item">
-              <NavLink to={`${url}/${id}`} activeClassName="text-white">
-                {name}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+    <div className="d-flex flex-column justify-content-center align-items-center">
+      <Navbar variant="dark">
+        <Container>
+          <Navbar.Brand href="#home">Topics</Navbar.Brand>
+          <Nav>
+            {topics.map(({ name, id }) => (
+              <Nav.Link key={id} className="nav-item">
+                <NavLink to={`${url}/${id}`} activeClassName="text-white">
+                  {name}
+                </NavLink>
+              </Nav.Link>
+            ))}
+          </Nav>
+        </Container>
       </Navbar>
 
       <Route path={`${path}/:topicId`}>

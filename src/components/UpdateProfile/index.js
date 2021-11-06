@@ -17,10 +17,16 @@ export const UpdateProfile = () => {
   const history = useHistory();
   const [isBlocking, setIsBlocking] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
+  const [isPhotoUrlDisabled, setIsPhotoUrlDisabled] = useState(false);
 
   const handleFileInputChange = (file) => {
-    const tempUrl = URL.createObjectURL(file);
-    setFileUrl(tempUrl);
+    if (file) {
+      const tempUrl = URL.createObjectURL(file);
+      setFileUrl(tempUrl);
+      setIsPhotoUrlDisabled(true);
+    } else {
+      setIsPhotoUrlDisabled(false);
+    }
   };
 
   const handleUpdateProfileSubmit = (e) => {
@@ -64,7 +70,6 @@ export const UpdateProfile = () => {
     ) {
       promises.push(updateUserProfile(displayNameRef.current.value, fileUrl));
     }
-
 
     Promise.all(promises)
       .then(() => {
@@ -126,6 +131,22 @@ export const UpdateProfile = () => {
                 handleFileInputChange(e.target.files[0]);
               }}
               accept=".jpg, .jpeg, .png"
+            ></Form.Control>
+          </Form.Group>
+
+          {/* Photo URL test: https://picsum.photos/50 */}
+
+          <Form.Group>
+            <Form.Label htmlFor="URLphoto">Or an URL of your photo</Form.Label>
+            <Form.Control
+              id="URLphoto"
+              type="text"
+              onChange={(e) => {
+                setIsBlocking(e.target.value.length > 0);
+                setFileUrl(e.target.value);
+              }}
+              disabled={isPhotoUrlDisabled}
+              defaultValue="https://picsum.photos/50"
             ></Form.Control>
           </Form.Group>
 
