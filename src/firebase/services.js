@@ -7,3 +7,4 @@ export const addDocument = (collections, data) => {
     createdAt: serverTimestamp(),
   });
 };
+

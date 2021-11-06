@@ -21,7 +21,7 @@ export const Login = () => {
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        uid: user.displayName,
+        uid: user.email,
         providerID: user.providerData[0].providerId,
       });
     }
