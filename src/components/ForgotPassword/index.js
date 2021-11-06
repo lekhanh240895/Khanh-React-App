@@ -28,17 +28,22 @@ export const ForgotPassWord = () => {
     setIsLoading(false);
   };
   return (
-    <Card>
-      <Card.Body>
-        <h1>Reset Password</h1>
+    <Card className="d-flex flex-row justify-content-center align-items-center">
+      <Card.Body style={{ maxWidth: "400px" }}>
+      <Card.Header as="h1"  className="mb-4">Reset Password</Card.Header>
         {message && <Alert variant="success">{message}</Alert>}
 
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleResetPassword}>
           <Form.Group>
-            <Form.Label>Your Email:</Form.Label>
-            <Form.Control type="email" ref={emailRef} required></Form.Control>
+            <Form.Label htmlFor="email">Your Email:</Form.Label>
+            <Form.Control
+              id="email"
+              type="email"
+              ref={emailRef}
+              required
+            ></Form.Control>
           </Form.Group>
 
           <Button disabled={isLoading} type="submit" className="w-100 my-3">

@@ -6,7 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 export const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login } = useAuth();
+  const { login, loginWithFacebook, loginWithGoogle } = useAuth();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
@@ -34,35 +34,82 @@ export const Login = () => {
     setIsLoading(false);
   };
 
-  const handleLoginByFacebook = () => {};
+  const handleLoginByFacebook = async () => {
+    try {
+      setError("");
+      await loginWithFacebook();
+      setIsSucced(true);
+      setTimeout(() => {
+        if (from.pathname === "/login") {
+          return history.push("/");
+        }
+        history.push(from);
+      }, 2000);
+    } catch (error) {
+      const errMessage = error.message.replace("Firebase: ", "");
+      setError(errMessage);
+    }
+  };
 
-  const handleLoginByGoogle = () => {};
+  const handleLoginByGoogle = async () => {
+    try {
+      setError("");
+      await loginWithGoogle();
+      setIsSucced(true);
+      setTimeout(() => {
+        if (from.pathname === "/login") {
+          return history.push("/");
+        }
+        history.push(from);
+      }, 2000);
+    } catch (error) {
+      const errMessage = error.message.replace("Firebase: ", "");
+      setError(errMessage);
+    }
+  };
 
   return (
-    <Card>
-      <Card.Body>
-        <h1>My App</h1>
+    <Card className="d-flex flex-row justify-content-center align-items-center">
+      <Card.Body style={{ maxWidth: "400px" }}>
+        <Card.Header as="h1" className="mb-4">
+          My App
+        </Card.Header>
 
         {isSucced && (
           <Alert
             variant="success"
             className="text-center"
-            style={{ fontWeight: "600", fontSize: "1.5rem" }}
+            style={{ fontWeight: "500", fontSize: "1.5rem" }}
           >
             Login Successfull. Redirecting....
           </Alert>
         )}
 
-        {error && <Alert variant="danger">{error}</Alert>}
+        {error && (
+          <Alert
+            variant="danger"
+            className="text-center"
+            style={{ fontWeight: "500", fontSize: "1.5rem" }}
+          >
+            {error}
+          </Alert>
+        )}
 
         <Form onSubmit={handleLoginByPassword}>
           <Form.Group>
-            <Form.Label>Your Email:</Form.Label>
-            <Form.Control type="email" ref={emailRef} required></Form.Control>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Your Password:</Form.Label>
+            <Form.Label htmlFor="email">Email:</Form.Label>
             <Form.Control
+              id="email"
+              type="email"
+              ref={emailRef}
+              required
+            ></Form.Control>
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label htmlFor="password">Password:</Form.Label>
+            <Form.Control
+              id="password"
               type="password"
               ref={passwordRef}
               required
@@ -92,11 +139,11 @@ export const Login = () => {
           Login with Google
         </Button>
 
-        <div className="text-center mb-3">
+        <div className="text-center mb-2">
           <Link to="/forgot-password">Forgot your password?</Link>
         </div>
 
-        <div>
+        <div className="text-center">
           Need an account? <Link to="/signup">Sign Up</Link>
         </div>
       </Card.Body>

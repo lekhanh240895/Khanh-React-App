@@ -4,12 +4,10 @@
   display: inline-block;
 }
 
-.navbar ul li{
+.navbar ul li {
   list-style: none;
 }
 
-.navbar span {
-  color: #fff;
+.navbar .nav-link {
   font-size: 20px;
-
 }

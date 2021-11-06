@@ -1,4 +1,4 @@
-import { Link, Route, useRouteMatch, useParams } from "react-router-dom";
+import { Route, useRouteMatch, useParams, NavLink } from "react-router-dom";
 import { Navbar } from "react-bootstrap";
 
 const topics = [
@@ -67,25 +67,21 @@ const topics = [
   },
 ];
 
-export default function Topics() {
-  const { url, path } = useRouteMatch();
-  return (
-    <main style={{ padding: "1rem 0" }}>
-      <h1>Topics</h1>
-      <Navbar className="d-flex flex-column justify-content-end ">
-        <ul classname="nav">
-          {topics.map(({ name, id }) => (
-            <li key={id} className="nav-item">
-              <Link to={`${url}/${id}`}>{name}</Link>
-            </li>
-          ))}
-        </ul>
-      </Navbar>
+//url : http://localhost:3000/topics/functional-programming/imperative-declarative
+//path: http://localhost:3000/topics/:topicId/:subId
+function Resource() {
+  const { topicId, subId } = useParams();
 
-      <Route path={`${path}/:topicId`}>
-        <Topic />
-      </Route>
-    </main>
+  const resource = topics
+    .find(({ id }) => id === topicId)
+    .resources.find(({ id }) => id === subId);
+
+  return (
+    <div>
+      <h1>{resource.name}</h1>
+      <p>{resource.description}</p>
+      <a href={resource.url}>More info</a>
+    </div>
   );
 }
 
@@ -98,14 +94,15 @@ function Topic() {
   return (
     <div>
       <h1>{topic.name}</h1>
-      <p>{topicId}</p>
       <p>{topic.description}</p>
 
       <Navbar className="d-flex flex-column justify-content-end ">
         <ul classname="nav">
           {topic.resources.map(({ name, id }) => (
             <li key={id} className="nav-item">
-              <Link to={`${url}/${id}`}>{name}</Link>
+              <NavLink to={`${url}/${id}`} activeClassName="text-white">
+                {name}
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -118,17 +115,27 @@ function Topic() {
   );
 }
 
-function Resource() {
-  const { topicId, subId } = useParams();
-
-  const subTopic = topics
-    .find(({ id }) => id === topicId)
-    .resources.find(({ id }) => id === subId);
+function Topics() {
+  const { url, path } = useRouteMatch();
   return (
     <div>
-      <h1>{subTopic.name}</h1>
-      <p>{subId}</p>
-      <p>{subTopic.description}</p>
+      <Navbar className="d-flex flex-column justify-content-end ">
+        <ul classname="nav">
+          {topics.map(({ name, id }) => (
+            <li key={id} className="nav-item">
+              <NavLink to={`${url}/${id}`} activeClassName="text-white">
+                {name}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </Navbar>
+
+      <Route path={`${path}/:topicId`}>
+        <Topic />
+      </Route>
     </div>
   );
 }
+
+export default Topics;

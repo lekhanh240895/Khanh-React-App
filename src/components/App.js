@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  NavLink,
+} from "react-router-dom";
 import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
 import Home from "./Home";
@@ -8,84 +13,101 @@ import SignUp from "./SignUp";
 import PrivateRoute from "./PrivateRoute";
 import "./FontAwesome";
 import "./App.css";
-import ScrollTopArrow from "./ScrollTopArrow";
-import { Navbar, Alert } from "react-bootstrap";
+import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
+import { Navbar, Container } from "react-bootstrap";
 import { AuthProvider } from "../contexts/AuthContext";
 import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
-import Topics from "./topics";
+import Topics from "./Topics";
+import NoMatch from "./NoMatch";
 
 export const App = () => {
   return (
     <Router>
-      <Navbar className="d-flex justify-content-end ">
+      <Navbar className="d-flex justify-content-end">
         <ul className="nav">
           <li className="nav-item">
-            <Link to="/" style={{ textDecoration: "none" }}>
-              <span className="nav-link">Home</span>
-            </Link>
+            <NavLink
+              exact
+              to="/"
+              className="nav-link"
+              activeClassName="text-white"
+            >
+              Home
+            </NavLink>
           </li>
           <li className="nav-item">
-            <Link to="/todo-app" style={{ textDecoration: "none" }}>
-              <span className="nav-link">Todo App</span>
-            </Link>
+            <NavLink
+              to="/todo-app"
+              className="nav-link"
+              activeClassName="text-white"
+            >
+              Todo App
+            </NavLink>
           </li>
           <li className="nav-item">
-            <Link to="/stories-app" style={{ textDecoration: "none" }}>
-              <span className="nav-link">Hacker News Stories App</span>
-            </Link>
+            <NavLink
+              to="/stories-app"
+              className="nav-link"
+              activeClassName="text-white"
+            >
+              Hacker News Stories App
+            </NavLink>
           </li>
           <li className="nav-item">
-            <Link to="/topics" style={{ textDecoration: "none" }}>
-              <span className="nav-link">Topics</span>
-            </Link>
+            <NavLink
+              to="/topics"
+              className="nav-link"
+              activeClassName="text-white"
+            >
+              Topics
+            </NavLink>
           </li>
         </ul>
       </Navbar>
+      <Container>
+        <AuthProvider>
+          <Switch>
+            <PrivateRoute exact path="/">
+              <Home />
+            </PrivateRoute>
 
-      <AuthProvider>
-        <Switch>
-          <PrivateRoute exact path="/">
-            <Home />
-          </PrivateRoute>
+            <PrivateRoute path="/todo-app">
+              <TodoApp />
+            </PrivateRoute>
 
-          <PrivateRoute path="/todo-app">
-            <TodoApp />
-          </PrivateRoute>
+            <PrivateRoute path="/stories-app">
+              <HackerNewStories />
+            </PrivateRoute>
 
-          <PrivateRoute path="/stories-app">
-            <HackerNewStories />
-          </PrivateRoute>
+            <Route path="/login">
+              <Login />
+            </Route>
 
-          <Route path="/login">
-            <Login />
-          </Route>
+            <Route path="/signup">
+              <SignUp />
+            </Route>
 
-          <Route path="/signup">
-            <SignUp />
-          </Route>
+            <Route path="/forgot-password">
+              <ForgotPassWord />
+            </Route>
 
-          <Route path="/forgot-password">
-            <ForgotPassWord />
-          </Route>
+            <Route path="/update-profile">
+              <UpdateProfile />
+            </Route>
 
-          <Route path="/update-profile">
-            <UpdateProfile />
-          </Route>
+            <PrivateRoute path="/topics">
+              <Topics />
+            </PrivateRoute>
 
-          <Route path="/topics">
-            <Topics />
-          </Route>
+            <Route path="*">
+              <NoMatch />
+            </Route>
+          </Switch>
+        </AuthProvider>
 
-          <Route path="*">
-            <Alert variant="danger" className="text-center">
-              Nothing to do here!
-            </Alert>
-          </Route>
-        </Switch>
-      </AuthProvider>
-
-      <ScrollTopArrow />
+        <ScrollTopArrow />
+      </Container>
     </Router>
   );
 };

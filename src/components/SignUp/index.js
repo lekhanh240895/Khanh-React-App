@@ -33,9 +33,11 @@ export const SignUp = () => {
     setIsLoading(false);
   };
   return (
-    <Card>
-      <Card.Body>
-        <h1>My App</h1>
+    <Card className="d-flex flex-row justify-content-center align-items-center">
+      <Card.Body style={{ maxWidth: "400px" }}>
+        <Card.Header as="h1" className="mb-4">
+          Sign Up
+        </Card.Header>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -51,20 +53,30 @@ export const SignUp = () => {
 
         <Form onSubmit={handleSignUpSubmit}>
           <Form.Group>
-            <Form.Label>Your Email:</Form.Label>
-            <Form.Control type="email" ref={emailRef} required></Form.Control>
+            <Form.Label htmlFor="email">Email:</Form.Label>
+            <Form.Control
+              id="email"
+              type="email"
+              ref={emailRef}
+              required
+            ></Form.Control>
           </Form.Group>
           <Form.Group>
-            <Form.Label>Your Password:</Form.Label>
+            <Form.Label htmlFor="password">Password:</Form.Label>
             <Form.Control
+              id="password"
               type="password"
               ref={passwordRef}
               required
             ></Form.Control>
           </Form.Group>
+
           <Form.Group>
-            <Form.Label>Confirm Your Password:</Form.Label>
+            <Form.Label htmlFor="passwordConfirm">
+              Confirm Your Password:
+            </Form.Label>
             <Form.Control
+              id="passwordConfirm"
               type="password"
               ref={passwordConfirmRef}
               required

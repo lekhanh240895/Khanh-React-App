@@ -129,7 +129,7 @@ const TodoApp = () => {
     setUrls(urls.concat(url));
     e.preventDefault();
     setIsOver(false);
-    setUserId(searchId)
+    setUserId(searchId);
   };
 
   const handleShowAll = () => {
@@ -193,7 +193,6 @@ const TodoApp = () => {
     return todos.data.slice(firstPageIndex, lastPageIndex);
   }, [currentPage, todos.data]);
 
-  console.log(isOver, isShowedAll);
   return (
     <div>
       <h1>My Todo App with {sum_todos} works.</h1>
