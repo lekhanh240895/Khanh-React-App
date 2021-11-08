@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 export const SignUp = () => {
   const emailRef = useRef();
@@ -12,6 +13,7 @@ export const SignUp = () => {
   const { signup } = useAuth();
   const history = useHistory();
   const [isSucced, setIsSucced] = useState(false);
+  const { addDocument } = useAppContext();
 
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
@@ -19,12 +21,24 @@ export const SignUp = () => {
     if (passwordConfirmRef.current.value !== passwordRef.current.value) {
       return setError("Password does not match!");
     }
+
     try {
       setError("");
       setIsLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value);
-      setTimeout(() => history.push("/"));
+      const userCredential = await signup(
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+      setTimeout(() => history.push("/"), 2000);
       setIsSucced(true);
+
+      addDocument("users", {
+        displayName: userCredential.user.displayName,
+        email: userCredential.user.email,
+        photoURL: userCredential.user.photoURL,
+        uid: userCredential.user.email,
+        providerID: userCredential.user.providerData[0].providerId,
+      });
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
       setError(errMessage);

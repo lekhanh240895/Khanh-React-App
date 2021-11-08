@@ -1,7 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Form, Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory, Prompt } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+// import { storage } from "../../firebase/config";
+// import {
+//   ref,
+//   uploadBytes,
+//   getDownloadURL,
+//   deleteObject,
+// } from "firebase/storage";
 
 export const UpdateProfile = () => {
   const emailRef = useRef();
@@ -19,15 +26,54 @@ export const UpdateProfile = () => {
   const [fileUrl, setFileUrl] = useState("");
   const [isPhotoUrlDisabled, setIsPhotoUrlDisabled] = useState(false);
 
-  const handleFileInputChange = (file) => {
+  // const [filePathUrl, setFilePathUrl] = useState();
+  // const imagesRef = ref(storage, "images/rim1");
+
+  const handleFileInputChange = async (file) => {
     if (file) {
       const tempUrl = URL.createObjectURL(file);
       setFileUrl(tempUrl);
+      console.log(tempUrl);
       setIsPhotoUrlDisabled(true);
+
+      // //Upload photo to images reference
+      // const metadata = {
+      //   contentType: "image/jpeg",
+      // };
+      // const uploadTask = await uploadBytes(imagesRef, tempUrl, metadata);
+      // console.log("Upload a blod or a file");
+      // console.log(uploadTask);
+
+      // //Download Files from Firebase Storage
+      // const url = await getDownloadURL(imagesRef);
+      // setFilePathUrl(url);
+      // console.log("Download image success", { url });
+
+      // getDownloadURL(ref(storage, "images/rim1"))
+      //   .then((url) => {
+      //     const img = document.getElementById("testImg");
+      //     img.setAttribute("src", url);
+      //   })
+      //   .catch((error) => console.log(error.message));
+
+      // //Delete File
+      // await deleteObject(imagesRef)
+      // console.log("delete ok")
     } else {
       setIsPhotoUrlDisabled(false);
     }
   };
+
+  useEffect(() => {
+    if (
+      (user.displayName === displayNameRef.current.value) &
+      (fileUrl === "")
+    ) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [user, fileUrl, displayNameRef.current?.value]);
 
   const handleUpdateProfileSubmit = (e) => {
     e.preventDefault();
@@ -61,7 +107,7 @@ export const UpdateProfile = () => {
       (fileUrl === "")
     ) {
       promises.push(
-        updateUserProfile(displayNameRef.current.value, user.profileURL)
+        updateUserProfile(displayNameRef.current.value, user.photoURL)
       );
     } else if (
       (user.displayName !== displayNameRef.current.value) &
@@ -92,6 +138,9 @@ export const UpdateProfile = () => {
           Update Profile
         </Card.Header>
 
+        {/* {filePathUrl ? <img src={filePathUrl} alt="test" /> : "Nothing here!"}
+        <img alt="Hey" src="" id="testImg" /> */}
+
         <Prompt
           when={isBlocking}
           message="Seem you are not finishing your works. Are you sure want to leave?"
@@ -116,8 +165,11 @@ export const UpdateProfile = () => {
               id="displayName"
               type="text"
               ref={displayNameRef}
-              defaultValue={user.displayName}
-              onChange={(e) => setIsBlocking(e.target.value.length > 0)}
+              defaultValue={user?.displayName}
+              required
+              onChange={(e) => {
+                setIsBlocking(e.target.value.length > 0);
+              }}
             ></Form.Control>
           </Form.Group>
 
@@ -146,7 +198,7 @@ export const UpdateProfile = () => {
                 setFileUrl(e.target.value);
               }}
               disabled={isPhotoUrlDisabled}
-              defaultValue="https://picsum.photos/50"
+              placeholder="E.g: https://picsum.photos/50"
             ></Form.Control>
           </Form.Group>
 
@@ -157,7 +209,7 @@ export const UpdateProfile = () => {
               type="email"
               ref={emailRef}
               required
-              defaultValue={user.email}
+              defaultValue={user?.email}
               onChange={(e) => setIsBlocking(e.target.value.length > 0)}
             ></Form.Control>
           </Form.Group>
