@@ -136,7 +136,7 @@ export const UpdateProfile = () => {
     Promise.all(promises)
       .then(() => {
         setIsSucced(true);
-        setTimeout(() => history.push("/"), 1500);
+        setTimeout(() => history.push("/profile"), 1500);
       })
       .catch((error) => {
         const errMessage = error.message.replace("Firebase: ", "");
