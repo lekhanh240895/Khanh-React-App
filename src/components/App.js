@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  NavLink,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+//Import Components
+import NoMatch from "./NoMatch";
+import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
+import Topics from "./Topics";
 import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
-import Home from "./Home";
+import Profile from "./Profile";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
-import "./FontAwesome";
-import "./App.css";
-import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
-import { Navbar, Container, Nav, NavDropdown, Button } from "react-bootstrap";
-import { AuthProvider } from "../contexts/AuthContext";
+import NavigationBar from "./NavigationBar";
 import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
-import Topics from "./Topics";
-import NoMatch from "./NoMatch";
+import Homepage from "./Homepage";
+
+//Import Styles
+import "./FontAwesome";
+import "./App.css";
+import { Container } from "react-bootstrap";
+//Import Firebase tools
+import { AuthProvider } from "../contexts/AuthContext";
 import { AppProvider } from "../contexts/AppContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../contexts/AuthContext";
 import { auth } from "../firebase/config";
-import styled from "styled-components";
-
-const StyledNavLink = styled.li`
-  font-size: 20px;
-  display: inline-block;
-  padding: 0.5rem;
-`;
 
 export const App = () => {
   const { user, logout } = useAuth();
@@ -56,88 +49,18 @@ export const App = () => {
   };
   return (
     <Router>
-      {showNavbar && (
-        <Navbar
-          expand="md"
-          variant="dark"
-          className="d-flex justify-content-start"
-        >
-          <Container fluid>
-            <Navbar.Brand>
-              <FontAwesomeIcon className="me-2" icon={["fab", "react"]} />
-              My React App
-            </Navbar.Brand>
-
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="mx-5">
-                <StyledNavLink>
-                  <NavLink
-                    exact
-                    to="/"
-                    className=""
-                    activeClassName="text-white"
-                  >
-                    Home
-                  </NavLink>
-                </StyledNavLink>
-
-                <StyledNavLink className="">
-                  <NavLink
-                    to="/todo-app"
-                    className=""
-                    activeClassName="text-white"
-                  >
-                    Todo App
-                  </NavLink>
-                </StyledNavLink>
-
-                <StyledNavLink className="">
-                  <NavLink
-                    to="/stories-app"
-                    className=""
-                    activeClassName="text-white"
-                  >
-                    Hacker News Stories App
-                  </NavLink>
-                </StyledNavLink>
-
-                <StyledNavLink className="">
-                  <NavLink
-                    to="/topics"
-                    className=""
-                    activeClassName="text-white"
-                  >
-                    Topics
-                  </NavLink>
-                </StyledNavLink>
-
-                <NavDropdown
-                  title={<FontAwesomeIcon icon={["fas", "cog"]} size="sm" />}
-                  id="basic-nav-dropdown"
-                >
-                  <div className="m-0 px-1">
-                    <Button
-                      variant="outline-primary"
-                      style={{ border: "none" }}
-                      onClick={handleSignOut}
-                    >
-                      Sign out
-                    </Button>
-                  </div>
-                </NavDropdown>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      )}
+      {showNavbar && <NavigationBar handleSignOut={handleSignOut} />}
 
       <Container>
         <AuthProvider>
           <AppProvider>
             <Switch>
               <PrivateRoute exact path="/">
-                <Home />
+                <Homepage />
+              </PrivateRoute>
+
+              <PrivateRoute path="/profile">
+                <Profile />
               </PrivateRoute>
 
               <PrivateRoute path="/todo-app">

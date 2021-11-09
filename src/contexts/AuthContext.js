@@ -19,7 +19,7 @@ const AuthContext = React.createContext();
 
 export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const signup = (email, password) =>
@@ -67,12 +67,12 @@ export const AuthProvider = ({ children }) => {
     });
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       setLoading(false);
     });
-    console.log("User: ", user);
-    return unsubscribe;
+    console.log(user);
+    return () => unsubscribe();
   }, [user]);
 
   const value = {

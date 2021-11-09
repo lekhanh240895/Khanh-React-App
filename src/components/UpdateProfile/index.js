@@ -17,11 +17,11 @@ export const UpdateProfile = () => {
   const [isSucced, setIsSucced] = useState(false);
   const history = useHistory();
   const [isBlocking, setIsBlocking] = useState(false);
-  const [fileUrl, setFileUrl] = useState("");
   const [isPhotoUrlDisabled, setIsPhotoUrlDisabled] = useState(false);
+
+  const [fileUrl, setFileUrl] = useState("");
   const [imageFile, setImageFile] = useState();
   const [urlUpload, setUrlUpload] = useState("");
-
   const [progress, setProgress] = useState(0);
 
   const [showProgress, setShowProgress] = useState(false);
@@ -74,35 +74,48 @@ export const UpdateProfile = () => {
     }
   };
 
-  const handleUploadByURL = () => {
-    setFileUrl(urlUpload);
+  //  Upload photo from an HTTP URL
+  const handleUploadByURL = async () => {
     setShowUploadUrlButton(false);
+    let blob = await fetch(urlUpload).then((res) => res.blob());
+    // .then((blobFile) => new File([blobFile], "avatar")); To get a File from an URL
+
+    handleUploadPhoto(blob);
   };
 
   useEffect(() => {
     if (
-      (user.displayName === displayNameRef.current.value) &
-      (fileUrl === "")
+      user.displayName !== displayNameRef.current.value ||
+      fileUrl ||
+      emailRef.current.value !== user.email ||
+      passwordRef.current.value ||
+      passwordConfirmRef.current.value
     ) {
-      setShowUpdateButton(false);
-    } else {
       setShowUpdateButton(true);
+    } else {
+      setShowUpdateButton(false);
     }
     //eslint-disable-next-line
-  }, [fileUrl, displayNameRef.current?.value]);
+  }, [
+    fileUrl,
+    displayNameRef.current?.value,
+    emailRef.current?.value,
+    passwordRef.current?.value,
+    passwordConfirmRef.current?.value,
+  ]);
 
   //Update Profile
   const handleUpdateProfileSubmit = (e) => {
     e.preventDefault();
     setIsBlocking(false);
+    setError("");
+    setShowUpdateButton(false);
 
     if (passwordConfirmRef.current.value !== passwordRef.current.value) {
-      return setError("Password does not match!");
+      return setError("Password does not match");
     }
 
     const promises = [];
-    setError("");
-    setShowUpdateButton(true);
 
     if (passwordRef.current.value) {
       promises.push(updateUserPassword(passwordRef.current.value));
@@ -123,18 +136,17 @@ export const UpdateProfile = () => {
     Promise.all(promises)
       .then(() => {
         setIsSucced(true);
-        setTimeout(() => history.push("/"), 1500);
+        setTimeout(() => history.push("/profile"), 1500);
       })
       .catch((error) => {
         const errMessage = error.message.replace("Firebase: ", "");
         return setError(errMessage);
       })
       .finally(() => {
-        setShowUpdateButton(false);
+        setShowUpdateButton(true);
       });
   };
 
-  console.log(fileUrl);
   return (
     <Card className="d-flex flex-row justify-content-center align-items-center">
       <Card.Body style={{ maxWidth: "400px" }}>
