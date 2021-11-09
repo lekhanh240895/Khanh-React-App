@@ -1,14 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Form, Card, Button, Alert } from "react-bootstrap";
+import { Form, Card, Button, Alert, ProgressBar } from "react-bootstrap";
 import { Link, useHistory, Prompt } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-// import { storage } from "../../firebase/config";
-// import {
-//   ref,
-//   uploadBytes,
-//   getDownloadURL,
-//   deleteObject,
-// } from "firebase/storage";
+import { storage } from "../../firebase/config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export const UpdateProfile = () => {
   const emailRef = useRef();
@@ -17,7 +12,6 @@ export const UpdateProfile = () => {
   const displayNameRef = useRef();
 
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const { user, updateUserEmail, updateUserPassword, updateUserProfile } =
     useAuth();
   const [isSucced, setIsSucced] = useState(false);
@@ -25,43 +19,64 @@ export const UpdateProfile = () => {
   const [isBlocking, setIsBlocking] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
   const [isPhotoUrlDisabled, setIsPhotoUrlDisabled] = useState(false);
+  const [imageFile, setImageFile] = useState();
+  const [urlUpload, setUrlUpload] = useState("");
 
-  // const [filePathUrl, setFilePathUrl] = useState();
-  // const imagesRef = ref(storage, "images/rim1");
+  const [progress, setProgress] = useState(0);
 
-  const handleFileInputChange = async (file) => {
+  const [showProgress, setShowProgress] = useState(false);
+  const [showUpdateButton, setShowUpdateButton] = useState(false);
+  const [showUploadButton, setShowUploadButton] = useState(false);
+  const [showUploadUrlButton, setShowUploadUrlButton] = useState(false);
+
+  const handleInputChange = async (file) => {
     if (file) {
-      const tempUrl = URL.createObjectURL(file);
-      setFileUrl(tempUrl);
-      console.log(tempUrl);
       setIsPhotoUrlDisabled(true);
-
-      // //Upload photo to images reference
-      // const metadata = {
-      //   contentType: "image/jpeg",
-      // };
-      // const uploadTask = await uploadBytes(imagesRef, tempUrl, metadata);
-      // console.log("Upload a blod or a file");
-      // console.log(uploadTask);
-
-      // //Download Files from Firebase Storage
-      // const url = await getDownloadURL(imagesRef);
-      // setFilePathUrl(url);
-      // console.log("Download image success", { url });
-
-      // getDownloadURL(ref(storage, "images/rim1"))
-      //   .then((url) => {
-      //     const img = document.getElementById("testImg");
-      //     img.setAttribute("src", url);
-      //   })
-      //   .catch((error) => console.log(error.message));
-
-      // //Delete File
-      // await deleteObject(imagesRef)
-      // console.log("delete ok")
+      setImageFile(file);
+      setShowUploadButton(true);
     } else {
       setIsPhotoUrlDisabled(false);
+      setShowUploadButton(false);
     }
+  };
+
+  const handleUploadPhoto = (file) => {
+    const imagesRef = ref(storage, "images/" + file.name);
+    const uploadTask = uploadBytesResumable(imagesRef, file);
+    setShowProgress(true);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+      },
+      (error) => setError(error.message),
+      async () => {
+        try {
+          const url = await getDownloadURL(imagesRef);
+          setFileUrl(url);
+          setShowProgress(false);
+          setShowUploadButton(false);
+        } catch (error) {
+          setError(error.message);
+        }
+      }
+    );
+  };
+
+  const handleInputURLChange = (e) => {
+    if (e.target.value.length > 0) {
+      setUrlUpload(e.target.value);
+      setShowUploadUrlButton(true);
+    } else {
+      setShowUploadUrlButton(false);
+    }
+  };
+
+  const handleUploadByURL = () => {
+    setFileUrl(urlUpload);
+    setShowUploadUrlButton(false);
   };
 
   useEffect(() => {
@@ -69,12 +84,14 @@ export const UpdateProfile = () => {
       (user.displayName === displayNameRef.current.value) &
       (fileUrl === "")
     ) {
-      setIsLoading(true);
+      setShowUpdateButton(false);
     } else {
-      setIsLoading(false);
+      setShowUpdateButton(true);
     }
-  }, [user, fileUrl, displayNameRef.current?.value]);
+    //eslint-disable-next-line
+  }, [fileUrl, displayNameRef.current?.value]);
 
+  //Update Profile
   const handleUpdateProfileSubmit = (e) => {
     e.preventDefault();
     setIsBlocking(false);
@@ -85,7 +102,7 @@ export const UpdateProfile = () => {
 
     const promises = [];
     setError("");
-    setIsLoading(true);
+    setShowUpdateButton(true);
 
     if (passwordRef.current.value) {
       promises.push(updateUserPassword(passwordRef.current.value));
@@ -95,26 +112,12 @@ export const UpdateProfile = () => {
       promises.push(updateUserEmail(emailRef.current.value));
     }
 
-    //Display name & Photo
-    if (
-      (user.displayName === displayNameRef.current.value) &
-      (fileUrl !== "") &
-      (fileUrl !== user.photoURL)
-    ) {
-      promises.push(updateUserProfile(user.displayName, fileUrl));
-    } else if (
-      (user.displayName !== displayNameRef.current.value) &
-      (fileUrl === "")
-    ) {
-      promises.push(
-        updateUserProfile(displayNameRef.current.value, user.photoURL)
-      );
-    } else if (
-      (user.displayName !== displayNameRef.current.value) &
-      (fileUrl !== "") &
-      (fileUrl !== user.photoURL)
-    ) {
+    if (fileUrl !== "") {
       promises.push(updateUserProfile(displayNameRef.current.value, fileUrl));
+    } else {
+      promises.push(
+        updateUserProfile(displayNameRef.current.value, user.profileURL)
+      );
     }
 
     Promise.all(promises)
@@ -127,19 +130,17 @@ export const UpdateProfile = () => {
         return setError(errMessage);
       })
       .finally(() => {
-        setIsLoading(false);
+        setShowUpdateButton(false);
       });
   };
 
+  console.log(fileUrl);
   return (
     <Card className="d-flex flex-row justify-content-center align-items-center">
       <Card.Body style={{ maxWidth: "400px" }}>
         <Card.Header as="h1" className="mb-4">
           Update Profile
         </Card.Header>
-
-        {/* {filePathUrl ? <img src={filePathUrl} alt="test" /> : "Nothing here!"}
-        <img alt="Hey" src="" id="testImg" /> */}
 
         <Prompt
           when={isBlocking}
@@ -155,8 +156,46 @@ export const UpdateProfile = () => {
             Update Successfull. Redirecting....
           </Alert>
         )}
-
         {error && <Alert variant="danger">{error}</Alert>}
+
+        <div className="mb-3 text-center d-flex justify-content-center">
+          {user.photoURL ? (
+            <Card.Img
+              variant="top"
+              src={fileUrl ? fileUrl : user.photoURL}
+              alt="Avatar"
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "100px",
+                height: "100px",
+                border: "1px solid #0B3D6B",
+                borderRadius: "50%",
+                background: "#0B3D6B",
+              }}
+              className="text-white d-flex justify-content-center align-items-center"
+            >
+              <span style={{ fontSize: "30px", fontWeight: "600" }}>
+                {user.displayName?.charAt(0)}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {showProgress && (
+          <ProgressBar
+            animated
+            now={progress}
+            label={`${progress}%`}
+            max="100"
+          />
+        )}
 
         <Form onSubmit={handleUpdateProfileSubmit}>
           <Form.Group>
@@ -175,31 +214,49 @@ export const UpdateProfile = () => {
 
           <Form.Group>
             <Form.Label htmlFor="photo">Upload your photo:</Form.Label>
+
             <Form.Control
               id="photo"
               type="file"
               onChange={(e) => {
                 setIsBlocking(e.target.value.length > 0);
-                handleFileInputChange(e.target.files[0]);
+                handleInputChange(e.target.files[0]);
               }}
               accept=".jpg, .jpeg, .png"
             ></Form.Control>
+
+            <Button
+              className="mt-2"
+              variant="outline-primary"
+              onClick={() => handleUploadPhoto(imageFile)}
+              disabled={!showUploadButton}
+            >
+              Upload
+            </Button>
           </Form.Group>
 
-          {/* Photo URL test: https://picsum.photos/50 */}
-
           <Form.Group>
-            <Form.Label htmlFor="URLphoto">Or an URL of your photo</Form.Label>
+            <Form.Label htmlFor="URLphoto">Or URL of your photo</Form.Label>
+
             <Form.Control
               id="URLphoto"
               type="text"
               onChange={(e) => {
                 setIsBlocking(e.target.value.length > 0);
-                setFileUrl(e.target.value);
+                handleInputURLChange(e);
               }}
               disabled={isPhotoUrlDisabled}
               placeholder="E.g: https://picsum.photos/50"
             ></Form.Control>
+
+            <Button
+              variant="outline-primary"
+              className="mt-2"
+              onClick={handleUploadByURL}
+              disabled={!showUploadUrlButton}
+            >
+              Upload
+            </Button>
           </Form.Group>
 
           <Form.Group>
@@ -209,7 +266,7 @@ export const UpdateProfile = () => {
               type="email"
               ref={emailRef}
               required
-              defaultValue={user?.email}
+              defaultValue={user.email}
               onChange={(e) => setIsBlocking(e.target.value.length > 0)}
             ></Form.Control>
           </Form.Group>
@@ -238,11 +295,14 @@ export const UpdateProfile = () => {
             ></Form.Control>
           </Form.Group>
 
-          <Button disabled={isLoading} type="submit" className="w-100 my-3">
-            Update
+          <Button
+            disabled={!showUpdateButton}
+            type="submit"
+            className="w-100 my-3"
+          >
+            Update profile
           </Button>
         </Form>
-
         <div className="text-center">
           <Link to="/">Cancel</Link>
         </div>

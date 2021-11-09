@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setLoading(false);
     });
-    console.log(user);
+    console.log("User: ", user);
     return unsubscribe;
   }, [user]);
 
