@@ -24,11 +24,17 @@ import { AppProvider } from "../contexts/AppContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../contexts/AuthContext";
 import { auth } from "../firebase/config";
+import styled from "styled-components";
+
+const StyledNavLink = styled.li`
+  font-size: 20px;
+  display: inline-block;
+  padding: 0.5rem;
+`;
 
 export const App = () => {
   const { user, logout } = useAuth();
   const [showNavbar, setShowNavbar] = useState(false);
-  console.log("Current user: ", { user });
 
   useEffect(() => {
     if (user) {
@@ -58,16 +64,14 @@ export const App = () => {
         >
           <Container fluid>
             <Navbar.Brand>
-              <span className="me-2">
-                <FontAwesomeIcon icon={["fab", "react"]} />
-              </span>
-              <span>My React App</span>
+              <FontAwesomeIcon className="me-2" icon={["fab", "react"]} />
+              My React App
             </Navbar.Brand>
 
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="mx-5">
-                <Nav.Link className="">
+                <StyledNavLink>
                   <NavLink
                     exact
                     to="/"
@@ -76,9 +80,9 @@ export const App = () => {
                   >
                     Home
                   </NavLink>
-                </Nav.Link>
+                </StyledNavLink>
 
-                <Nav.Link className="">
+                <StyledNavLink className="">
                   <NavLink
                     to="/todo-app"
                     className=""
@@ -86,9 +90,9 @@ export const App = () => {
                   >
                     Todo App
                   </NavLink>
-                </Nav.Link>
+                </StyledNavLink>
 
-                <Nav.Link className="">
+                <StyledNavLink className="">
                   <NavLink
                     to="/stories-app"
                     className=""
@@ -96,9 +100,9 @@ export const App = () => {
                   >
                     Hacker News Stories App
                   </NavLink>
-                </Nav.Link>
+                </StyledNavLink>
 
-                <Nav.Link className="">
+                <StyledNavLink className="">
                   <NavLink
                     to="/topics"
                     className=""
@@ -106,7 +110,7 @@ export const App = () => {
                   >
                     Topics
                   </NavLink>
-                </Nav.Link>
+                </StyledNavLink>
 
                 <NavDropdown
                   title={<FontAwesomeIcon icon={["fas", "cog"]} size="sm" />}

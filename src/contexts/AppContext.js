@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import useFirestore from "../components/hooks/useFirestore";
 // import { useAuth } from "./AuthContext";
 import { db } from "../firebase/config";
@@ -26,9 +26,6 @@ export const AppProvider = ({ children }) => {
   };
 
   const users = useFirestore("users", "");
-  useEffect(() => {
-    console.log({ users });
-  }, [users]);
 
   const value = { users, addDocument };
 
