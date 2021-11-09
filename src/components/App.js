@@ -10,7 +10,7 @@ import HackerNewStories from "./HackerNewStoriesApp";
 import Home from "./Home";
 import Login from "./Login";
 import SignUp from "./SignUp";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "../components/PrivateRoute/index";
 import "./FontAwesome";
 import "./App.css";
 import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
