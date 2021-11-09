@@ -22,7 +22,6 @@ export const Login = () => {
       //   return element.email !== user.email
       // }
       // if (users.every(isDiffer)) {}
-
       if (users.every((dbUser) => dbUser.email !== user.email)) {
         addDocument("users", {
           displayName: user.displayName,
@@ -44,6 +43,9 @@ export const Login = () => {
       await login(emailRef.current.value, passwordRef.current.value);
       setIsSucced(true);
       setTimeout(() => {
+        if (from.pathname === "/login") {
+          return history.push("/");
+        }
         history.push(from);
       }, 2000);
     } catch (error) {

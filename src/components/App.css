@@ -1,13 +1,1 @@
-.navbar {
-  background: #0b3d6b;
-  margin-bottom: 1rem;
-  display: inline-block;
-}
 
-.navbar ul li {
-  list-style: none;
-}
-
-.navbar .nav-link {
-  font-size: 20px;
-}

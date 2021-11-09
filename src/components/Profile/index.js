@@ -4,7 +4,7 @@ import { auth } from "../../firebase/config";
 import { useAuth } from "../../contexts/AuthContext";
 import { useHistory, Link } from "react-router-dom";
 
-export const Home = () => {
+export const Profile = () => {
   const { logout, user } = useAuth();
   const [error, setError] = useState("");
   const history = useHistory();
@@ -81,4 +81,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;
