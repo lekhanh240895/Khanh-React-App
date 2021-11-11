@@ -53,7 +53,7 @@ export default function Homepage() {
 
     Promise.all(promises)
       .then(() => {
-        return setProgress(false), alert("Upload Multiple Files Successfull");
+        return setProgress(false);
       })
       .catch((error) => setError(error.message))
       .finally(() => {});

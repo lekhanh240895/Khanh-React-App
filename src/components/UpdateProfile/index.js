@@ -5,8 +5,11 @@ import { useAuth } from "../../contexts/AuthContext";
 import { storage } from "../../firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { v1 as uuidv1 } from "uuid";
+// Create timestamp uuid: uuidv1()
+// Create random uuid: uuidv4()
 import { useAppContext } from "../../contexts/AppContext";
 import useFirestore from "../hooks/useFirestore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const UpdateProfile = () => {
   const emailRef = useRef();
@@ -20,16 +23,33 @@ export const UpdateProfile = () => {
   const [isSucced, setIsSucced] = useState(false);
   const history = useHistory();
   const [isBlocking, setIsBlocking] = useState(false);
-  const [isPhotoUrlDisabled, setIsPhotoUrlDisabled] = useState(false);
+  const [photoUrl, photoUrlUpload] = useState(false);
 
+  const [fileUpload, setFileUpload] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
-  const [imageFile, setImageFile] = useState();
-  const [urlUpload, setUrlUpload] = useState("");
   const [progress, setProgress] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [showUpdateButton, setShowUpdateButton] = useState(false);
-  const [showUploadButton, setShowUploadButton] = useState(false);
-  const [showUploadUrlButton, setShowUploadUrlButton] = useState(false);
+  useEffect(() => {
+    if (
+      user.displayName !== displayNameRef.current.value ||
+      fileUrl ||
+      emailRef.current.value !== user.email ||
+      passwordRef.current.value ||
+      passwordConfirmRef.current.value
+    ) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+    //eslint-disable-next-line
+  }, [
+    fileUrl,
+    displayNameRef.current?.value,
+    emailRef.current?.value,
+    passwordRef.current?.value,
+    passwordConfirmRef.current?.value,
+  ]);
 
   const { updateDocument } = useAppContext();
   const condition = useMemo(() => {
@@ -49,19 +69,9 @@ export const UpdateProfile = () => {
     });
   };
 
-  const handleInputChange = async (file) => {
-    if (file) {
-      setIsPhotoUrlDisabled(true);
-      setImageFile(file);
-      setShowUploadButton(true);
-    } else {
-      setIsPhotoUrlDisabled(false);
-      setShowUploadButton(false);
-    }
-  };
-
-  const handleUploadPhoto = (file) => {
-    const imagesRef = ref(storage, "avatar/" + file.name);
+  //Upload photo to Firebase Storage
+  const handleUploadPhoto = (path, file) => {
+    const imagesRef = ref(storage, `${path}/${file.name}`);
     const metadata = {
       contentType: "image/jpeg",
     };
@@ -79,8 +89,7 @@ export const UpdateProfile = () => {
         try {
           const url = await getDownloadURL(imagesRef);
           setFileUrl(url);
-
-          setShowUploadButton(false);
+          setProgress(null);
         } catch (error) {
           setError(error.message);
         }
@@ -88,60 +97,42 @@ export const UpdateProfile = () => {
     );
   };
 
-  const handleInputURLChange = (e) => {
+  const handleInputChange = async (e) => {
+    if (e.target.files[0]) {
+      photoUrlUpload(false);
+      handleUploadPhoto("Images-upload", e.target.files[0]);
+      setFileUpload(e.target.files[0]);
+    } else {
+      photoUrlUpload(true);
+      setFileUpload(null);
+    }
+  };
+
+  const handleInputURLChange = async (e) => {
     if (e.target.value.length > 0) {
-      setUrlUpload(e.target.value);
-      setShowUploadUrlButton(true);
+      // Get Blob File from an URL
+      // let blob = await fetch(urlUpload).then((res) => res.blob());
+
+      // const { v1: uuidv1 } = require("uuid");
+      // Get a File from an URL
+      const file = await fetch(e.target.value)
+        .then((res) => res.blob())
+        .then((blobRes) => new File([blobRes], uuidv1()))
+        .catch((error) => setError(error.message));
+
+      handleUploadPhoto("Images-upload", file);
+      setFileUpload(e.target.files[0]);
     } else {
-      setShowUploadUrlButton(false);
+      setFileUpload(null);
     }
   };
-
-  //  Upload photo from an HTTP URL
-  const handleUploadByURL = async () => {
-    setShowUploadUrlButton(false);
-    // Get Blob File from an URL
-    // let blob = await fetch(urlUpload).then((res) => res.blob());
-
-    // Create timestamp uuid: uuidv1()
-    // Create random uuid: uuidv4()
-    // const { v1: uuidv1 } = require("uuid");
-    // Get a File from an URL
-    const file = await fetch(urlUpload)
-      .then((res) => res.blob())
-      .then((blobRes) => new File([blobRes], uuidv1()))
-      .catch((error) => setError(error.message));
-
-    handleUploadPhoto(file);
-  };
-
-  useEffect(() => {
-    if (
-      user.displayName !== displayNameRef.current.value ||
-      fileUrl ||
-      emailRef.current.value !== user.email ||
-      passwordRef.current.value ||
-      passwordConfirmRef.current.value
-    ) {
-      setShowUpdateButton(true);
-    } else {
-      setShowUpdateButton(false);
-    }
-    //eslint-disable-next-line
-  }, [
-    fileUrl,
-    displayNameRef.current?.value,
-    emailRef.current?.value,
-    passwordRef.current?.value,
-    passwordConfirmRef.current?.value,
-  ]);
 
   //Update Profile
   const handleUpdateProfileSubmit = (e) => {
     e.preventDefault();
     setIsBlocking(false);
     setError("");
-    setShowUpdateButton(false);
+    setIsLoading(false);
 
     if (passwordConfirmRef.current.value !== passwordRef.current.value) {
       return setError("Password does not match");
@@ -169,6 +160,7 @@ export const UpdateProfile = () => {
       .then(() => {
         setIsSucced(true);
         handleUpdateDocument();
+        handleUploadPhoto("Avatar", fileUpload);
         setTimeout(() => history.push("/profile"), 1000);
       })
       .catch((error) => {
@@ -176,7 +168,7 @@ export const UpdateProfile = () => {
         return setError(errMessage);
       })
       .finally(() => {
-        setShowUpdateButton(true);
+        setIsLoading(true);
       });
   };
 
@@ -203,45 +195,6 @@ export const UpdateProfile = () => {
         )}
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <div className="mb-3 text-center d-flex justify-content-center">
-          {user.photoURL ? (
-            <Card.Img
-              variant="top"
-              src={fileUrl ? fileUrl : user.photoURL}
-              alt="Avatar"
-              style={{
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: "100px",
-                height: "100px",
-                border: "1px solid #0B3D6B",
-                borderRadius: "50%",
-                background: "#0B3D6B",
-              }}
-              className="text-white d-flex justify-content-center align-items-center"
-            >
-              <span style={{ fontSize: "30px", fontWeight: "600" }}>
-                {user.displayName?.charAt(0)}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {progress && (
-          <ProgressBar
-            animated
-            now={progress}
-            label={`Loading...${progress}%`}
-            max="100"
-          />
-        )}
-
         <Form onSubmit={handleUpdateProfileSubmit}>
           <Form.Group>
             <Form.Label htmlFor="displayName">Display Name:</Form.Label>
@@ -258,30 +211,52 @@ export const UpdateProfile = () => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label htmlFor="photo">Upload your photo:</Form.Label>
+            <Form.Label htmlFor="photo">Change Avatar</Form.Label>
 
             <Form.Control
               id="photo"
               type="file"
               onChange={(e) => {
                 setIsBlocking(e.target.value.length > 0);
-                handleInputChange(e.target.files[0]);
+                handleInputChange(e);
               }}
               accept=".jpg, .jpeg, .png"
             ></Form.Control>
 
-            <Button
-              className="mt-2"
-              variant="outline-primary"
-              onClick={() => handleUploadPhoto(imageFile)}
-              disabled={!showUploadButton}
-            >
-              Upload
-            </Button>
+            {fileUrl && (
+              <div className="d-flex flex-column justify-content-center align-items-center">
+                <Card.Img
+                  variant="top"
+                  src={fileUrl}
+                  alt="Avatar"
+                  className="w-100 my-3"
+                  style={{
+                    height: "auto",
+                    borderRadius: "10px",
+                  }}
+                />
+
+                <FontAwesomeIcon
+                  icon={["fas", "times"]}
+                  onClick={() => setFileUrl("")}
+                  size="lg"
+                />
+
+                {progress && (
+                  <ProgressBar
+                    animated
+                    now={progress}
+                    label={`Loading...${progress}%`}
+                    max="100"
+                    className="w-75 mb-3"
+                  />
+                )}
+              </div>
+            )}
           </Form.Group>
 
           <Form.Group>
-            <Form.Label htmlFor="URLphoto">Or URL of your photo</Form.Label>
+            <Form.Label htmlFor="URLphoto">URL of your photo</Form.Label>
 
             <Form.Control
               id="URLphoto"
@@ -290,18 +265,9 @@ export const UpdateProfile = () => {
                 setIsBlocking(e.target.value.length > 0);
                 handleInputURLChange(e);
               }}
-              disabled={isPhotoUrlDisabled}
+              disabled={!photoUrl}
               placeholder="E.g: https://picsum.photos/50"
             ></Form.Control>
-
-            <Button
-              variant="outline-primary"
-              className="mt-2"
-              onClick={handleUploadByURL}
-              disabled={!showUploadUrlButton}
-            >
-              Upload
-            </Button>
           </Form.Group>
 
           <Form.Group>
@@ -340,11 +306,7 @@ export const UpdateProfile = () => {
             ></Form.Control>
           </Form.Group>
 
-          <Button
-            disabled={!showUpdateButton}
-            type="submit"
-            className="w-100 my-3"
-          >
+          <Button disabled={!isLoading} type="submit" className="w-100 my-3">
             Update profile
           </Button>
         </Form>
