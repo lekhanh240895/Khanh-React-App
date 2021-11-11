@@ -83,9 +83,9 @@ export const App = () => {
                 <ForgotPassWord />
               </Route>
 
-              <Route path="/update-profile">
+              <PrivateRoute path="/update-profile">
                 <UpdateProfile />
-              </Route>
+              </PrivateRoute>
 
               <PrivateRoute path="/topics">
                 <Topics />
