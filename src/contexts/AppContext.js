@@ -2,7 +2,13 @@ import React, { useContext } from "react";
 import useFirestore from "../components/hooks/useFirestore";
 // import { useAuth } from "./AuthContext";
 import { db } from "../firebase/config";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 
 export const AppContext = React.createContext();
 
@@ -25,9 +31,18 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  const updateDocument = (collection, docID, data) => {
+    updateDoc(doc(db, collection, docID), {
+      ...data,
+      lastModified: serverTimestamp(),
+    });
+
+  
+  };
+
   const users = useFirestore("users", "");
 
-  const value = { users, addDocument };
+  const value = { users, addDocument, updateDocument };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

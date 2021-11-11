@@ -1,9 +1,12 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Form, Card, Button, Alert, ProgressBar } from "react-bootstrap";
 import { Link, useHistory, Prompt } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { storage } from "../../firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { v1 as uuidv1 } from "uuid";
+import { useAppContext } from "../../contexts/AppContext";
+import useFirestore from "../hooks/useFirestore";
 
 export const UpdateProfile = () => {
   const emailRef = useRef();
@@ -22,12 +25,29 @@ export const UpdateProfile = () => {
   const [fileUrl, setFileUrl] = useState("");
   const [imageFile, setImageFile] = useState();
   const [urlUpload, setUrlUpload] = useState("");
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState();
 
-  const [showProgress, setShowProgress] = useState(false);
   const [showUpdateButton, setShowUpdateButton] = useState(false);
   const [showUploadButton, setShowUploadButton] = useState(false);
   const [showUploadUrlButton, setShowUploadUrlButton] = useState(false);
+
+  const { updateDocument } = useAppContext();
+  const condition = useMemo(() => {
+    return {
+      fieldName: "email",
+      operator: "==",
+      compareValue: user.email,
+    };
+  }, [user.email]);
+  const userDocs = useFirestore("users", condition);
+  const handleUpdateDocument = () => {
+    updateDocument("users", userDocs[0].id, {
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      uid: user.email,
+    });
+  };
 
   const handleInputChange = async (file) => {
     if (file) {
@@ -41,9 +61,12 @@ export const UpdateProfile = () => {
   };
 
   const handleUploadPhoto = (file) => {
-    const imagesRef = ref(storage, "images/" + file.name);
-    const uploadTask = uploadBytesResumable(imagesRef, file);
-    setShowProgress(true);
+    const imagesRef = ref(storage, "avatar/" + file.name);
+    const metadata = {
+      contentType: "image/jpeg",
+    };
+    const uploadTask = uploadBytesResumable(imagesRef, file, metadata);
+
     uploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -56,7 +79,7 @@ export const UpdateProfile = () => {
         try {
           const url = await getDownloadURL(imagesRef);
           setFileUrl(url);
-          setShowProgress(false);
+
           setShowUploadButton(false);
         } catch (error) {
           setError(error.message);
@@ -77,10 +100,19 @@ export const UpdateProfile = () => {
   //  Upload photo from an HTTP URL
   const handleUploadByURL = async () => {
     setShowUploadUrlButton(false);
-    let blob = await fetch(urlUpload).then((res) => res.blob());
-    // .then((blobFile) => new File([blobFile], "avatar")); To get a File from an URL
+    // Get Blob File from an URL
+    // let blob = await fetch(urlUpload).then((res) => res.blob());
 
-    handleUploadPhoto(blob);
+    // Create timestamp uuid: uuidv1()
+    // Create random uuid: uuidv4()
+    // const { v1: uuidv1 } = require("uuid");
+    // Get a File from an URL
+    const file = await fetch(urlUpload)
+      .then((res) => res.blob())
+      .then((blobRes) => new File([blobRes], uuidv1()))
+      .catch((error) => setError(error.message));
+
+    handleUploadPhoto(file);
   };
 
   useEffect(() => {
@@ -136,7 +168,8 @@ export const UpdateProfile = () => {
     Promise.all(promises)
       .then(() => {
         setIsSucced(true);
-        setTimeout(() => history.push("/profile"), 1500);
+        handleUpdateDocument();
+        setTimeout(() => history.push("/profile"), 1000);
       })
       .catch((error) => {
         const errMessage = error.message.replace("Firebase: ", "");
@@ -200,11 +233,11 @@ export const UpdateProfile = () => {
           )}
         </div>
 
-        {showProgress && (
+        {progress && (
           <ProgressBar
             animated
             now={progress}
-            label={`${progress}%`}
+            label={`Loading...${progress}%`}
             max="100"
           />
         )}
@@ -316,7 +349,7 @@ export const UpdateProfile = () => {
           </Button>
         </Form>
         <div className="text-center">
-          <Link to="/">Cancel</Link>
+          <Link to="/profile">Cancel</Link>
         </div>
       </Card.Body>
     </Card>

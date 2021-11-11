@@ -29,7 +29,7 @@ export const SignUp = () => {
         emailRef.current.value,
         passwordRef.current.value
       );
-      setTimeout(() => history.push("/"), 2000);
+      setTimeout(() => history.push("/"), 1000);
       setIsSucced(true);
 
       addDocument("users", {

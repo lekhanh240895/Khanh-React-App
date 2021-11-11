@@ -32,21 +32,21 @@ export const App = () => {
   useEffect(() => {
     if (user) {
       setTimeout(() => {
-        return window.addEventListener("onload", setShowNavbar(true));
-      }, 2000);
+        return setShowNavbar(true);
+      }, 1000);
     }
+
     setShowNavbar(false);
   }, [user]);
 
   const handleSignOut = async () => {
-    if (user) {
-      try {
-        await logout(auth);
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      await logout(auth);
+    } catch (error) {
+      console.log(error.message);
     }
   };
+
   return (
     <Router>
       {showNavbar && <NavigationBar handleSignOut={handleSignOut} />}

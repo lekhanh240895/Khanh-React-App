@@ -13,14 +13,23 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "@firebase/auth";
-import { Spinner } from "react-bootstrap";
 
 const AuthContext = React.createContext();
 
 export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const signup = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
@@ -35,7 +44,7 @@ export const AuthProvider = ({ children }) => {
       display: "popup", //Login dưới dạng popup
     });
     const result = await signInWithPopup(auth, fbProvider);
-    // const token = result.credential.accessToken;
+    // const fbToken = result.credential.accessToken;
     setUser(result.user);
   };
 
@@ -47,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     });
     const result = await signInWithPopup(auth, ggProvider);
     // const credential = ggProvider.credentialFromResult(auth, result);
-    // const token = credential.accessToken;
+    // const ggToken = credential.accessToken;
 
     setUser(result.user);
   };
@@ -66,15 +75,6 @@ export const AuthProvider = ({ children }) => {
       photoURL: url,
     });
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    console.log(user);
-    return () => unsubscribe();
-  }, [user]);
-
   const value = {
     user,
     signup,
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   };
   return (
     <AuthContext.Provider value={value}>
-      {loading ? <Spinner /> : children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

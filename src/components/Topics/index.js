@@ -121,14 +121,14 @@ function Topics() {
     <div className="d-flex flex-column justify-content-center align-items-center">
       <Navbar variant="dark">
         <Container>
-          <Navbar.Brand href="#home">Topics</Navbar.Brand>
+          <Navbar.Brand>Topics</Navbar.Brand>
           <Nav>
             {topics.map(({ name, id }) => (
-              <Nav.Link key={id} className="nav-item">
+              <li key={id}>
                 <NavLink to={`${url}/${id}`} activeClassName="text-white">
                   {name}
                 </NavLink>
-              </Nav.Link>
+              </li>
             ))}
           </Nav>
         </Container>

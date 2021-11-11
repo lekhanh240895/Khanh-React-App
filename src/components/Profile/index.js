@@ -40,7 +40,7 @@ export const Profile = () => {
                 height: "100px",
                 borderRadius: "50%",
               }}
-            ></Card.Img>
+            />
           ) : (
             <div
               style={{
