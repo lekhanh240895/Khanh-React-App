@@ -1,27 +1,33 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { Form, Card, Button, Alert } from "react-bootstrap";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory /* useLocation */ } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useAppContext } from "../../contexts/AppContext";
 
 export const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { user, login, loginWithFacebook, loginWithGoogle } = useAuth();
+  const { login, loginWithFacebook, loginWithGoogle } = useAuth();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
-  const location = useLocation();
-  const { from } = location.state || { from: { pathname: "/" } };
+  // const location = useLocation();
+  // const { from } = location.state || { from: { pathname: "/" } };
   const [isSucced, setIsSucced] = useState(false);
+
   const { users, addDocument } = useAppContext();
 
-  useEffect(() => {
-    if (user) {
-      //function IsDiffer = (element, index, array) => {
-      //   return element.email !== user.email
-      // }
-      // if (users.every(isDiffer)) {}
+  const handleLoginByPassword = async (e) => {
+    e.preventDefault();
+
+    try {
+      setError("");
+      setIsLoading(true);
+      const {user} = await login(
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+
       if (users.every((dbUser) => dbUser.email !== user.email)) {
         addDocument("users", {
           displayName: user.displayName,
@@ -31,27 +37,21 @@ export const Login = () => {
           providerID: user.providerData[0].providerId,
         });
       }
-    }
-    //eslint-disable-next-line
-  }, [user]);
 
-  const handleLoginByPassword = async (e) => {
-    e.preventDefault();
-    try {
-      setError("");
-      setIsLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
+      //function IsDiffer = (element, index, array) => {
+      //   return element.email !== user.email
+      // }
+      // if (users.every(isDiffer)) {}
+
       setIsSucced(true);
       setTimeout(() => {
-        if (from.pathname === "/login") {
-          return history.push("/");
-        }
-        history.push(from);
-      }, 2000);
+        history.push("/profile");
+      }, 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
       setError(errMessage);
     }
+
     setIsLoading(false);
   };
 
@@ -59,14 +59,12 @@ export const Login = () => {
     try {
       setError("");
       setIsLoading(true);
-      await loginWithFacebook();
+      const data = await loginWithFacebook();
       setIsSucced(true);
+      console.log({ data });
       setTimeout(() => {
-        if (from.pathname === "/login") {
-          return history.push("/");
-        }
-        history.push(from);
-      }, 2000);
+        history.push("/profile");
+      }, 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
       setError(errMessage);
@@ -80,11 +78,8 @@ export const Login = () => {
       await loginWithGoogle();
       setIsSucced(true);
       setTimeout(() => {
-        if (from.pathname === "/login") {
-          return history.push("/");
-        }
-        history.push(from);
-      }, 2000);
+        history.push("/profile");
+      }, 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
       setError(errMessage);
