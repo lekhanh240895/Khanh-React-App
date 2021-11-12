@@ -8,16 +8,18 @@ import {
   Image,
 } from "react-bootstrap";
 
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import { Prompt } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { storage } from "../../firebase/config";
+import { storage } from "../../../firebase/config";
 import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import Avatar from "../Avatar/index.js";
+import "./index.css";
 
 export default function UploadFileModal() {
   const { user } = useAuth();
@@ -94,13 +96,13 @@ export default function UploadFileModal() {
         }}
       />
 
-      <Button onClick={handleShow}>Click</Button>
+      <Avatar onShowUploadModal={handleShow} />
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
           <Form.Control
             id="photo"
             type="file"
-            multiple
             onChange={(e) => {
               setIsBlocking(e.target.value.length > 0);
               handleInputChange(e);
@@ -109,31 +111,8 @@ export default function UploadFileModal() {
           ></Form.Control>
 
           {fileUrl && (
-            <div
-              style={{ position: "relative" }}
-              className="d-flex flex-column justify-content-center align-items-center"
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "1.25rem",
-                  right: "0.75rem",
-                  cursor: "pointer",
-                }}
-              >
-                {!isLoading && (
-                  <FontAwesomeIcon
-                    className="closed-icon"
-                    icon={["fas", "times"]}
-                    size="lg"
-                    onClick={() =>
-                      handleCancelUploadFile("Images-upload", fileUpload)
-                    }
-                  />
-                )}
-              </div>
-
-              <div>
+            <div className="d-flex flex-column justify-content-center align-items-center">
+              <div style={{ position: "relative" }}>
                 <Image
                   variant="top"
                   src={fileUrl}
@@ -142,9 +121,25 @@ export default function UploadFileModal() {
                   fluid
                   style={{
                     borderRadius: "10px",
-                    width: "500px",
                   }}
                 />
+
+                {!isLoading && (
+                  <FontAwesomeIcon
+                    className="closed-icon"
+                    style={{
+                      position: "absolute",
+                      top: "1.25rem",
+                      right: "0.75rem",
+                      cursor: "pointer",
+                    }}
+                    icon={["fas", "times"]}
+                    size="lg"
+                    onClick={() =>
+                      handleCancelUploadFile("Images-upload", fileUpload)
+                    }
+                  />
+                )}
               </div>
 
               {progress && (
