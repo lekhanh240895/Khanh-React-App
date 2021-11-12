@@ -187,13 +187,15 @@ const TodoApp = () => {
   const lastSearches = getLastSearches(urls);
 
   const handleLastSearches = (searchId) => {
-    const extractSearchId = searchId.replace("User Id: ", "");
+    // const extractSearchId = searchId.replace("User Id: ", "");
+    const extractSearchId = Number(searchId[searchId.length - 1]);
     setPage(1);
     setIsShowedAll(false);
     const url = getUrlByUserId(extractSearchId, 1);
     setUrls(urls.concat(url));
     setSearchId(extractSearchId);
     setIsOver(false);
+    setUserId(extractSearchId);
   };
 
   const [currentPage, setCurrentPage] = React.useState(page);
