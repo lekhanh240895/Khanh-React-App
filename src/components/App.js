@@ -14,6 +14,7 @@ import NavigationBar from "./NavigationBar";
 import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
 import Homepage from "./Homepage";
+/* import Homepage from "../components/Homepage/Homepage.js"; */
 
 //Import Styles
 import "./FontAwesome";

@@ -3,7 +3,6 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Modal, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
 
-
 export default function Avatar({ onShowUploadModal }) {
   const { user } = useAuth();
   const [showAvatar, setShowAvatar] = useState(false);
@@ -13,19 +12,21 @@ export default function Avatar({ onShowUploadModal }) {
   return (
     <>
       {user.photoURL ? (
-        <div style={{ position: "relative" }}>
-          <Image
-            variant="top"
-            src={user.photoURL}
-            alt="Avatar"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              cursor: "pointer",
-            }}
-            onClick={handleShowAvatar}
-          />
+        <div style={{ position: "relative", height: "100px", width: "100px" }}>
+          <div>
+            <Image
+              variant="top"
+              src={user.photoURL}
+              alt="Avatar"
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                cursor: "pointer",
+              }}
+              onClick={handleShowAvatar}
+            />
+          </div>
 
           <OverlayTrigger
             placement="right-start"
@@ -35,7 +36,7 @@ export default function Avatar({ onShowUploadModal }) {
               </Tooltip>
             }
           >
-            <span
+            <div
               style={{
                 position: "absolute",
                 bottom: "-5px",
@@ -45,7 +46,7 @@ export default function Avatar({ onShowUploadModal }) {
               onClick={onShowUploadModal}
             >
               <FontAwesomeIcon icon={["fas", "camera"]} />
-            </span>
+            </div>
           </OverlayTrigger>
 
           <Modal show={showAvatar} onHide={handleClose} fullscreen>
@@ -68,6 +69,7 @@ export default function Avatar({ onShowUploadModal }) {
           <span style={{ fontSize: "30px", fontWeight: "600" }}>
             {user.displayName?.charAt(0)}
           </span>
+          
           <FontAwesomeIcon
             icon={["fas", "camera"]}
             style={{

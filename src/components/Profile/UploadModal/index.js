@@ -6,6 +6,7 @@ import {
   ProgressBar,
   Alert,
   Image,
+  Spinner,
 } from "react-bootstrap";
 
 import { useAuth } from "../../../contexts/AuthContext";
@@ -37,7 +38,11 @@ export default function UploadFileModal() {
   const { updateUserProfile } = useAuth();
   const { updateDocument } = useAppContext();
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    handleCancelUploadFile("Images-upload", fileUpload);
+  };
+
   const handleShow = () => setShow(true);
 
   const handleUploadFile = (path, file) => {
@@ -75,6 +80,7 @@ export default function UploadFileModal() {
       deleteObject(imagesRef);
       setFileUrl("");
       setFileUpload(null);
+      setIsBlocking(false);
     } else {
       setShow(false);
       setFileUrl("");
@@ -117,12 +123,9 @@ export default function UploadFileModal() {
   }, [user.email]);
   const userDocs = useFirestore("users", condition);
 
-  const handleUpdateDocument = () => {
+  const handleUpdatePhotoURL = (newPhotoURL) => {
     updateDocument("users", userDocs[0].id, {
-      displayName: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      uid: user.email,
+      photoURL: newPhotoURL,
     });
   };
 
@@ -132,9 +135,9 @@ export default function UploadFileModal() {
     try {
       setIsBlocking(false);
       await updateUserProfile(user.displayName, fileUrl);
-      handleUpdateDocument();
+      handleUpdatePhotoURL(fileUrl);
       handleUploadFile("Avatar", fileUpload);
-      setShow(false);
+      handleClose();
       setFileUrl("");
       setFileUpload(null);
     } catch (error) {
@@ -148,12 +151,11 @@ export default function UploadFileModal() {
 
       <Prompt
         when={isBlocking}
-        /* message={(location, action) => {
+        message={(location, action) => {
           return location.pathname.startsWith("/profile")
             ? true
-            : `Are you sure you want to go to ${location.pathname}?`;
-        }} */
-        message="You are not finishing your works. Do you want to go on?"
+            : "You are not finishing your works. Are you sure to go on?";
+        }}
       />
 
       <Avatar onShowUploadModal={handleShow} />
@@ -173,20 +175,24 @@ export default function UploadFileModal() {
                 accept=".jpg, .jpeg, .png"
               ></Form.Control>
 
-              {fileUrl && (
-                <div
-                  style={{ position: "relative" }}
-                  className="d-flex flex-column justify-content-center align-items-center"
-                >
+              {isLoading ? (
+                <div className="d-flex flex-column justify-content-center align-items-center my-5">
+                  <Spinner animation="border" size="lg" variant="primary" />
+                </div>
+              ) : (
+                fileUrl && (
                   <div
-                    style={{
-                      position: "absolute",
-                      top: "1.25rem",
-                      right: "0.75rem",
-                      cursor: "pointer",
-                    }}
+                    style={{ position: "relative" }}
+                    className="d-flex flex-column justify-content-center align-items-center"
                   >
-                    {!isLoading && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "1.25rem",
+                        right: "0.75rem",
+                        cursor: "pointer",
+                      }}
+                    >
                       <FontAwesomeIcon
                         className="closed-icon"
                         icon={["fas", "times"]}
@@ -195,34 +201,33 @@ export default function UploadFileModal() {
                           handleCancelUploadFile("Images-upload", fileUpload)
                         }
                       />
+                    </div>
+
+                    <div>
+                      <Image
+                        variant="top"
+                        src={fileUrl}
+                        alt="Avatar"
+                        className="my-3"
+                        fluid
+                        style={{
+                          borderRadius: "10px",
+                          width: "500px",
+                        }}
+                      />
+                    </div>
+
+                    {progress && (
+                      <ProgressBar
+                        animated
+                        now={progress}
+                        label={`Loading...${progress}%`}
+                        max="100"
+                        className="w-75 mb-3"
+                      />
                     )}
                   </div>
-
-                  <div>
-                    <Image
-                      variant="top"
-                      src={fileUrl}
-                      alt="Avatar"
-                      className="my-3"
-                      fluid
-                      style={{
-                        borderRadius: "10px",
-                        width: "500px",
-                      }}
-                    />
-                  </div>
-
-                  {progress && (
-                    <ProgressBar
-                      animated
-                      now={progress}
-                      visibility-hidden
-                      label={`Loading...${progress}%`}
-                      max="100"
-                      className="w-75 mb-3"
-                    />
-                  )}
-                </div>
+                )
               )}
             </Form.Group>
 
@@ -238,9 +243,19 @@ export default function UploadFileModal() {
                   setIsBlocking(e.target.value.length > 0);
                   handleInputURLChange(e);
                 }}
-                placeholder="E.g: https://picsum.photos/50"
+                placeholder="E.g: https://picsum.photos/500"
               ></Form.Control>
             </Form.Group>
+
+            <div className="text-center">
+              <Button
+                type="reset"
+                variant="outline-primary"
+                className="w-50 my-3"
+              >
+                Reset
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
 

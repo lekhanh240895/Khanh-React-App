@@ -6,6 +6,7 @@ import {
   ProgressBar,
   Alert,
   Image,
+  Spinner,
 } from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -19,68 +20,77 @@ import {
   deleteObject,
 } from "firebase/storage";
 
-export default function UploadFileModal() {
+export default function Homepage() {
   const { user } = useAuth();
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [fileUpload, setFileUpload] = useState(null);
-  const [fileUrl, setFileUrl] = useState("");
-  const [progress, setProgress] = useState();
+  const [progress, setProgress] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [urls, setUrls] = useState([]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleUploadFile = (path, file) => {
+  const handleUploadFile = () => {
     setError("");
     setIsLoading(true);
+    const promises = [];
 
-    if (file) {
-      const imageRef = ref(storage, `${user.email}/${path}/${file.name}`);
-      const metadata = {
-        contentType: "image/jpeg",
-      };
-      const uploadTask = uploadBytesResumable(imageRef, file, metadata);
+    files.forEach((file) => {
+      if (file) {
+        const imageRef = ref(storage, `${user.email}/Images/${file.name}`);
+        const metadata = {
+          contentType: "image/jpeg",
+        };
+        const uploadTask = uploadBytesResumable(imageRef, file, metadata);
+        promises.push(uploadTask);
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgress(progress);
-        },
-        (error) => setError(error.message),
-        async () => {
-          const url = await getDownloadURL(imageRef);
-          setFileUrl(url);
-          setProgress(null);
-          setIsLoading(false);
-        }
-      );
-    }
-  };
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress);
+          },
+          (error) => setError(error.message),
+          async () => {
+            const url = await getDownloadURL(imageRef);
+            setUrls((prevState) => [...prevState, url]);
+            files.splice(files.indexOf(file), 1);
+            setProgress(null);
+            setIsLoading(false);
+          }
+        );
+      }
+    });
 
-  const handleCancelUploadFile = (path, file) => {
-    if (file) {
-      const imagesRef = ref(storage, `${user.email}/${path}/${file.name}`);
-      deleteObject(imagesRef);
-      setFileUrl("");
-      setFileUpload(null);
-    } else {
-      setShow(false);
-      setFileUrl("");
-    }
+    Promise.all(promises)
+      .then(() => setProgress(null))
+      .catch((error) => setError(error.message));
   };
 
   const handleInputChange = (e) => {
     if (e.target.files[0]) {
-      handleUploadFile("Images-upload", e.target.files[0]);
-      setFileUpload(e.target.files[0]);
+      for (let i = 0; i < e.target.files.length; i++) {
+        const newImage = e.target.files[i];
+        setFiles((prevState) => [...prevState, newImage]);
+      }
     }
   };
 
+  const handleRemoveFile = async (url) => {
+    const httpRef = ref(storage, url);
+    try {
+      await deleteObject(httpRef);
+      const newUrls = urls.filter((fileUrl) => fileUrl !== url);
+      setUrls(newUrls);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
   return (
     <div className="mb-3  d-flex justify-content-center">
       {error && <Alert variant="danger">{error}</Alert>}
@@ -90,11 +100,12 @@ export default function UploadFileModal() {
         message={(location, action) => {
           return location.pathname.startsWith("/profile")
             ? true
-            : `Are you sure you want to go to ${location.pathname}?`;
+            : "You are not finishing your works. Are you sure to go on?";
         }}
       />
 
       <Button onClick={handleShow}>Click</Button>
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
           <Form.Control
@@ -106,58 +117,68 @@ export default function UploadFileModal() {
               handleInputChange(e);
             }}
             accept=".jpg, .jpeg, .png"
-          ></Form.Control>
+          />
 
-          {fileUrl && (
-            <div
-              style={{ position: "relative" }}
-              className="d-flex flex-column justify-content-center align-items-center"
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "1.25rem",
-                  right: "0.75rem",
-                  cursor: "pointer",
-                }}
-              >
-                {!isLoading && (
-                  <FontAwesomeIcon
-                    className="closed-icon"
-                    icon={["fas", "times"]}
-                    size="lg"
-                    onClick={() =>
-                      handleCancelUploadFile("Images-upload", fileUpload)
-                    }
-                  />
-                )}
-              </div>
-
-              <div>
-                <Image
-                  variant="top"
-                  src={fileUrl}
-                  alt="Avatar"
-                  className="my-3"
-                  fluid
-                  style={{
-                    borderRadius: "10px",
-                    width: "500px",
-                  }}
-                />
-              </div>
-
-              {progress && (
-                <ProgressBar
-                  animated
-                  now={progress}
-                  visibility-hidden
-                  label={`Loading...${progress}%`}
-                  max="100"
-                  className="w-75 mb-3"
-                />
-              )}
+          {isLoading ? (
+            <div className="d-flex flex-column justify-content-center align-items-center my-5">
+              <Spinner animation="border" size="lg" variant="primary" />
             </div>
+          ) : (
+            <>
+              {urls.length > 0 &&
+                urls.map((fileUrl) => {
+                  return (
+                    <div>
+                      {fileUrl && (
+                        <div
+                          style={{ position: "relative" }}
+                          className="d-flex justify-content-center align-items-center"
+                        >
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "1.25rem",
+                              right: "0.75rem",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              className="closed-icon"
+                              icon={["fas", "times"]}
+                              size="lg"
+                              onClick={() => handleRemoveFile(fileUrl)}
+                            />
+                          </div>
+
+                          <div>
+                            <Image
+                              variant="top"
+                              src={fileUrl}
+                              alt="Avatar"
+                              className="my-3"
+                              fluid
+                              style={{
+                                borderRadius: "10px",
+                                width: "500px",
+                              }}
+                            />
+                          </div>
+
+                          {progress && (
+                            <ProgressBar
+                              animated
+                              now={progress}
+                              label={`Loading...${progress}%`}
+                              max="100"
+                              className="w-75 mb-3"
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </>
           )}
         </Modal.Body>
 
@@ -165,7 +186,9 @@ export default function UploadFileModal() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary">Save Changes</Button>
+          <Button variant="primary" onClick={handleUploadFile}>
+            Save Changes
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

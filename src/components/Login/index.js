@@ -23,7 +23,7 @@ export const Login = () => {
     try {
       setError("");
       setIsLoading(true);
-      const {user} = await login(
+      const { user } = await login(
         emailRef.current.value,
         passwordRef.current.value
       );
@@ -59,9 +59,8 @@ export const Login = () => {
     try {
       setError("");
       setIsLoading(true);
-      const data = await loginWithFacebook();
+      await loginWithFacebook();
       setIsSucced(true);
-      console.log({ data });
       setTimeout(() => {
         history.push("/profile");
       }, 1000);
