@@ -69,16 +69,16 @@ export const UpdateProfile = () => {
     }
 
     if (passwordRef.current.value) {
-      promises.push(updateUserPassword(user, passwordRef.current.value));
+      promises.push(updateUserPassword(passwordRef.current.value));
     }
 
     if (emailRef.current.value !== user.email) {
-      promises.push(updateUserEmail(user, emailRef.current.value));
+      promises.push(updateUserEmail(emailRef.current.value));
     }
 
     if (displayNameRef.current.value !== user.displayName) {
       promises.push(
-        updateUserProfile(user, displayNameRef.current.value, user.photoURL)
+        updateUserProfile(displayNameRef.current.value, user.photoURL)
       );
     }
 
@@ -87,7 +87,6 @@ export const UpdateProfile = () => {
         setIsSucced(true);
         handleUpdateDocument();
         setTimeout(() => history.push("/profile"), 1000);
-        e.target.reset();
       })
       .catch((error) => {
         const errMessage = error.message.replace("Firebase: ", "");

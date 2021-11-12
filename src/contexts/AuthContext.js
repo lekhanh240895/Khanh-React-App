@@ -22,6 +22,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, [user]);
+
   const signup = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
 
@@ -56,25 +65,15 @@ export const AuthProvider = ({ children }) => {
 
   const resetPassword = (email) => sendPasswordResetEmail(auth, email);
 
-  const updateUserEmail = (user, email) => updateEmail(user, email);
+  const updateUserEmail = (email) => updateEmail(user, email);
 
-  const updateUserPassword = (user, password) => updatePassword(user, password);
+  const updateUserPassword = (password) => updatePassword(user, password);
 
-  const updateUserProfile = (user, name, url) =>
+  const updateUserProfile = (name, url) =>
     updateProfile(user, {
       displayName: name,
       photoURL: url,
     });
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-
-      setLoading(false);
-    });
-
-    return unsubscribe;
-  }, [user]);
 
   const value = {
     user,
