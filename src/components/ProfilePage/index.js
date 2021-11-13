@@ -7,6 +7,8 @@ import UpdateProfile from "./UpdateProfile/index.js";
 
 export const ProfilePage = () => {
   const history = useHistory();
+  console.log(history);
+
   return (
     <>
       <Route path="/profile">

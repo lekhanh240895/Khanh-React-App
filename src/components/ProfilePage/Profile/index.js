@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { Button, Alert, Card } from "react-bootstrap";
 import { auth } from "../../../firebase/config";
 import { useAuth } from "../../../contexts/AuthContext";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import UploadFileModal from "./UploadModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-
 
 export const Profile = () => {
   const { logout, user } = useAuth();

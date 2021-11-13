@@ -15,8 +15,7 @@ import NavigationBar from "./NavigationBar";
 import ForgotPassWord from "./ForgotPassword"; /*  */
 import UpdateProfile from "./UpdateProfile";
 import Homepage from "./Homepage";
-/* import CustomPromptPage from "./Profile"; */
-/* import Homepage from "../components/Homepage/Homepage.js"; */
+
 
 /* import CustomPrompt from "./CustomPrompt/index"; */
 import CustomPrompt from "../components/Custom-Prompt/index.js";
