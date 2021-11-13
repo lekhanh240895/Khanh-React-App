@@ -9,21 +9,22 @@ import {
   Spinner,
 } from "react-bootstrap";
 
-import { useAuth } from "../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext";
 import { Prompt } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { storage } from "../../../firebase/config";
+import { storage } from "../../../../firebase/config";
 import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { useAppContext } from "../../../contexts/AppContext";
-import useFirestore from "../../hooks/useFirestore";
+import { useAppContext } from "../../../../contexts/AppContext";
+import useFirestore from "../../../hooks/useFirestore";
 import { v1 as uuidv1 } from "uuid";
 import Avatar from "../Avatar/index.js";
 import "./index.css";
+import usePreventReload from "../../../hooks/usePreventReload";
 
 export default function UploadFileModal() {
   const { user } = useAuth();
@@ -40,7 +41,7 @@ export default function UploadFileModal() {
 
   const handleClose = () => {
     setShow(false);
-    handleCancelUploadFile("Images-upload", fileUpload);
+    /* handleCancelUploadFile("Images-upload", fileUpload); */
   };
 
   const handleShow = () => setShow(true);
@@ -86,6 +87,8 @@ export default function UploadFileModal() {
       setFileUrl("");
     }
   };
+
+  usePreventReload(isBlocking);
 
   const handleInputChange = (e) => {
     if (e.target.files[0]) {
@@ -133,8 +136,8 @@ export default function UploadFileModal() {
     setError("");
 
     try {
-      setIsBlocking(false);
       await updateUserProfile(user.displayName, fileUrl);
+      setIsBlocking(false);
       handleUpdatePhotoURL(fileUrl);
       handleUploadFile("Avatar", fileUpload);
       handleClose();
@@ -151,11 +154,7 @@ export default function UploadFileModal() {
 
       <Prompt
         when={isBlocking}
-        message={(location, action) => {
-          return location.pathname.startsWith("/profile")
-            ? true
-            : "You are not finishing your works. Are you sure to go on?";
-        }}
+        message="You are not finishing your works. Are you sure to go on?"
       />
 
       <Avatar onShowUploadModal={handleShow} />

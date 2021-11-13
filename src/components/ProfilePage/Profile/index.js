@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Button, Alert, Card } from "react-bootstrap";
-import { auth } from "../../firebase/config";
-import { useAuth } from "../../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { auth } from "../../../firebase/config";
+import { useAuth } from "../../../contexts/AuthContext";
+import { Link} from "react-router-dom";
 
 import UploadFileModal from "./UploadModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+
 
 export const Profile = () => {
   const { logout, user } = useAuth();
@@ -33,10 +36,16 @@ export const Profile = () => {
 
         <Card.Text className="text-center">
           <strong>Email:</strong> {user.email}
+          <Link to="/profile/update-profile" className="list-style-none ms-3">
+            <FontAwesomeIcon icon={["fas", "pen"]} />
+          </Link>
         </Card.Text>
 
         <Card.Text className="text-center">
           <strong>Name:</strong> {user.displayName}
+          <Link to="/profile/update-profile" className="list-style-none ms-3">
+            <FontAwesomeIcon icon={["fas", "pen"]} />
+          </Link>
         </Card.Text>
 
         <div className="text-center mb-3">

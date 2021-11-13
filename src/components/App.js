@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Import Components
 import NoMatch from "./NoMatch";
@@ -6,15 +7,19 @@ import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
 import Topics from "./Topics";
 import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
-import Profile from "./Profile";
+import ProfilePage from "../components/ProfilePage/index";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
 import NavigationBar from "./NavigationBar";
-import ForgotPassWord from "./ForgotPassword";
+import ForgotPassWord from "./ForgotPassword"; /*  */
 import UpdateProfile from "./UpdateProfile";
 import Homepage from "./Homepage";
+/* import CustomPromptPage from "./Profile"; */
 /* import Homepage from "../components/Homepage/Homepage.js"; */
+
+/* import CustomPrompt from "./CustomPrompt/index"; */
+import CustomPrompt from "../components/Custom-Prompt/index.js";
 
 //Import Styles
 import "./FontAwesome";
@@ -48,8 +53,14 @@ export const App = () => {
     }
   };
 
+  const [show, setShow] = useState(true);
+
   return (
-    <Router>
+    <Router
+      getUserConfirmation={(message, callback) => {
+        return CustomPrompt(message, callback, show, setShow);
+      }}
+    >
       {showNavbar && <NavigationBar handleSignOut={handleSignOut} />}
 
       <Container>
@@ -61,7 +72,7 @@ export const App = () => {
               </PrivateRoute>
 
               <PrivateRoute path="/profile">
-                <Profile />
+                <ProfilePage />
               </PrivateRoute>
 
               <PrivateRoute path="/todo-app">
