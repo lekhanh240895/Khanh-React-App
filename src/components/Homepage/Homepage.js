@@ -37,6 +37,7 @@ export default function Homepage() {
   const handleUploadFiles = (path, file) => {
     setError("");
     setIsLoading(true);
+
     if (file) {
       const imageRef = ref(storage, `${user.email}/${path}/${file.name}`);
       const metadata = {
@@ -84,6 +85,7 @@ export default function Homepage() {
     }
   };
 
+  //Missing Upload Photo To Firebase Storage with another path
   const handleUpload = async () => {
     try {
       setIsBlocking(false);
@@ -93,6 +95,7 @@ export default function Homepage() {
     }
   };
 
+  
   return (
     <div className="mb-3  d-flex justify-content-center">
       {error && <Alert variant="danger">{error}</Alert>}

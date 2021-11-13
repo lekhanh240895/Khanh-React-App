@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Form, Card, Button, Alert /* ProgressBar */ } from "react-bootstrap";
 import { Link, useHistory, Prompt } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useAppContext } from "../../contexts/AppContext";
-import useFirestore from "../hooks/useFirestore";
-import usePreventReload from "../hooks/usePreventReload";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useAppContext } from "../../../contexts/AppContext";
+import useFirestore from "../../hooks/useFirestore";
+import usePreventReload from "../../hooks/usePreventReload";
 
 export const UpdateProfile = () => {
   const emailRef = useRef();
