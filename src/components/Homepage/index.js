@@ -7,6 +7,9 @@ import {
   Alert,
   Image,
   Spinner,
+  Container,
+  Row,
+  Col,
 } from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -73,7 +76,7 @@ export default function Homepage() {
   };
 
   const handleInputChange = (e) => {
-    if (e.target.files[0]) {
+    if (e.target.files.length > 0) {
       for (let i = 0; i < e.target.files.length; i++) {
         const newImage = e.target.files[i];
         setFiles((prevState) => [...prevState, newImage]);
@@ -91,20 +94,23 @@ export default function Homepage() {
       setError(error.message);
     }
   };
-  return (
-    <div className="mb-3  d-flex justify-content-center">
+
+  const UploadModal = (
+    <div>
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Prompt
         when={isBlocking}
-        message={(location, action) => {
-          return location.pathname.startsWith("/profile")
+        message={(location) => {
+          return location.pathname === "/"
             ? true
-            : "You are not finishing your works. Are you sure to go on?";
+            : JSON.stringify({
+                header: "Leave this page?",
+                content:
+                  "You are not finishing your works. Are you sure want to leave?",
+              });
         }}
       />
-
-      <Button onClick={handleShow}>Click</Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
@@ -192,5 +198,19 @@ export default function Homepage() {
         </Modal.Footer>
       </Modal>
     </div>
+  );
+
+  return (
+    <Container class="bg-white">
+      <Row>
+        <Col xs={4}>
+          <Button variant="outline-primary" onClick={handleShow}>
+            <FontAwesomeIcon icon={["fas", "images"]} size="lg" />
+          </Button>
+          {UploadModal}
+        </Col>
+        <Col xs as="h1">Homepage</Col>
+      </Row>
+    </Container>
   );
 }

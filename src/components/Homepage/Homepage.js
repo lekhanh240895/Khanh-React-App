@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -7,6 +7,10 @@ import {
   Alert,
   Image,
   Spinner,
+  Row,
+  Col,
+  Container,
+  Card,
 } from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -18,7 +22,10 @@ import {
   uploadBytesResumable,
   getDownloadURL,
   deleteObject,
+  list,
+  listAll,
 } from "firebase/storage";
+import useDeviceInfo from "../hooks/useDeviceInfo";
 
 export default function Homepage() {
   const { user } = useAuth();
@@ -28,11 +35,8 @@ export default function Homepage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [progress, setProgress] = useState(null);
-  //   const [files, setFiles] = useState([]);
   const [urls, setUrls] = useState([]);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [imgUrls, setImgUrls] = useState([]);
 
   const handleUploadFiles = (path, file) => {
     setError("");
@@ -64,15 +68,13 @@ export default function Homepage() {
   };
 
   const handleInputChange = (e) => {
-    if (e.target.files[0]) {
+    if (e.target.files.length > 0) {
       for (let i = 0; i < e.target.files.length; i++) {
         const newImage = e.target.files[i];
         handleUploadFiles("Images", newImage);
       }
     }
   };
-
-  console.log({ urls });
 
   const handleRemoveFile = async (url) => {
     const httpRef = ref(storage, url);
@@ -88,37 +90,90 @@ export default function Homepage() {
   //Missing Upload Photo To Firebase Storage with another path
   const handleUpload = async () => {
     try {
-      setIsBlocking(false);
+      setImgUrls(imgUrls.concat(urls));
       handleClose();
+      setIsBlocking(false);
     } catch (error) {
       setError(error.message);
     }
   };
 
-  
-  return (
-    <div className="mb-3  d-flex justify-content-center">
-      {error && <Alert variant="danger">{error}</Alert>}
+  const loadAllImages = () => {
+    const listRef = ref(storage, `${user.email}/Images`);
+    listAll(listRef)
+      .then((res) => {
+        res.items.forEach(async (itemRef) => {
+          const url = await getDownloadURL(itemRef);
+          setImgUrls((prevState) => [...prevState, url]);
+        });
+      })
+      .catch((error) => setError(error.message));
+    //eslint-disable-next-line
+  };
 
+  const deviceInfo = useDeviceInfo();
+  useEffect(() => {
+    const loadImg = async () => {
+      const listRef = ref(storage, `${user.email}/Images`);
+      let firstPage;
+
+      if (deviceInfo.isMobile) {
+        firstPage = await list(listRef, { maxResults: 6 });
+      } else if (deviceInfo.isTablet) {
+        firstPage = await list(listRef, { maxResults: 9 });
+      } else {
+        firstPage = await list(listRef, { maxResults: 12 });
+      }
+
+      firstPage.items.forEach(async (itemRef) => {
+        const url = await getDownloadURL(itemRef);
+        setImgUrls((prevState) => [...prevState, url]);
+      });
+    };
+    loadImg();
+  }, []);
+
+  const handleClose = () => {
+    setShow(false);
+    setUrls([]);
+    setIsBlocking(false);
+    /* urls.forEach((url) => {
+      const httpRef = ref(storage, url);
+      deleteObject(httpRef);
+    }); */
+  };
+
+  const handleShow = () => setShow(true);
+
+  const UploadModal = (
+    <div>
+      {error && <Alert variant="danger">{error}</Alert>}
       <Prompt
         when={isBlocking}
-        message={(location, action) => {
-          return location.pathname.startsWith("/profile")
+        message={(location) => {
+          return location.pathname === "/"
             ? true
-            : "You are not finishing your works. Are you sure to go on?";
+            : JSON.stringify({
+                header: "Leave this page?",
+                content:
+                  "You are not finishing your works. Are you sure want to leave?",
+              });
         }}
       />
 
-      <Button onClick={handleShow}>Click</Button>
-
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
         <Modal.Body>
           <Form.Control
             id="photo"
             type="file"
             multiple
             onChange={(e) => {
-              setIsBlocking(e.target.value.length > 0);
+              setIsBlocking(e.target.files.length > 0);
               handleInputChange(e);
             }}
             accept=".jpg, .jpeg, .png"
@@ -163,7 +218,7 @@ export default function Homepage() {
                             fluid
                             style={{
                               borderRadius: "10px",
-                              width: "500px",
+                              width: "50vw",
                             }}
                           />
                         </div>
@@ -196,5 +251,60 @@ export default function Homepage() {
         </Modal.Footer>
       </Modal>
     </div>
+  );
+
+  const Pictures = (
+    <Card>
+      <Card.Header>
+        <div className="d-flex justify-content-between align-items-center">
+          <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
+            Pictures
+          </Card.Title>
+
+          <FontAwesomeIcon
+            icon={["fas", "images"]}
+            size="lg"
+            onClick={handleShow}
+            style={{ cursor: "pointer" }}
+          />
+        </div>
+      </Card.Header>
+      <Card.Body>
+        <Row>
+          {imgUrls.map((url) => (
+            <Col xs={6} md={4} className="p-0">
+              <Image
+                src={url}
+                alt={`${user.displayName}-photoUpload`}
+                style={{ height: "125px", width: "100%" }}
+              />
+            </Col>
+          ))}
+        </Row>
+      </Card.Body>
+    </Card>
+  );
+
+  return (
+    <Container className="bg-white">
+      {UploadModal}
+      <Row className="pt-3">
+        <Col md>{Pictures}</Col>
+
+        <Col md>
+          <h1>Homepage</h1>
+          <div className="text-center">
+            <textarea
+              type="text"
+              placeholder="What are you thinking?"
+              style={{ padding: "1rem", borderRadius: "10px" }}
+              column="500px"
+            />
+          </div>
+
+          <div className="my-3"></div>
+        </Col>
+      </Row>
+    </Container>
   );
 }

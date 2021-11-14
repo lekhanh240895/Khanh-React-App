@@ -10,14 +10,12 @@ export default function CustomPrompt(message, callback, show, setShow) {
     ReactDOM.unmountComponentAtNode(container);
     callback(callbackState);
     setShow(false);
-    console.log("callback", callbackState);
   };
 
   const handleCancel = (callbackState) => {
     ReactDOM.unmountComponentAtNode(container);
     callback();
     setShow(false);
-    console.log("callback", callbackState);
   };
 
   const { header, content } = JSON.parse(message);

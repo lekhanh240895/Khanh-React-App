@@ -7,15 +7,16 @@ import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
 import Topics from "./Topics";
 import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
-import ProfilePage from "../components/ProfilePage/index";
+/* import ProfilePage from "../components/ProfilePage/index"; */
+import Profile from "../components/Profile/index.js";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
 import NavigationBar from "./NavigationBar";
 import ForgotPassWord from "./ForgotPassword"; /*  */
 import UpdateProfile from "./UpdateProfile";
-import Homepage from "./Homepage";
-
+/* import Homepage from "./Homepage"; */
+import Homepage from "../components/Homepage/Homepage.js";
 
 /* import CustomPrompt from "./CustomPrompt/index"; */
 import CustomPrompt from "../components/Custom-Prompt/index.js";
@@ -71,7 +72,7 @@ export const App = () => {
               </PrivateRoute>
 
               <PrivateRoute path="/profile">
-                <ProfilePage />
+                <Profile />
               </PrivateRoute>
 
               <PrivateRoute path="/todo-app">
