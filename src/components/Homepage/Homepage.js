@@ -26,6 +26,7 @@ import {
   listAll,
 } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
+import Avatar from "../Profile/Avatar/index.js"
 
 export default function Homepage() {
   const { user } = useAuth();
@@ -154,10 +155,10 @@ export default function Homepage() {
           return location.pathname === "/"
             ? true
             : JSON.stringify({
-                header: "Leave this page?",
-                content:
-                  "You are not finishing your works. Are you sure want to leave?",
-              });
+              header: "Leave this page?",
+              content:
+                "You are not finishing your works. Are you sure want to leave?",
+            });
         }}
       />
 
@@ -256,17 +257,10 @@ export default function Homepage() {
   const Pictures = (
     <Card>
       <Card.Header>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="">
           <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
             Pictures
           </Card.Title>
-
-          <FontAwesomeIcon
-            icon={["fas", "images"]}
-            size="lg"
-            onClick={handleShow}
-            style={{ cursor: "pointer" }}
-          />
         </div>
       </Card.Header>
       <Card.Body>
@@ -293,16 +287,26 @@ export default function Homepage() {
 
         <Col md>
           <h1>Homepage</h1>
-          <div className="text-center">
+          <div className="">
+            <Avatar />
             <textarea
               type="text"
               placeholder="What are you thinking?"
-              style={{ padding: "1rem", borderRadius: "10px" }}
-              column="500px"
+              style={{ padding: "1rem", borderRadius: "10px", width: "100%" }}
             />
           </div>
 
-          <div className="my-3"></div>
+          <div className="my-3">
+
+
+            <FontAwesomeIcon
+              icon={["fas", "images"]}
+              size="lg"
+              onClick={handleShow}
+              style={{ cursor: "pointer" }}
+            />
+
+          </div>
         </Col>
       </Row>
     </Container>
