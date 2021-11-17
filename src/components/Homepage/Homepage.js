@@ -26,10 +26,14 @@ import {
   listAll,
 } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
+<<<<<<< HEAD
 import useFirestore from "../hooks/useFirestore";
 import { useAppContext } from "../../contexts/AppContext";
 import { db } from "../../firebase/config";
 import { doc, setDoc, increment, arrayUnion } from "firebase/firestore";
+=======
+import Avatar from "../Profile/Avatar/index.js"
+>>>>>>> a69ffe7e420a932057ee2644c859798f60176106
 
 export default function Homepage() {
   const { user } = useAuth();
@@ -186,10 +190,10 @@ export default function Homepage() {
           return location.pathname === "/"
             ? true
             : JSON.stringify({
-                header: "Leave this page?",
-                content:
-                  "You are not finishing your works. Are you sure want to leave?",
-              });
+              header: "Leave this page?",
+              content:
+                "You are not finishing your works. Are you sure want to leave?",
+            });
         }}
       />
 
@@ -288,14 +292,17 @@ export default function Homepage() {
   const Pictures = (
     <Card>
       <Card.Header>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="">
           <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
             Pictures
           </Card.Title>
+<<<<<<< HEAD
 
           <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
             Show all pictures
           </Card.Title>
+=======
+>>>>>>> a69ffe7e420a932057ee2644c859798f60176106
         </div>
       </Card.Header>
       <Card.Body>
@@ -334,6 +341,7 @@ export default function Homepage() {
         <Col md>{Pictures}</Col>
 
         <Col md>
+<<<<<<< HEAD
           <Card>
             <Card.Header>
               <Card.Title>Homepage</Card.Title>
@@ -398,6 +406,29 @@ export default function Homepage() {
               <FontAwesomeIcon icon={["fas", "comments"]} />
             </Card.Footer>
           </Card>
+=======
+          <h1>Homepage</h1>
+          <div className="">
+            <Avatar />
+            <textarea
+              type="text"
+              placeholder="What are you thinking?"
+              style={{ padding: "1rem", borderRadius: "10px", width: "100%" }}
+            />
+          </div>
+
+          <div className="my-3">
+
+
+            <FontAwesomeIcon
+              icon={["fas", "images"]}
+              size="lg"
+              onClick={handleShow}
+              style={{ cursor: "pointer" }}
+            />
+
+          </div>
+>>>>>>> a69ffe7e420a932057ee2644c859798f60176106
         </Col>
       </Row>
     </Container>
