@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Button,
   Modal,
@@ -26,6 +26,10 @@ import {
   listAll,
 } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
+import useFirestore from "../hooks/useFirestore";
+import { useAppContext } from "../../contexts/AppContext";
+import { db } from "../../firebase/config";
+import { doc, setDoc, increment, arrayUnion } from "firebase/firestore";
 
 export default function Homepage() {
   const { user } = useAuth();
@@ -37,6 +41,9 @@ export default function Homepage() {
   const [progress, setProgress] = useState(null);
   const [urls, setUrls] = useState([]);
   const [imgUrls, setImgUrls] = useState([]);
+
+  const [status, setStatus] = useState("");
+  const { updateDocument } = useAppContext();
 
   const handleUploadFiles = (path, file) => {
     setError("");
@@ -108,7 +115,6 @@ export default function Homepage() {
         });
       })
       .catch((error) => setError(error.message));
-    //eslint-disable-next-line
   };
 
   const deviceInfo = useDeviceInfo();
@@ -131,6 +137,7 @@ export default function Homepage() {
       });
     };
     loadImg();
+    //eslint-disable-next-line
   }, []);
 
   const handleClose = () => {
@@ -144,6 +151,31 @@ export default function Homepage() {
   };
 
   const handleShow = () => setShow(true);
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  //Get DOC ID
+  const condition = useMemo(() => {
+    return {
+      fieldName: "email",
+      operator: "==",
+      compareValue: user.email,
+    };
+  }, [user.email]);
+
+  const userDocs = useFirestore("users", condition);
+
+  const handlePostStatus = (e) => {
+    e.preventDefault();
+
+    updateDocument("users", userDocs[0].id, {
+      status: arrayUnion({
+        content: status,
+      }),
+    });
+  };
 
   const UploadModal = (
     <div>
@@ -261,18 +293,15 @@ export default function Homepage() {
             Pictures
           </Card.Title>
 
-          <FontAwesomeIcon
-            icon={["fas", "images"]}
-            size="lg"
-            onClick={handleShow}
-            style={{ cursor: "pointer" }}
-          />
+          <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
+            Show all pictures
+          </Card.Title>
         </div>
       </Card.Header>
       <Card.Body>
         <Row>
           {imgUrls.map((url) => (
-            <Col xs={6} md={4} className="p-0">
+            <Col xs={6} md={4} className="p-1">
               <Image
                 src={url}
                 alt={`${user.displayName}-photoUpload`}
@@ -285,6 +314,19 @@ export default function Homepage() {
     </Card>
   );
 
+  const Avatar = (
+    <Image
+      src={user.photoURL}
+      alt="Avatar"
+      style={{
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+      }}
+    />
+  );
+  console.log({ user });
+
   return (
     <Container className="bg-white">
       {UploadModal}
@@ -292,17 +334,70 @@ export default function Homepage() {
         <Col md>{Pictures}</Col>
 
         <Col md>
-          <h1>Homepage</h1>
-          <div className="text-center">
-            <textarea
-              type="text"
-              placeholder="What are you thinking?"
-              style={{ padding: "1rem", borderRadius: "10px" }}
-              column="500px"
-            />
-          </div>
+          <Card>
+            <Card.Header>
+              <Card.Title>Homepage</Card.Title>
+            </Card.Header>
+            <Card.Body className="px-0 my-2">
+              <Form onSubmit={handlePostStatus}>
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>{Avatar}</div>
+                  <Form.Control
+                    as="textarea"
+                    type="text"
+                    placeholder="What are you thinking?"
+                    style={{
+                      borderRadius: "10px",
+                      height: "40px",
+                    }}
+                    onChange={(e) => handleStatusChange(e)}
+                    value={status}
+                  />
+                  <Button type="submit" disabled={!status}>
+                    Post
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
 
-          <div className="my-3"></div>
+            <Card.Footer>
+              <div>
+                <FontAwesomeIcon
+                  icon={["fas", "images"]}
+                  size="lg"
+                  onClick={handleShow}
+                  style={{ cursor: "pointer" }}
+                  className="text-primary"
+                />
+              </div>
+            </Card.Footer>
+          </Card>
+
+          <Card className="my-3">
+            <Card.Header>
+              <div>
+                <div style={{ float: "left" }}>{Avatar}</div>
+                <h5
+                  style={{
+                    fontSize: "20px",
+                    paddingLeft: "50px",
+                    lineHeight: "0.6",
+                    fontWeight: "",
+                  }}
+                >
+                  {user.displayName}
+                </h5>
+                <p style={{ fontSize: "14px", paddingLeft: "50px" }}>
+                  1 hours ago
+                </p>
+              </div>
+            </Card.Header>
+            <Card.Body>{status}</Card.Body>
+            <Card.Footer>
+              <FontAwesomeIcon icon={["fas", "heart"]} />
+              <FontAwesomeIcon icon={["fas", "comments"]} />
+            </Card.Footer>
+          </Card>
         </Col>
       </Row>
     </Container>

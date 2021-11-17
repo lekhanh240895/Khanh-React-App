@@ -36,8 +36,6 @@ export const AppProvider = ({ children }) => {
       ...data,
       lastModified: serverTimestamp(),
     });
-
-  
   };
 
   const users = useFirestore("users", "");

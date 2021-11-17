@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, /* useEffect */ } from "react";
 import {
   Button,
   Modal,
@@ -146,13 +146,13 @@ export default function UploadFileModal() {
     }
   };
 
-  useEffect(() => {
+ /*  useEffect(() => {
     return () => {
       if (isBlocking & (fileUrl !== "")) {
         handleRemoveUploadFile(fileUrl);
       }
     };
-  }, [isBlocking, fileUrl]);
+  }, [isBlocking, fileUrl]); */
 
   return (
     <div className="mb-3  d-flex justify-content-center">
