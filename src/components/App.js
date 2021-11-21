@@ -17,6 +17,7 @@ import ForgotPassWord from "./ForgotPassword"; /*  */
 import UpdateProfile from "./UpdateProfile";
 /* import Homepage from "./Homepage"; */
 import Homepage from "../components/Homepage/Homepage.js";
+import Photos from "./Photos";
 
 /* import CustomPrompt from "./CustomPrompt/index"; */
 import CustomPrompt from "../components/Custom-Prompt/index.js";
@@ -69,6 +70,10 @@ export const App = () => {
             <Switch>
               <PrivateRoute exact path="/">
                 <Homepage />
+              </PrivateRoute>
+
+              <PrivateRoute exact path="/photos">
+                <Photos />
               </PrivateRoute>
 
               <PrivateRoute path="/profile">

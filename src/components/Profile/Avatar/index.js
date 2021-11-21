@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Modal, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
+import "./index.css";
 
 export default function Avatar({ onShowUploadModal }) {
   const { user } = useAuth();
@@ -51,7 +52,16 @@ export default function Avatar({ onShowUploadModal }) {
 
           <Modal show={showAvatar} onHide={handleClose} fullscreen>
             <Modal.Body>
-              <Image fluid src={user.photoURL} />
+              <div>
+                <Image fluid src={user.photoURL} />
+                <FontAwesomeIcon
+                  className="closed-icon"
+                  icon={["fas", "times"]}
+                  size="lg"
+                  onClick={handleClose}
+                  style={{ position: "absolute", top: "2rem", right: "2rem" }}
+                />
+              </div>
             </Modal.Body>
           </Modal>
         </div>
@@ -69,7 +79,7 @@ export default function Avatar({ onShowUploadModal }) {
           <span style={{ fontSize: "30px", fontWeight: "600" }}>
             {user.displayName?.charAt(0)}
           </span>
-          
+
           <FontAwesomeIcon
             icon={["fas", "camera"]}
             style={{

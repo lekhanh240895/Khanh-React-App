@@ -1,0 +1,10 @@
+.closed-icon {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+svg.closed-icon:hover {
+  width: 2rem;
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.459);
+  transition: all 0.5s;
+}

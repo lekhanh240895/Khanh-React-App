@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
-import { Prompt } from "react-router-dom";
+import { Prompt, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { storage } from "../../firebase/config";
 import {
@@ -178,7 +178,6 @@ export default function Homepage() {
 
   const UploadModal = (
     <div>
-      {error && <Alert variant="danger">{error}</Alert>}
       <Prompt
         when={isBlocking}
         message={(location) => {
@@ -287,16 +286,17 @@ export default function Homepage() {
   const Pictures = (
     <Card>
       <Card.Header>
-        <div className="">
-          <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
-            Pictures
-          </Card.Title>
+        <div className="d-flex justify-content-between">
+          <Card.Title>Pictures</Card.Title>
 
           <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
-            Show all pictures
+            <Link style={{ textDecoration: "none" }} to="/photos">
+              Show all pictures
+            </Link>
           </Card.Title>
         </div>
       </Card.Header>
+
       <Card.Body>
         <Row>
           {imgUrls.map((url) => (
@@ -304,7 +304,7 @@ export default function Homepage() {
               <Image
                 src={url}
                 alt={`${user.displayName}-photoUpload`}
-                style={{ height: "125px", width: "100%" }}
+                style={{ height: "25vh", width: "100%" }}
               />
             </Col>
           ))}
@@ -328,7 +328,8 @@ export default function Homepage() {
 
   return (
     <Container className="bg-white">
-      {UploadModal}
+      {error && <Alert variant="danger">{error}</Alert>}
+
       <Row className="pt-3">
         <Col md>{Pictures}</Col>
 
@@ -360,6 +361,7 @@ export default function Homepage() {
             </Card.Body>
 
             <Card.Footer>
+              {UploadModal}
               <div>
                 <FontAwesomeIcon
                   icon={["fas", "images"]}
