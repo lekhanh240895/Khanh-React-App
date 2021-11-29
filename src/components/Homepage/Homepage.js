@@ -33,7 +33,6 @@ import { arrayUnion, arrayRemove } from "firebase/firestore";
 import { v1 as uuidv1 } from "uuid";
 import Moment from "react-moment";
 import { useForm } from "react-hook-form";
-import { faRainbow } from "@fortawesome/free-solid-svg-icons";
 
 export default function Homepage() {
   const { user } = useAuth();
@@ -221,7 +220,7 @@ export default function Homepage() {
         isLiked: status.isLiked,
         id: status.id,
         postedAt: status.postedAt,
-        isCommentFormOpened: false,
+        isCommentFormOpened: status.isCommentFormOpened,
         comments: status.comments,
       });
     });
@@ -274,6 +273,7 @@ export default function Homepage() {
       content: data.comment,
       commentedAt: new Date(),
       id: uuidv1(),
+      isLiked: false,
     });
 
     await updateDocument("users", userDocs[0].id, {
@@ -293,7 +293,7 @@ export default function Homepage() {
         isLiked: status.isLiked,
         id: status.id,
         postedAt: status.postedAt,
-        isCommentFormOpened: false,
+        isCommentFormOpened: status.isCommentFormOpened,
         comments: status.comments,
       });
     });
@@ -303,6 +303,42 @@ export default function Homepage() {
     );
 
     updateDocument("users", userDocs[0].id, {
+      statuses: newStatuses,
+    });
+  };
+
+  const handleLikeComment = async (status, comment) => {
+    let newStatuses = [];
+    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+
+    userDocs[0].statuses.forEach((status) => {
+      newStatuses.push({
+        content: status.content,
+        isLiked: status.isLiked,
+        id: status.id,
+        postedAt: status.postedAt,
+        isCommentFormOpened: status.isCommentFormOpened,
+        comments: status.comments,
+      });
+    });
+
+    const newComments = [];
+    const commentIndex = status.comments.findIndex((e) => e.id === comment.id);
+
+    status.comments.forEach((dbComment) => {
+      newComments.push({
+        content: dbComment.content,
+        commentedAt: dbComment.commentedAt,
+        id: dbComment.id,
+        isLiked: dbComment.isLiked,
+      });
+    });
+
+    newComments[commentIndex].isLiked = !comment.isLiked;
+
+    newStatuses[objIndex].comments = newComments;
+
+    await updateDocument("users", userDocs[0].id, {
       statuses: newStatuses,
     });
   };
@@ -556,7 +592,13 @@ export default function Homepage() {
                         >
                           {user.displayName}
                         </h4>
-                        <p style={{ fontSize: "14px", paddingLeft: "50px", fontStyle: "italic"}}>
+                        <p
+                          style={{
+                            fontSize: "14px",
+                            paddingLeft: "50px",
+                            fontStyle: "italic",
+                          }}
+                        >
                           <Moment fromNow unix>
                             {status.postedAt.seconds}
                           </Moment>
@@ -572,19 +614,19 @@ export default function Homepage() {
                   <Card.Body>{status.content}</Card.Body>
 
                   <Card.Footer>
-                    <Row className="text-center">
+                    <Row className="text-center my-2">
                       <Col
                         onClick={() => handleLikeStatus(status)}
-                        id="like"
+                        id="status-like"
                         style={{ cursor: "pointer" }}
                       >
                         <span>
                           <FontAwesomeIcon
                             icon={["fas", "heart"]}
-                            id="like-icon"
                             className={
-                              status.isLiked ? "icon-liked me-2" : "me-2"
+                              status.isLiked ? "status-liked me-2" : "me-2"
                             }
+                            size="lg"
                           />
                         </span>
                         <span>Like</span>
@@ -592,7 +634,7 @@ export default function Homepage() {
 
                       <Col
                         onClick={() => handleToggleCommentForm(status)}
-                        id="comment"
+                        id="status-comment"
                         style={{ cursor: "pointer" }}
                       >
                         <label htmlFor={status.id}>
@@ -600,6 +642,7 @@ export default function Homepage() {
                             <FontAwesomeIcon
                               icon={["far", "comments"]}
                               className="me-2"
+                              size="lg"
                             />
                           </span>
                           <span>Comment</span>
@@ -612,8 +655,8 @@ export default function Homepage() {
                         display: status.isCommentFormOpened ? "block" : "none",
                       }}
                     >
-                      {status.comments.map((comment) => (
-                        <Row key={comment.id} className="my-3">
+                      {status.comments?.map((comment) => (
+                        <Row key={comment.id} className="my-3 py-3 bg-white">
                           <Col xs={1}>{Avatar}</Col>
 
                           <Col
@@ -623,16 +666,39 @@ export default function Homepage() {
                             <div style={{ lineHeight: "0.5" }}>
                               <h5 style={{}}>{user.displayName}</h5>
                               <p>{comment.content}</p>
-                              <span
-                                style={{
-                                  fontSize: "14px",
-                                  fontStyle: "italic",
-                                }}
-                              >
-                                <Moment fromNow unix>
-                                  {comment.commentedAt.seconds}
-                                </Moment>
-                              </span>
+                              <div>
+                                <span
+                                  onClick={() =>
+                                    handleLikeComment(status, comment)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                  className={
+                                    comment.isLiked ? "comment-liked" : ""
+                                  }
+                                >
+                                  <FontAwesomeIcon
+                                    icon={["far", "thumbs-up"]}
+                                  />
+                                </span>
+                                <span
+                                  style={{
+                                    margin: "0 1rem",
+                                    fontSize: "0.5rem",
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={["far", "circle"]} />
+                                </span>
+                                <span
+                                  style={{
+                                    fontSize: "14px",
+                                    fontStyle: "italic",
+                                  }}
+                                >
+                                  <Moment fromNow unix>
+                                    {comment.commentedAt.seconds}
+                                  </Moment>
+                                </span>
+                              </div>
                             </div>
 
                             <span
@@ -653,7 +719,7 @@ export default function Homepage() {
                         )}
                       >
                         <div
-                          className="d-flex justify-content-between align-items-center"
+                          className="d-flex justify-content-between align-items-center my-3"
                           style={{ position: "relative" }}
                         >
                           <Form.Control

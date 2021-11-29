@@ -1,16 +1,28 @@
-#like:hover,
-#comment:hover {
+#status-like:hover,
+#status-comment:hover {
   background: #fff;
 }
 
-.icon-liked {
+.status-liked {
   color: red;
-  animation: example alternate-reverse 1s ease-in-out;
+  animation: status-liked alternate-reverse 1s ease-in;
 }
 
-@keyframes example {
+@keyframes status-liked {
+  50% {
+    font-size: 25px;
+    transform: rotate(-15deg);
+  }
+}
+
+@keyframes comment-liked {
   50% {
     font-size: 20px;
     transform: rotate(-15deg);
   }
+}
+
+.comment-liked {
+  color: #0d6efd;
+  animation: comment-liked alternate-reverse 1s ease-out;
 }
