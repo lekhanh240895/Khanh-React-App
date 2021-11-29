@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -11,8 +11,10 @@ import {
   Col,
   Container,
   Card,
+  OverlayTrigger,
+  Tooltip,
 } from "react-bootstrap";
-
+import "./index.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { Prompt, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,9 +28,12 @@ import {
   listAll,
 } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
-import useFirestore from "../hooks/useFirestore";
 import { useAppContext } from "../../contexts/AppContext";
-import { arrayUnion } from "firebase/firestore";
+import { arrayUnion, arrayRemove } from "firebase/firestore";
+import { v1 as uuidv1 } from "uuid";
+import Moment from "react-moment";
+import { useForm } from "react-hook-form";
+import { faRainbow } from "@fortawesome/free-solid-svg-icons";
 
 export default function Homepage() {
   const { user } = useAuth();
@@ -36,13 +41,16 @@ export default function Homepage() {
   const [show, setShow] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPosted, setIsPosted] = useState(false);
 
   const [progress, setProgress] = useState(null);
   const [urls, setUrls] = useState([]);
   const [imgUrls, setImgUrls] = useState([]);
 
   const [status, setStatus] = useState("");
-  const { updateDocument } = useAppContext();
+  const { updateDocument, userDocs } = useAppContext();
+
+  const { register, handleSubmit, reset } = useForm();
 
   const handleUploadFiles = (path, file) => {
     setError("");
@@ -143,38 +151,165 @@ export default function Homepage() {
     setShow(false);
     setUrls([]);
     setIsBlocking(false);
-    /* urls.forEach((url) => {
+    urls.forEach((url) => {
       const httpRef = ref(storage, url);
       deleteObject(httpRef);
-    }); */
+    });
   };
 
   const handleShow = () => setShow(true);
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
+    setIsPosted(true);
   };
 
-  //Get DOC ID
-  const condition = useMemo(() => {
-    return {
-      fieldName: "email",
-      operator: "==",
-      compareValue: user.email,
-    };
-  }, [user.email]);
-
-  const userDocs = useFirestore("users", condition);
-
-  const handlePostStatus = (e) => {
+  const handlePostStatus = async (e) => {
     e.preventDefault();
+    setIsPosted(false);
 
-    updateDocument("users", userDocs[0].id, {
-      status: arrayUnion({
+    await updateDocument("users", userDocs[0].id, {
+      statuses: arrayUnion({
         content: status,
+        isLiked: false,
+        id: uuidv1(),
+        postedAt: new Date(),
+        isCommentFormOpened: false,
+        comments: [],
       }),
     });
+
+    setIsPosted(true);
+    reset();
   };
+
+  const handleDeleteStatus = (status) => {
+    updateDocument("users", userDocs[0].id, {
+      statuses: arrayRemove(status),
+    });
+  };
+
+  const handleLikeStatus = (status) => {
+    let newStatuses = [];
+    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+
+    userDocs[0].statuses.forEach((status) => {
+      newStatuses.push({
+        content: status.content,
+        isLiked: status.isLiked,
+        id: status.id,
+        postedAt: status.postedAt,
+        isCommentFormOpened: status.isCommentFormOpened,
+        comments: status.comments,
+      });
+    });
+
+    newStatuses[objIndex].isLiked = !status.isLiked;
+
+    updateDocument("users", userDocs[0].id, {
+      statuses: newStatuses,
+    });
+  };
+
+  const handleToggleCommentForm = (status) => {
+    let newStatuses = [];
+    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+
+    userDocs[0].statuses.forEach((status) => {
+      newStatuses.push({
+        content: status.content,
+        isLiked: status.isLiked,
+        id: status.id,
+        postedAt: status.postedAt,
+        isCommentFormOpened: false,
+        comments: status.comments,
+      });
+    });
+
+    newStatuses[objIndex].isCommentFormOpened = !status.isCommentFormOpened;
+
+    updateDocument("users", userDocs[0].id, {
+      statuses: newStatuses,
+    });
+  };
+
+  const handleCloseCommentForm = (status) => {
+    let newStatuses = [];
+    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+
+    userDocs[0].statuses.forEach((status) => {
+      newStatuses.push({
+        content: status.content,
+        isLiked: status.isLiked,
+        id: status.id,
+        postedAt: status.postedAt,
+        isCommentFormOpened: status.isCommentFormOpened,
+        comments: status.comments,
+      });
+    });
+
+    newStatuses[objIndex].isCommentFormOpened = false;
+
+    updateDocument("users", userDocs[0].id, {
+      statuses: newStatuses,
+    });
+  };
+
+  const onPostComment = async (data, status) => {
+    let newStatuses = [];
+    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+
+    userDocs[0].statuses.forEach((status) => {
+      newStatuses.push({
+        content: status.content,
+        isLiked: status.isLiked,
+        id: status.id,
+        postedAt: status.postedAt,
+        isCommentFormOpened: status.isCommentFormOpened,
+        comments: status.comments,
+      });
+    });
+
+    newStatuses[objIndex].comments = newStatuses[objIndex].comments.concat({
+      content: data.comment,
+      commentedAt: new Date(),
+      id: uuidv1(),
+    });
+
+    await updateDocument("users", userDocs[0].id, {
+      statuses: newStatuses,
+    });
+
+    reset();
+  };
+
+  const handleDeleteComment = (status, comment) => {
+    let newStatuses = [];
+    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+
+    userDocs[0].statuses.forEach((status) => {
+      newStatuses.push({
+        content: status.content,
+        isLiked: status.isLiked,
+        id: status.id,
+        postedAt: status.postedAt,
+        isCommentFormOpened: false,
+        comments: status.comments,
+      });
+    });
+
+    newStatuses[objIndex].comments = newStatuses[objIndex].comments.filter(
+      (dbComment) => dbComment.id !== comment.id
+    );
+
+    updateDocument("users", userDocs[0].id, {
+      statuses: newStatuses,
+    });
+  };
+
+  const [showPhoto, setShowPhoto] = useState(false);
+  const handleShowPhoto = () => setShowPhoto(true);
+  const handleClosePhoto = () => setShowPhoto(false);
 
   const UploadModal = (
     <div>
@@ -217,7 +352,7 @@ export default function Homepage() {
             <>
               {urls.map((fileUrl) => {
                 return (
-                  <div>
+                  <div key={fileUrl}>
                     {fileUrl && (
                       <div
                         style={{ position: "relative" }}
@@ -250,6 +385,7 @@ export default function Homepage() {
                               borderRadius: "10px",
                               width: "50vw",
                             }}
+                            onCLick={handleShowPhoto}
                           />
                         </div>
 
@@ -300,11 +436,32 @@ export default function Homepage() {
       <Card.Body>
         <Row>
           {imgUrls.map((url) => (
-            <Col xs={6} md={4} className="p-1">
+            <Col key={url} xs={6} md={4} className="p-1">
+              <Modal show={showPhoto} onHide={handleClosePhoto} fullscreen>
+                <Modal.Body>
+                  <div>
+                    <Image fluid src={url} />
+                    <FontAwesomeIcon
+                      className="closed-icon"
+                      icon={["fas", "times"]}
+                      size="lg"
+                      onClick={handleClosePhoto}
+                      style={{
+                        position: "absolute",
+                        top: "2rem",
+                        right: "2rem",
+                        cursor: "pointer",
+                      }}
+                    />
+                  </div>
+                </Modal.Body>
+              </Modal>
+
               <Image
                 src={url}
                 alt={`${user.displayName}-photoUpload`}
-                style={{ height: "25vh", width: "100%" }}
+                style={{ height: "25vh", width: "100%", cursor: "pointer" }}
+                onClick={handleShowPhoto}
               />
             </Col>
           ))}
@@ -324,7 +481,6 @@ export default function Homepage() {
       }}
     />
   );
-  console.log({ user });
 
   return (
     <Container className="bg-white">
@@ -340,10 +496,9 @@ export default function Homepage() {
             </Card.Header>
             <Card.Body className="px-0 my-2">
               <Form onSubmit={handlePostStatus}>
-                <div className="d-flex align-items-center justify-content-between">
+                <div className="d-flex align-items-center justify-content-between px-3">
                   <div>{Avatar}</div>
                   <Form.Control
-                    as="textarea"
                     type="text"
                     placeholder="What are you thinking?"
                     style={{
@@ -351,9 +506,9 @@ export default function Homepage() {
                       height: "40px",
                     }}
                     onChange={(e) => handleStatusChange(e)}
-                    value={status}
+                    className="mx-2"
                   />
-                  <Button type="submit" disabled={!status}>
+                  <Button type="submit" disabled={!isPosted}>
                     Post
                   </Button>
                 </div>
@@ -362,43 +517,168 @@ export default function Homepage() {
 
             <Card.Footer>
               {UploadModal}
-              <div>
-                <FontAwesomeIcon
-                  icon={["fas", "images"]}
-                  size="lg"
+
+              <OverlayTrigger
+                key="right"
+                placement="right"
+                overlay={
+                  <Tooltip id={`tooltip-right`}>
+                    <span style={{ fontSize: "1rem" }}>Add Images</span>
+                  </Tooltip>
+                }
+              >
+                <span
                   onClick={handleShow}
                   style={{ cursor: "pointer" }}
                   className="text-primary"
-                />
-              </div>
+                >
+                  <FontAwesomeIcon icon={["fas", "images"]} size="lg" />
+                </span>
+              </OverlayTrigger>
+
+              <div></div>
             </Card.Footer>
           </Card>
 
-          <Card className="my-3">
-            <Card.Header>
-              <div>
-                <div style={{ float: "left" }}>{Avatar}</div>
-                <h5
-                  style={{
-                    fontSize: "20px",
-                    paddingLeft: "50px",
-                    lineHeight: "0.6",
-                    fontWeight: "",
-                  }}
-                >
-                  {user.displayName}
-                </h5>
-                <p style={{ fontSize: "14px", paddingLeft: "50px" }}>
-                  1 hours ago
-                </p>
-              </div>
-            </Card.Header>
-            <Card.Body>{status}</Card.Body>
-            <Card.Footer>
-              <FontAwesomeIcon icon={["fas", "heart"]} />
-              <FontAwesomeIcon icon={["fas", "comments"]} />
-            </Card.Footer>
-          </Card>
+          <div className="d-flex flex-column-reverse">
+            {userDocs.length > 0 &&
+              userDocs[0].statuses?.map((status) => (
+                <Card className="my-3" key={status.id}>
+                  <Card.Header>
+                    <div className="my-2 d-flex justify-content-between">
+                      <div>
+                        <div style={{ float: "left" }}>{Avatar}</div>
+                        <h4
+                          style={{
+                            paddingLeft: "50px",
+                            lineHeight: "0.7",
+                          }}
+                        >
+                          {user.displayName}
+                        </h4>
+                        <p style={{ fontSize: "14px", paddingLeft: "50px", fontStyle: "italic"}}>
+                          <Moment fromNow unix>
+                            {status.postedAt.seconds}
+                          </Moment>
+                        </p>
+                      </div>
+
+                      <span onClick={() => handleDeleteStatus(status)}>
+                        <FontAwesomeIcon icon={["far", "trash-alt"]} />
+                      </span>
+                    </div>
+                  </Card.Header>
+
+                  <Card.Body>{status.content}</Card.Body>
+
+                  <Card.Footer>
+                    <Row className="text-center">
+                      <Col
+                        onClick={() => handleLikeStatus(status)}
+                        id="like"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <span>
+                          <FontAwesomeIcon
+                            icon={["fas", "heart"]}
+                            id="like-icon"
+                            className={
+                              status.isLiked ? "icon-liked me-2" : "me-2"
+                            }
+                          />
+                        </span>
+                        <span>Like</span>
+                      </Col>
+
+                      <Col
+                        onClick={() => handleToggleCommentForm(status)}
+                        id="comment"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <label htmlFor={status.id}>
+                          <span>
+                            <FontAwesomeIcon
+                              icon={["far", "comments"]}
+                              className="me-2"
+                            />
+                          </span>
+                          <span>Comment</span>
+                        </label>
+                      </Col>
+                    </Row>
+
+                    <div
+                      style={{
+                        display: status.isCommentFormOpened ? "block" : "none",
+                      }}
+                    >
+                      {status.comments.map((comment) => (
+                        <Row key={comment.id} className="my-3">
+                          <Col xs={1}>{Avatar}</Col>
+
+                          <Col
+                            xs
+                            className="d-flex justify-content-between ms-3"
+                          >
+                            <div style={{ lineHeight: "0.5" }}>
+                              <h5 style={{}}>{user.displayName}</h5>
+                              <p>{comment.content}</p>
+                              <span
+                                style={{
+                                  fontSize: "14px",
+                                  fontStyle: "italic",
+                                }}
+                              >
+                                <Moment fromNow unix>
+                                  {comment.commentedAt.seconds}
+                                </Moment>
+                              </span>
+                            </div>
+
+                            <span
+                              onClick={() =>
+                                handleDeleteComment(status, comment)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <FontAwesomeIcon icon={["far", "trash-alt"]} />
+                            </span>
+                          </Col>
+                        </Row>
+                      ))}
+
+                      <Form
+                        onSubmit={handleSubmit((data) =>
+                          onPostComment(data, status)
+                        )}
+                      >
+                        <div
+                          className="d-flex justify-content-between align-items-center"
+                          style={{ position: "relative" }}
+                        >
+                          <Form.Control
+                            {...register(`comment`)}
+                            className="me-2"
+                            id={status.id}
+                          />
+
+                          <FontAwesomeIcon
+                            icon={["fas", "times"]}
+                            style={{
+                              position: "absolute",
+                              right: "70px",
+                              top: "5px",
+                            }}
+                            onClick={() => handleCloseCommentForm(status)}
+                          />
+                          <Button type="submit">Post</Button>
+                        </div>
+                      </Form>
+                    </div>
+                  </Card.Footer>
+                </Card>
+              ))}
+          </div>
         </Col>
       </Row>
     </Container>

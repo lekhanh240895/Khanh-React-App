@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Image, Row, Col, Container, Card } from "react-bootstrap";
+import {
+  Alert,
+  Image,
+  Row,
+  Col,
+  Container,
+  Card,
+  Modal,
+} from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
 
-/* import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; */
 import { storage } from "../../firebase/config";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
+import "./index.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Photos() {
   const { user } = useAuth();
   const [error, setError] = useState("");
 
   const [imgUrls, setImgUrls] = useState([]);
+
+  const [showPhoto, setShowPhoto] = useState(false);
+  const handleShowPhoto = () => setShowPhoto(true);
+  const handleClosePhoto = () => setShowPhoto(false);
 
   useEffect(() => {
     const loadAllImages = () => {
@@ -32,21 +45,41 @@ export default function Photos() {
   return (
     <Container className="bg-white">
       {error && <Alert variant="danger">{error}</Alert>}
-      <Card>
+      <Card className="pt-3">
         <Card.Header>
-          <div className="d-flex justify-content-between">
-            <Card.Title>Pictures</Card.Title>
-          </div>
+          <Card.Title>Pictures</Card.Title>
         </Card.Header>
 
         <Card.Body>
           <Row>
             {imgUrls.map((url) => (
               <Col xs={6} md={4} className="p-1">
+                <Modal show={showPhoto} onHide={handleClosePhoto} fullscreen>
+                  <Modal.Body>
+                    <div>
+                      <Image fluid src={url} />
+                      <FontAwesomeIcon
+                        className="closed-icon"
+                        icon={["fas", "times"]}
+                        size="lg"
+                        onClick={handleClosePhoto}
+                        style={{
+                          position: "absolute",
+                          top: "2rem",
+                          right: "2rem",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </div>
+                  </Modal.Body>
+                </Modal>
+
                 <Image
                   src={url}
-                  alt={`${user.displayName}-photoUpload`}
-                  style={{ height: "25vh", width: "100%" }}
+                  alt={`${user.displayName}-photos`}
+                  id="photos"
+                  onClick={handleShowPhoto}
+                  style={{ cursor: "pointer" }}
                 />
               </Col>
             ))}

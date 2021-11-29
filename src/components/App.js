@@ -31,6 +31,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { AppProvider } from "../contexts/AppContext";
 import { useAuth } from "../contexts/AuthContext";
 import { auth } from "../firebase/config";
+import "moment-timezone";
 
 export const App = () => {
   const { user, logout } = useAuth();

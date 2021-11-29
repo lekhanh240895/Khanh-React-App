@@ -34,6 +34,7 @@ export default function NavigationBar({ handleSignOut }) {
         <Navbar.Toggle aria-controls="basic-navbar-nav">
           <FontAwesomeIcon icon={["fas", "bars"]} className="text-white" />
         </Navbar.Toggle>
+
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
             <StyledNavLink>
