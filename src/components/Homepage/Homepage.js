@@ -179,7 +179,7 @@ export default function Homepage() {
     });
 
     setIsPosted(true);
-    reset();
+    e.target.reset();
   };
 
   const handleDeleteStatus = (status) => {
@@ -581,7 +581,7 @@ export default function Homepage() {
               userDocs[0].statuses?.map((status) => (
                 <Card className="my-3" key={status.id}>
                   <Card.Header>
-                    <div className="my-2 d-flex justify-content-between">
+                    <div className="mt-3 d-flex justify-content-between">
                       <div>
                         <div style={{ float: "left" }}>{Avatar}</div>
                         <h4
@@ -663,9 +663,14 @@ export default function Homepage() {
                             xs
                             className="d-flex justify-content-between ms-3"
                           >
-                            <div style={{ lineHeight: "0.5" }}>
-                              <h5 style={{}}>{user.displayName}</h5>
+                            <div style={{ lineHeight: "0.7" }}>
+                              <h5
+                                style={{ fontSize: "14px", fontWeight: "600" }}
+                              >
+                                {user.displayName}
+                              </h5>
                               <p>{comment.content}</p>
+
                               <div>
                                 <span
                                   onClick={() =>
@@ -677,17 +682,24 @@ export default function Homepage() {
                                   }
                                 >
                                   <FontAwesomeIcon
-                                    icon={["far", "thumbs-up"]}
+                                    icon={
+                                      comment.isLiked
+                                        ? ["fas", "thumbs-up"]
+                                        : ["far", "thumbs-up"]
+                                    }
+                                    size="sm"
                                   />
                                 </span>
+
                                 <span
                                   style={{
-                                    margin: "0 1rem",
+                                    margin: "0 0.5rem",
                                     fontSize: "0.5rem",
                                   }}
                                 >
                                   <FontAwesomeIcon icon={["far", "circle"]} />
                                 </span>
+
                                 <span
                                   style={{
                                     fontSize: "14px",

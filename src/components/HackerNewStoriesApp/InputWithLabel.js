@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as SC from "./style";
 export const InputWithLabel = ({
   isFocused,
@@ -10,11 +10,10 @@ export const InputWithLabel = ({
   checked,
 }) => {
   const inputRef = React.useRef(null);
-  React.useEffect(() => {
+  useEffect(() => {
     if (isFocused && inputRef.current) {
       inputRef.current.focus();
     }
-    // eslint-disable-next-line
   });
 
   return (

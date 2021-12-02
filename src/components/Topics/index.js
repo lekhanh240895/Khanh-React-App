@@ -99,11 +99,11 @@ function Topic() {
       <Navbar>
         <Nav>
           {topic.resources.map(({ name, id }) => (
-            <Nav.Link key={id}>
+            <li key={id}>
               <NavLink to={`${url}/${id}`} activeClassName="text-white">
                 {name}
               </NavLink>
-            </Nav.Link>
+            </li>
           ))}
         </Nav>
       </Navbar>

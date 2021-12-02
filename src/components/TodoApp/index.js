@@ -143,18 +143,20 @@ const TodoApp = () => {
   };
 
   const handleShowAll = () => {
-    setSearchId("");
     const url = `${API_ENDPOINT}`;
     setUrls(urls.concat(url));
     setIsShowedAll(true);
     setPage(1);
     setIsOver(false);
+    setUserId(null);
   };
 
   useEffect(() => {
-    setUnCompletedTodo(
-      todos.data.filter((todo) => todo.completed === false).length
-    );
+    if (todos) {
+      setUnCompletedTodo(
+        todos.data.filter((todo) => todo.completed === false).length
+      );
+    }
   }, [todos]);
 
   const extractSearchId = (url) =>

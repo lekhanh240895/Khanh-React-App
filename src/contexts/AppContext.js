@@ -38,9 +38,9 @@ export const AppProvider = ({ children }) => {
     return {
       fieldName: "email",
       operator: "==",
-      compareValue: user.email,
+      compareValue: user?.email,
     };
-  }, [user.email]);
+  }, [user?.email]);
 
   const userDocs = useFirestore("users", condition);
 

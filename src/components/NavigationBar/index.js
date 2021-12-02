@@ -38,29 +38,25 @@ export default function NavigationBar({ handleSignOut }) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
             <StyledNavLink>
-              <NavLink to="/profile" className="" activeClassName="text-white">
+              <NavLink to="/profile" activeClassName="text-white">
                 Profile
               </NavLink>
             </StyledNavLink>
 
-            <StyledNavLink className="">
-              <NavLink to="/todo-app" className="" activeClassName="text-white">
+            <StyledNavLink>
+              <NavLink to="/todo-app" activeClassName="text-white">
                 Todo App
               </NavLink>
             </StyledNavLink>
 
-            <StyledNavLink className="">
-              <NavLink
-                to="/stories-app"
-                className=""
-                activeClassName="text-white"
-              >
+            <StyledNavLink>
+              <NavLink to="/stories-app" activeClassName="text-white">
                 Hacker News Stories App
               </NavLink>
             </StyledNavLink>
 
-            <StyledNavLink className="">
-              <NavLink to="/topics" className="" activeClassName="text-white">
+            <StyledNavLink>
+              <NavLink to="/topics" activeClassName="text-white">
                 Topics
               </NavLink>
             </StyledNavLink>
