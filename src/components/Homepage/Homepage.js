@@ -15,8 +15,7 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import "./index.css";
-import { useAuth } from "../../contexts/AuthContext";
-import { Prompt, Link } from "react-router-dom";
+import { Prompt } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { storage } from "../../firebase/config";
 import {
@@ -25,29 +24,69 @@ import {
   getDownloadURL,
   deleteObject,
   list,
-  listAll,
 } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
 import { useAppContext } from "../../contexts/AppContext";
-import { arrayUnion, arrayRemove } from "firebase/firestore";
+import { arrayRemove } from "firebase/firestore";
 import { v1 as uuidv1 } from "uuid";
 import Moment from "react-moment";
 import { useForm } from "react-hook-form";
+import { Route, useParams, NavLink } from "react-router-dom";
+import { Navbar, Nav } from "react-bootstrap";
+import StatusForm from "./StatusForm";
+import Avatar from "./Avatar";
+import Pictures from "./Pictures";
 
-export default function Homepage() {
-  const { user } = useAuth();
+export function Homepages() {
+  const { users } = useAppContext();
+  return (
+    <div className="d-flex flex-column justify-content-center align-items-center">
+      <Navbar variant="dark">
+        <Container>
+          <Navbar.Brand>Homepages</Navbar.Brand>
+          <Nav>
+            {users.map(({ email }) => (
+              <li key={email}>
+                <NavLink to={`/${email}`} activeClassName="text-white">
+                  {email}
+                </NavLink>
+              </li>
+            ))}
+          </Nav>
+        </Container>
+      </Navbar>
+
+      <Route path={`/:profileUid`}>
+        <Homepage users={users} />
+      </Route>
+    </div>
+  );
+}
+
+export default function Homepage({ users }) {
+  const { profileUid } = useParams();
+  const [isUser, setIsUser] = useState(false);
+  const { updateDocument, userDocs } = useAppContext();
+  const userProfile = users.find(({ uid }) => uid === profileUid);
+  console.log(userProfile)
+
+  useEffect(() => {
+    if (userDocs[0].email === userProfile.email) {
+      setIsUser(true);
+    }
+  }, [userDocs, userProfile]);
+
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isPosted, setIsPosted] = useState(false);
+  // const [isPosted, setIsPosted] = useState(false);
 
   const [progress, setProgress] = useState(null);
   const [urls, setUrls] = useState([]);
   const [imgUrls, setImgUrls] = useState([]);
 
-  const [status, setStatus] = useState("");
-  const { updateDocument, userDocs } = useAppContext();
+  // const [status, setStatus] = useState("");
 
   const { register, handleSubmit, reset } = useForm();
 
@@ -56,7 +95,10 @@ export default function Homepage() {
     setIsLoading(true);
 
     if (file) {
-      const imageRef = ref(storage, `${user.email}/${path}/${file.name}`);
+      const imageRef = ref(
+        storage,
+        `${userProfile.email}/${path}/${file.name}`
+      );
       const metadata = {
         contentType: "image/jpeg",
       };
@@ -111,22 +153,11 @@ export default function Homepage() {
     }
   };
 
-  const loadAllImages = () => {
-    const listRef = ref(storage, `${user.email}/Images`);
-    listAll(listRef)
-      .then((res) => {
-        res.items.forEach(async (itemRef) => {
-          const url = await getDownloadURL(itemRef);
-          setImgUrls((prevState) => [...prevState, url]);
-        });
-      })
-      .catch((error) => setError(error.message));
-  };
-
   const deviceInfo = useDeviceInfo();
+
   useEffect(() => {
     const loadImg = async () => {
-      const listRef = ref(storage, `${user.email}/Images`);
+      const listRef = ref(storage, `${userProfile.email}/Images`);
       let firstPage;
 
       if (deviceInfo.isMobile) {
@@ -158,30 +189,6 @@ export default function Homepage() {
 
   const handleShow = () => setShow(true);
 
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-    setIsPosted(true);
-  };
-
-  const handlePostStatus = async (e) => {
-    e.preventDefault();
-    setIsPosted(false);
-
-    await updateDocument("users", userDocs[0].id, {
-      statuses: arrayUnion({
-        content: status,
-        isLiked: false,
-        id: uuidv1(),
-        postedAt: new Date(),
-        isCommentFormOpened: false,
-        comments: [],
-      }),
-    });
-
-    setIsPosted(true);
-    e.target.reset();
-  };
-
   const handleDeleteStatus = (status) => {
     updateDocument("users", userDocs[0].id, {
       statuses: arrayRemove(status),
@@ -196,6 +203,7 @@ export default function Homepage() {
       newStatuses.push({
         content: status.content,
         isLiked: status.isLiked,
+        /*   numOfLikes: ++status.numOfLikes, */
         id: status.id,
         postedAt: status.postedAt,
         isCommentFormOpened: status.isCommentFormOpened,
@@ -343,10 +351,6 @@ export default function Homepage() {
     });
   };
 
-  const [showPhoto, setShowPhoto] = useState(false);
-  const handleShowPhoto = () => setShowPhoto(true);
-  const handleClosePhoto = () => setShowPhoto(false);
-
   const UploadModal = (
     <div>
       <Prompt
@@ -421,7 +425,6 @@ export default function Homepage() {
                               borderRadius: "10px",
                               width: "50vw",
                             }}
-                            onCLick={handleShowPhoto}
                           />
                         </div>
 
@@ -455,264 +458,192 @@ export default function Homepage() {
     </div>
   );
 
-  const Pictures = (
-    <Card>
-      <Card.Header>
-        <div className="d-flex justify-content-between">
-          <Card.Title>Pictures</Card.Title>
-
-          <Card.Title onClick={loadAllImages} style={{ cursor: "pointer" }}>
-            <Link style={{ textDecoration: "none" }} to="/photos">
-              Show all pictures
-            </Link>
-          </Card.Title>
-        </div>
-      </Card.Header>
-
-      <Card.Body>
-        <Row>
-          {imgUrls.map((url) => (
-            <Col key={url} xs={6} md={4} className="p-1">
-              <Modal show={showPhoto} onHide={handleClosePhoto} fullscreen>
-                <Modal.Body>
-                  <div>
-                    <Image fluid src={url} />
-                    <FontAwesomeIcon
-                      className="closed-icon"
-                      icon={["fas", "times"]}
-                      size="lg"
-                      onClick={handleClosePhoto}
-                      style={{
-                        position: "absolute",
-                        top: "2rem",
-                        right: "2rem",
-                        cursor: "pointer",
-                      }}
-                    />
-                  </div>
-                </Modal.Body>
-              </Modal>
-
-              <Image
-                src={url}
-                alt={`${user.displayName}-photoUpload`}
-                style={{ height: "25vh", width: "100%", cursor: "pointer" }}
-                onClick={handleShowPhoto}
-              />
-            </Col>
-          ))}
-        </Row>
-      </Card.Body>
-    </Card>
-  );
-
-  const Avatar = (
-    <Image
-      src={user.photoURL}
-      alt="Avatar"
-      style={{
-        borderRadius: "50%",
-        width: "40px",
-        height: "40px",
-      }}
-    />
-  );
-
   return (
     <Container className="bg-white">
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Row className="pt-3">
-        <Col md>{Pictures}</Col>
+        <Col md>
+          <Pictures imgUrls={imgUrls} user={userProfile} />
+        </Col>
 
         <Col md>
           <Card>
             <Card.Header>
               <Card.Title>Homepage</Card.Title>
             </Card.Header>
-            <Card.Body className="px-0 my-2">
-              <Form onSubmit={handlePostStatus}>
-                <div className="d-flex align-items-center justify-content-between px-3">
-                  <div>{Avatar}</div>
-                  <Form.Control
-                    type="text"
-                    placeholder="What are you thinking?"
-                    style={{
-                      borderRadius: "10px",
-                      height: "40px",
-                    }}
-                    onChange={(e) => handleStatusChange(e)}
-                    className="mx-2"
-                  />
-                  <Button type="submit" disabled={!isPosted}>
-                    Post
-                  </Button>
-                </div>
-              </Form>
-            </Card.Body>
 
-            <Card.Footer>
-              {UploadModal}
+            {isUser && (
+              <div>
+                <Card.Body className="px-0 my-2">
+                  <StatusForm user={userProfile} />
+                </Card.Body>
 
-              <OverlayTrigger
-                key="right"
-                placement="right"
-                overlay={
-                  <Tooltip id={`tooltip-right`}>
-                    <span style={{ fontSize: "1rem" }}>Add Images</span>
-                  </Tooltip>
-                }
-              >
-                <span
-                  onClick={handleShow}
-                  style={{ cursor: "pointer" }}
-                  className="text-primary"
-                >
-                  <FontAwesomeIcon icon={["fas", "images"]} size="lg" />
-                </span>
-              </OverlayTrigger>
+                <Card.Footer>
+                  {UploadModal}
 
-              <div></div>
-            </Card.Footer>
+                  <OverlayTrigger
+                    key="right"
+                    placement="right"
+                    overlay={
+                      <Tooltip id={`tooltip-right`}>
+                        <span style={{ fontSize: "1rem" }}>Add Images</span>
+                      </Tooltip>
+                    }
+                  >
+                    <span
+                      onClick={handleShow}
+                      style={{ cursor: "pointer" }}
+                      className="text-primary"
+                    >
+                      <FontAwesomeIcon icon={["fas", "images"]} size="lg" />
+                    </span>
+                  </OverlayTrigger>
+                </Card.Footer>
+              </div>
+            )}
           </Card>
 
           <div className="d-flex flex-column-reverse">
-            {userDocs.length > 0 &&
-              userDocs[0].statuses?.map((status) => (
-                <Card className="my-3" key={status.id}>
-                  <Card.Header>
-                    <div className="mt-3 d-flex justify-content-between">
-                      <div>
-                        <div style={{ float: "left" }}>{Avatar}</div>
-                        <h4
-                          style={{
-                            paddingLeft: "50px",
-                            lineHeight: "0.7",
-                          }}
-                        >
-                          {user.displayName}
-                        </h4>
-                        <p
-                          style={{
-                            fontSize: "14px",
-                            paddingLeft: "50px",
-                            fontStyle: "italic",
-                          }}
-                        >
-                          <Moment fromNow unix>
-                            {status.postedAt.seconds}
-                          </Moment>
-                        </p>
+            {userProfile.statuses?.map((status) => (
+              <Card className="my-3" key={status.id}>
+                <Card.Header>
+                  <div className="mt-3 d-flex justify-content-between">
+                    <div>
+                      <div style={{ float: "left" }}>
+                        <Avatar user={userProfile} />
                       </div>
+                      <h4
+                        style={{
+                          paddingLeft: "50px",
+                          lineHeight: "0.7",
+                        }}
+                      >
+                        {userProfile.displayName}
+                      </h4>
+                      <p
+                        style={{
+                          fontSize: "14px",
+                          paddingLeft: "50px",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        <Moment fromNow unix>
+                          {status.postedAt.seconds}
+                        </Moment>
+                      </p>
+                    </div>
 
+                    {isUser && (
                       <span onClick={() => handleDeleteStatus(status)}>
                         <FontAwesomeIcon icon={["far", "trash-alt"]} />
                       </span>
-                    </div>
-                  </Card.Header>
+                    )}
+                  </div>
+                </Card.Header>
 
-                  <Card.Body>{status.content}</Card.Body>
+                <Card.Body>{status.content}</Card.Body>
 
-                  <Card.Footer>
-                    <Row className="text-center my-2">
-                      <Col
-                        onClick={() => handleLikeStatus(status)}
-                        id="status-like"
-                        style={{ cursor: "pointer" }}
-                      >
+                <Card.Footer>
+                  <Row className="text-center my-2">
+                    <Col
+                      onClick={() => handleLikeStatus(status)}
+                      id="status-like"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <span>
+                        <FontAwesomeIcon
+                          icon={
+                            status.isLiked ? ["fas", "heart"] : ["far", "heart"]
+                          }
+                          className={
+                            status.isLiked ? "status-liked me-2" : "me-2"
+                          }
+                          size="lg"
+                        />
+                      </span>
+                      <span>Like</span>
+                    </Col>
+
+                    <Col
+                      onClick={() => handleToggleCommentForm(status)}
+                      id="status-comment"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <label htmlFor={status.id}>
                         <span>
                           <FontAwesomeIcon
-                            icon={["fas", "heart"]}
-                            className={
-                              status.isLiked ? "status-liked me-2" : "me-2"
-                            }
+                            icon={["far", "comments"]}
+                            className="me-2"
                             size="lg"
                           />
                         </span>
-                        <span>Like</span>
-                      </Col>
+                        <span>Comment</span>
+                      </label>
+                    </Col>
+                  </Row>
 
-                      <Col
-                        onClick={() => handleToggleCommentForm(status)}
-                        id="status-comment"
-                        style={{ cursor: "pointer" }}
-                      >
-                        <label htmlFor={status.id}>
-                          <span>
-                            <FontAwesomeIcon
-                              icon={["far", "comments"]}
-                              className="me-2"
-                              size="lg"
-                            />
-                          </span>
-                          <span>Comment</span>
-                        </label>
-                      </Col>
-                    </Row>
+                  <div
+                    style={{
+                      display: status.isCommentFormOpened ? "block" : "none",
+                    }}
+                  >
+                    {status.comments?.map((comment) => (
+                      <Row key={comment.id} className="my-3 py-3 bg-white">
+                        <Col xs={1}>
+                          <Avatar user={userProfile} />
+                        </Col>
 
-                    <div
-                      style={{
-                        display: status.isCommentFormOpened ? "block" : "none",
-                      }}
-                    >
-                      {status.comments?.map((comment) => (
-                        <Row key={comment.id} className="my-3 py-3 bg-white">
-                          <Col xs={1}>{Avatar}</Col>
+                        <Col xs className="d-flex justify-content-between ms-3">
+                          <div style={{ lineHeight: "0.7" }}>
+                            <h5 style={{ fontSize: "14px", fontWeight: "600" }}>
+                              {userProfile.displayName}
+                            </h5>
+                            <p>{comment.content}</p>
 
-                          <Col
-                            xs
-                            className="d-flex justify-content-between ms-3"
-                          >
-                            <div style={{ lineHeight: "0.7" }}>
-                              <h5
-                                style={{ fontSize: "14px", fontWeight: "600" }}
+                            <div>
+                              <span
+                                onClick={() =>
+                                  handleLikeComment(status, comment)
+                                }
+                                style={{ cursor: "pointer" }}
+                                className={
+                                  comment.isLiked ? "comment-liked" : ""
+                                }
                               >
-                                {user.displayName}
-                              </h5>
-                              <p>{comment.content}</p>
-
-                              <div>
-                                <span
-                                  onClick={() =>
-                                    handleLikeComment(status, comment)
+                                <FontAwesomeIcon
+                                  icon={
+                                    comment.isLiked
+                                      ? ["fas", "thumbs-up"]
+                                      : ["far", "thumbs-up"]
                                   }
-                                  style={{ cursor: "pointer" }}
-                                  className={
-                                    comment.isLiked ? "comment-liked" : ""
-                                  }
-                                >
-                                  <FontAwesomeIcon
-                                    icon={
-                                      comment.isLiked
-                                        ? ["fas", "thumbs-up"]
-                                        : ["far", "thumbs-up"]
-                                    }
-                                    size="sm"
-                                  />
-                                </span>
+                                  size="sm"
+                                />
+                              </span>
 
-                                <span
-                                  style={{
-                                    margin: "0 0.5rem",
-                                    fontSize: "0.5rem",
-                                  }}
-                                >
-                                  <FontAwesomeIcon icon={["far", "circle"]} />
-                                </span>
+                              <span
+                                style={{
+                                  margin: "0 0.5rem",
+                                  fontSize: "0.5rem",
+                                }}
+                              >
+                                <FontAwesomeIcon icon={["far", "circle"]} />
+                              </span>
 
-                                <span
-                                  style={{
-                                    fontSize: "14px",
-                                    fontStyle: "italic",
-                                  }}
-                                >
-                                  <Moment fromNow unix>
-                                    {comment.commentedAt.seconds}
-                                  </Moment>
-                                </span>
-                              </div>
+                              <span
+                                style={{
+                                  fontSize: "14px",
+                                  fontStyle: "italic",
+                                }}
+                              >
+                                <Moment fromNow unix>
+                                  {comment.commentedAt.seconds}
+                                </Moment>
+                              </span>
                             </div>
+                          </div>
 
+                          {isUser && (
                             <span
                               onClick={() =>
                                 handleDeleteComment(status, comment)
@@ -721,41 +652,42 @@ export default function Homepage() {
                             >
                               <FontAwesomeIcon icon={["far", "trash-alt"]} />
                             </span>
-                          </Col>
-                        </Row>
-                      ))}
+                          )}
+                        </Col>
+                      </Row>
+                    ))}
 
-                      <Form
-                        onSubmit={handleSubmit((data) =>
-                          onPostComment(data, status)
-                        )}
+                    <Form
+                      onSubmit={handleSubmit((data) =>
+                        onPostComment(data, status)
+                      )}
+                    >
+                      <div
+                        className="d-flex justify-content-between align-items-center my-3"
+                        style={{ position: "relative" }}
                       >
-                        <div
-                          className="d-flex justify-content-between align-items-center my-3"
-                          style={{ position: "relative" }}
-                        >
-                          <Form.Control
-                            {...register(`comment`)}
-                            className="me-2"
-                            id={status.id}
-                          />
+                        <Form.Control
+                          {...register(`comment`)}
+                          className="me-2"
+                          id={status.id}
+                        />
 
-                          <FontAwesomeIcon
-                            icon={["fas", "times"]}
-                            style={{
-                              position: "absolute",
-                              right: "70px",
-                              top: "5px",
-                            }}
-                            onClick={() => handleCloseCommentForm(status)}
-                          />
-                          <Button type="submit">Post</Button>
-                        </div>
-                      </Form>
-                    </div>
-                  </Card.Footer>
-                </Card>
-              ))}
+                        <FontAwesomeIcon
+                          icon={["fas", "times"]}
+                          style={{
+                            position: "absolute",
+                            right: "70px",
+                            top: "5px",
+                          }}
+                          onClick={() => handleCloseCommentForm(status)}
+                        />
+                        <Button type="submit">Post</Button>
+                      </div>
+                    </Form>
+                  </div>
+                </Card.Footer>
+              </Card>
+            ))}
           </div>
         </Col>
       </Row>

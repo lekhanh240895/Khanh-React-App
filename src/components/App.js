@@ -16,7 +16,7 @@ import NavigationBar from "./NavigationBar";
 import ForgotPassWord from "./ForgotPassword"; /*  */
 import UpdateProfile from "./UpdateProfile";
 /* import Homepage from "./Homepage"; */
-import Homepage from "../components/Homepage/Homepage.js";
+import { Homepages } from "../components/Homepage/Homepage.js";
 import Photos from "./Photos";
 
 /* import CustomPrompt from "./CustomPrompt/index"; */
@@ -32,10 +32,12 @@ import { AppProvider } from "../contexts/AppContext";
 import { useAuth } from "../contexts/AuthContext";
 import { auth } from "../firebase/config";
 import "moment-timezone";
+import { useAppContext } from "../contexts/AppContext";
 
 export const App = () => {
   const { user, logout } = useAuth();
   const [showNavbar, setShowNavbar] = useState(false);
+  const { users } = useAppContext();
 
   useEffect(() => {
     if (user) {
@@ -69,9 +71,11 @@ export const App = () => {
         <AuthProvider>
           <AppProvider>
             <Switch>
-              <PrivateRoute exact path="/">
-                <Homepage />
-              </PrivateRoute>
+              {users?.map((user) => (
+                <PrivateRoute path={`/${user.email}`} key={user.email}>
+                  <Homepages />
+                </PrivateRoute>
+              ))}
 
               <PrivateRoute exact path="/photos">
                 <Photos />

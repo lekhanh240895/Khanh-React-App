@@ -3,6 +3,7 @@ import { Navbar, Container, Nav, NavDropdown, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const StyledNavLink = styled.li`
   font-size: 20px;
@@ -11,6 +12,8 @@ const StyledNavLink = styled.li`
 `;
 
 export default function NavigationBar({ handleSignOut }) {
+  const { user } = useAuth();
+
   return (
     <Navbar
       expand="md"
@@ -22,7 +25,7 @@ export default function NavigationBar({ handleSignOut }) {
     >
       <Container fluid>
         <Navbar.Brand>
-          <NavLink exact to="/" activeClassName="text-white">
+          <NavLink to={`/${user.email}`} activeClassName="text-white">
             <FontAwesomeIcon
               className="me-2 "
               icon={["fab", "react"]}

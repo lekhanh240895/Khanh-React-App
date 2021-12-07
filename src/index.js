@@ -5,11 +5,14 @@ import App from "./components/App.js";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AppProvider } from "./contexts/AppContext.js";
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <AppProvider>
+        <App />
+      </AppProvider>
     </AuthProvider>
   </React.StrictMode>,
   document.getElementById("root")

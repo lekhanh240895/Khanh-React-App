@@ -7,6 +7,7 @@ import {
   Container,
   Card,
   Modal,
+  Carousel,
 } from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -14,17 +15,13 @@ import { useAuth } from "../../contexts/AuthContext";
 import { storage } from "../../firebase/config";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 import "./index.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+/* import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; */
 
 export default function Photos() {
   const { user } = useAuth();
   const [error, setError] = useState("");
 
   const [imgUrls, setImgUrls] = useState([]);
-
-  const [showPhoto, setShowPhoto] = useState(false);
-  const handleShowPhoto = () => setShowPhoto(true);
-  const handleClosePhoto = () => setShowPhoto(false);
 
   useEffect(() => {
     const loadAllImages = () => {
@@ -42,6 +39,17 @@ export default function Photos() {
     //eslint-disable-next-line
   }, []);
 
+  const [showPhotos, setShowPhotos] = useState(false);
+
+  const handleShowPhotos = () => setShowPhotos(true);
+  const handleClose = () => setShowPhotos(false);
+
+  const [index, setIndex] = useState(0);
+
+  const handleSelect = (selectedIndex, e) => {
+    setIndex(selectedIndex);
+  };
+
   return (
     <Container className="bg-white">
       {error && <Alert variant="danger">{error}</Alert>}
@@ -51,35 +59,31 @@ export default function Photos() {
         </Card.Header>
 
         <Card.Body>
+          {showPhotos && (
+            <Modal show={showPhotos} fullscreen onHide={handleClose}>
+              <Carousel activeIndex={index} onSelect={handleSelect}>
+                {imgUrls.map((url) => (
+                  <Carousel.Item key={url}>
+                    <img
+                      className="d-block w-100"
+                      src={url}
+                      alt="Photos"
+                    />
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+            </Modal>
+          )}
+
           <Row>
             {imgUrls.map((url) => (
-              <Col xs={6} md={4} className="p-1">
-                <Modal show={showPhoto} onHide={handleClosePhoto} fullscreen>
-                  <Modal.Body>
-                    <div>
-                      <Image fluid src={url} />
-                      <FontAwesomeIcon
-                        className="closed-icon"
-                        icon={["fas", "times"]}
-                        size="lg"
-                        onClick={handleClosePhoto}
-                        style={{
-                          position: "absolute",
-                          top: "2rem",
-                          right: "2rem",
-                          cursor: "pointer",
-                        }}
-                      />
-                    </div>
-                  </Modal.Body>
-                </Modal>
-
+              <Col xs={6} md={4} className="p-1" key={url}>
                 <Image
                   src={url}
                   alt={`${user.displayName}-photos`}
                   id="photos"
-                  onClick={handleShowPhoto}
                   style={{ cursor: "pointer" }}
+                  onClick={handleShowPhotos}
                 />
               </Col>
             ))}
