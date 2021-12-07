@@ -30,14 +30,15 @@ import { useAppContext } from "../../contexts/AppContext";
 import { arrayRemove } from "firebase/firestore";
 import { v1 as uuidv1 } from "uuid";
 import Moment from "react-moment";
-import { useForm } from "react-hook-form";
 import { Route, useParams, NavLink } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 import StatusForm from "./StatusForm";
 import Avatar from "./Avatar";
 import Pictures from "./Pictures";
+import Comment from "./Comment";
+import PostCommentForm from "./Comment/PostCommentForm";
 
-export function Homepages() {
+export default function Homepages() {
   const { users } = useAppContext();
   return (
     <div className="d-flex flex-column justify-content-center align-items-center">
@@ -63,12 +64,11 @@ export function Homepages() {
   );
 }
 
-export default function Homepage({ users }) {
+function Homepage({ users }) {
   const { profileUid } = useParams();
   const [isUser, setIsUser] = useState(false);
   const { updateDocument, userDocs } = useAppContext();
   const userProfile = users.find(({ uid }) => uid === profileUid);
-  console.log(userProfile)
 
   useEffect(() => {
     if (userDocs[0].email === userProfile.email) {
@@ -87,8 +87,6 @@ export default function Homepage({ users }) {
   const [imgUrls, setImgUrls] = useState([]);
 
   // const [status, setStatus] = useState("");
-
-  const { register, handleSubmit, reset } = useForm();
 
   const handleUploadFiles = (path, file) => {
     setError("");
@@ -153,8 +151,8 @@ export default function Homepage({ users }) {
     }
   };
 
+  //Load Photos
   const deviceInfo = useDeviceInfo();
-
   useEffect(() => {
     const loadImg = async () => {
       const listRef = ref(storage, `${userProfile.email}/Images`);
@@ -228,7 +226,7 @@ export default function Homepage({ users }) {
         isLiked: status.isLiked,
         id: status.id,
         postedAt: status.postedAt,
-        isCommentFormOpened: status.isCommentFormOpened,
+        isCommentFormOpened: false,
         comments: status.comments,
       });
     });
@@ -287,8 +285,6 @@ export default function Homepage({ users }) {
     await updateDocument("users", userDocs[0].id, {
       statuses: newStatuses,
     });
-
-    reset();
   };
 
   const handleDeleteComment = (status, comment) => {
@@ -570,16 +566,14 @@ export default function Homepage({ users }) {
                       id="status-comment"
                       style={{ cursor: "pointer" }}
                     >
-                      <label htmlFor={status.id}>
-                        <span>
-                          <FontAwesomeIcon
-                            icon={["far", "comments"]}
-                            className="me-2"
-                            size="lg"
-                          />
-                        </span>
-                        <span>Comment</span>
-                      </label>
+                      <span>
+                        <FontAwesomeIcon
+                          icon={["far", "comments"]}
+                          className="me-2"
+                          size="lg"
+                        />
+                      </span>
+                      <span>Comment</span>
                     </Col>
                   </Row>
 
@@ -589,101 +583,24 @@ export default function Homepage({ users }) {
                     }}
                   >
                     {status.comments?.map((comment) => (
-                      <Row key={comment.id} className="my-3 py-3 bg-white">
-                        <Col xs={1}>
-                          <Avatar user={userProfile} />
-                        </Col>
-
-                        <Col xs className="d-flex justify-content-between ms-3">
-                          <div style={{ lineHeight: "0.7" }}>
-                            <h5 style={{ fontSize: "14px", fontWeight: "600" }}>
-                              {userProfile.displayName}
-                            </h5>
-                            <p>{comment.content}</p>
-
-                            <div>
-                              <span
-                                onClick={() =>
-                                  handleLikeComment(status, comment)
-                                }
-                                style={{ cursor: "pointer" }}
-                                className={
-                                  comment.isLiked ? "comment-liked" : ""
-                                }
-                              >
-                                <FontAwesomeIcon
-                                  icon={
-                                    comment.isLiked
-                                      ? ["fas", "thumbs-up"]
-                                      : ["far", "thumbs-up"]
-                                  }
-                                  size="sm"
-                                />
-                              </span>
-
-                              <span
-                                style={{
-                                  margin: "0 0.5rem",
-                                  fontSize: "0.5rem",
-                                }}
-                              >
-                                <FontAwesomeIcon icon={["far", "circle"]} />
-                              </span>
-
-                              <span
-                                style={{
-                                  fontSize: "14px",
-                                  fontStyle: "italic",
-                                }}
-                              >
-                                <Moment fromNow unix>
-                                  {comment.commentedAt.seconds}
-                                </Moment>
-                              </span>
-                            </div>
-                          </div>
-
-                          {isUser && (
-                            <span
-                              onClick={() =>
-                                handleDeleteComment(status, comment)
-                              }
-                              style={{ cursor: "pointer" }}
-                            >
-                              <FontAwesomeIcon icon={["far", "trash-alt"]} />
-                            </span>
-                          )}
-                        </Col>
-                      </Row>
+                      <Comment
+                        key={comment.id}
+                        userProfile={userProfile}
+                        comment={comment}
+                        onLikeComment={(comment) =>
+                          handleLikeComment(status, comment)
+                        }
+                        onDeleteComment={(comment) =>
+                          handleDeleteComment(status, comment)
+                        }
+                        isUser={isUser}
+                      />
                     ))}
 
-                    <Form
-                      onSubmit={handleSubmit((data) =>
-                        onPostComment(data, status)
-                      )}
-                    >
-                      <div
-                        className="d-flex justify-content-between align-items-center my-3"
-                        style={{ position: "relative" }}
-                      >
-                        <Form.Control
-                          {...register(`comment`)}
-                          className="me-2"
-                          id={status.id}
-                        />
-
-                        <FontAwesomeIcon
-                          icon={["fas", "times"]}
-                          style={{
-                            position: "absolute",
-                            right: "70px",
-                            top: "5px",
-                          }}
-                          onClick={() => handleCloseCommentForm(status)}
-                        />
-                        <Button type="submit">Post</Button>
-                      </div>
-                    </Form>
+                    <PostCommentForm
+                      onPostComment={(data) => onPostComment(data, status)}
+                      onCloseCommentForm={() => handleCloseCommentForm(status)}
+                    />
                   </div>
                 </Card.Footer>
               </Card>

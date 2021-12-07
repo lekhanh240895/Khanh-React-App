@@ -16,7 +16,8 @@ import NavigationBar from "./NavigationBar";
 import ForgotPassWord from "./ForgotPassword"; /*  */
 import UpdateProfile from "./UpdateProfile";
 /* import Homepage from "./Homepage"; */
-import { Homepages } from "../components/Homepage/Homepage.js";
+// import { Homepages } from "../components/Homepage/Homepage.js";
+import Homepages from "./Homepage";
 import Photos from "./Photos";
 
 /* import CustomPrompt from "./CustomPrompt/index"; */
@@ -26,13 +27,11 @@ import CustomPrompt from "../components/Custom-Prompt/index.js";
 import "./FontAwesome";
 import "./App.css";
 import { Container } from "react-bootstrap";
+
 //Import Firebase tools
-import { AuthProvider } from "../contexts/AuthContext";
-import { AppProvider } from "../contexts/AppContext";
-import { useAuth } from "../contexts/AuthContext";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
+import { AppProvider, useAppContext } from "../contexts/AppContext";
 import { auth } from "../firebase/config";
-import "moment-timezone";
-import { useAppContext } from "../contexts/AppContext";
 
 export const App = () => {
   const { user, logout } = useAuth();
