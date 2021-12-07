@@ -44,12 +44,12 @@ export default function Homepages() {
     <div className="d-flex flex-column justify-content-center align-items-center">
       <Navbar variant="dark">
         <Container>
-          <Navbar.Brand>Homepages</Navbar.Brand>
+          <h4>People you may know</h4>
           <Nav>
-            {users.map(({ email }) => (
-              <li key={email}>
-                <NavLink to={`/${email}`} activeClassName="text-white">
-                  {email}
+            {users.map((user) => (
+              <li key={user.email}>
+                <NavLink to={`/${user.email}`} activeClassName="text-white">
+                  <Avatar user={user} />
                 </NavLink>
               </li>
             ))}
@@ -71,7 +71,7 @@ function Homepage({ users }) {
   const userProfile = users.find(({ uid }) => uid === profileUid);
 
   useEffect(() => {
-    if (userDocs[0].email === userProfile.email) {
+    if (userDocs[0]?.email === userProfile?.email) {
       setIsUser(true);
     }
   }, [userDocs, userProfile]);
@@ -155,7 +155,7 @@ function Homepage({ users }) {
   const deviceInfo = useDeviceInfo();
   useEffect(() => {
     const loadImg = async () => {
-      const listRef = ref(storage, `${userProfile.email}/Images`);
+      const listRef = ref(storage, `${userProfile?.email}/Images`);
       let firstPage;
 
       if (deviceInfo.isMobile) {
@@ -501,7 +501,7 @@ function Homepage({ users }) {
           </Card>
 
           <div className="d-flex flex-column-reverse">
-            {userProfile.statuses?.map((status) => (
+            {userProfile?.statuses?.map((status) => (
               <Card className="my-3" key={status.id}>
                 <Card.Header>
                   <div className="mt-3 d-flex justify-content-between">
