@@ -25,7 +25,7 @@ export default function NavigationBar({ handleSignOut }) {
     >
       <Container fluid>
         <Navbar.Brand>
-          <NavLink to={`/${user.email}`} activeClassName="text-white">
+          <NavLink to={`/${user?.email}`} activeClassName="text-white">
             <FontAwesomeIcon
               className="me-2 "
               icon={["fab", "react"]}
