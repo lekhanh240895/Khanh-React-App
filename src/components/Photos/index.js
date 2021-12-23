@@ -40,12 +40,6 @@ export default function Photos({ user }) {
   const handleShowPhotos = () => setShowPhotos(true);
   const handleClose = () => setShowPhotos(false);
 
-  const [index, setIndex] = useState(0);
-
-  const handleSelect = (selectedIndex, e) => {
-    setIndex(selectedIndex);
-  };
-
   return (
     <Container className="bg-white">
       {error && <Alert variant="danger">{error}</Alert>}
@@ -57,7 +51,7 @@ export default function Photos({ user }) {
         <Card.Body>
           {showPhotos && (
             <Modal show={showPhotos} fullscreen onHide={handleClose}>
-              <Carousel activeIndex={index} onSelect={handleSelect}>
+              <Carousel>
                 {imgUrls.map((url) => (
                   <Carousel.Item key={url}>
                     <img className="d-block w-100" src={url} alt="Photos" />
