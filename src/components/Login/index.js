@@ -45,7 +45,7 @@ export const Login = () => {
 
       setIsSucced(true);
       setTimeout(() => {
-        history.push("/profile");
+        history.push("/");
       }, 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
@@ -62,7 +62,7 @@ export const Login = () => {
       await loginWithFacebook();
       setIsSucced(true);
       setTimeout(() => {
-        history.push("/profile");
+        history.push("/");
       }, 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
@@ -77,7 +77,7 @@ export const Login = () => {
       await loginWithGoogle();
       setIsSucced(true);
       setTimeout(() => {
-        history.push("/profile");
+        history.push("/");
       }, 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");

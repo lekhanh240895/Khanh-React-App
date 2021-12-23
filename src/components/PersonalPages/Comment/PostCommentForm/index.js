@@ -16,7 +16,7 @@ export default function PostCommentForm({ onPostComment, onCloseCommentForm }) {
         className="d-flex justify-content-between align-items-center my-3"
         style={{ position: "relative" }}
       >
-        <Form.Control {...register(`comment`)} className="me-2" />
+        <Form.Control {...register(`comment`)} className="me-2" placeholder="Write your comments"/>
 
         <FontAwesomeIcon
           icon={["fas", "times"]}

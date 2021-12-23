@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Row, Image, Col} from "react-bootstrap";
+import { Card, Row, Image, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function Pictures({ imgUrls, user }) {
@@ -10,7 +10,10 @@ export default function Pictures({ imgUrls, user }) {
           <Card.Title>Pictures</Card.Title>
 
           <Card.Title style={{ cursor: "pointer" }}>
-            <Link style={{ textDecoration: "none" }} to="/photos">
+            <Link
+              style={{ textDecoration: "none" }}
+              to={`/${user.email}/photos`}
+            >
               Show all pictures
             </Link>
           </Card.Title>
@@ -24,7 +27,7 @@ export default function Pictures({ imgUrls, user }) {
               <Image
                 src={url}
                 alt={`${user.displayName}-photoUpload`}
-                style={{ height: "25vh", width: "100%", cursor: "pointer" }}
+                style={{ height: "25vh", width: "100%", cursor: "pointer", borderRadius: "5px" }}
               />
             </Col>
           ))}

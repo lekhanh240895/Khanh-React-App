@@ -12,17 +12,20 @@ export default function Comment({
   onDeleteComment,
 }) {
   return (
-    <Row className="my-3 py-3 bg-white">
+    <Row className="my-3 py-3 mx-1 bg-white">
       <Col xs={1}>
         <Avatar user={userProfile} />
       </Col>
 
       <Col xs className="d-flex justify-content-between ms-3">
-        <div style={{ lineHeight: "0.7" }}>
+        <div>
           <h5 style={{ fontSize: "14px", fontWeight: "600" }}>
             {userProfile.displayName}
           </h5>
-          <p>{comment.content}</p>
+
+          <p style={{ marginTop: "-5px", marginBottom: "-2px" }}>
+            {comment.content}
+          </p>
 
           <div>
             <span

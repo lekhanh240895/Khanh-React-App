@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Modal, Image, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "./index.css";
 
-export default function Avatar({ onShowUploadModal }) {
-  const { user } = useAuth();
+export default function Avatar({ onShowUploadModal, user, isUser}) {
+  
   const [showAvatar, setShowAvatar] = useState(false);
-
   const handleShowAvatar = () => setShowAvatar(true);
   const handleClose = () => setShowAvatar(false);
   return (
@@ -29,7 +27,7 @@ export default function Avatar({ onShowUploadModal }) {
             />
           </div>
 
-          <OverlayTrigger
+          {isUser && <OverlayTrigger
             placement="right-start"
             overlay={
               <Tooltip>
@@ -48,7 +46,7 @@ export default function Avatar({ onShowUploadModal }) {
             >
               <FontAwesomeIcon icon={["fas", "camera"]} />
             </div>
-          </OverlayTrigger>
+          </OverlayTrigger>}
 
           <Modal show={showAvatar} onHide={handleClose} fullscreen>
             <Modal.Body>

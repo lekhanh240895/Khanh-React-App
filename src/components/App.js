@@ -19,7 +19,6 @@ import PrivateRoute from "../components/PrivateRoute/index";
 import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
 import PersonalPages from "../components/PersonalPages/index";
-import Photos from "./Photos";
 import CustomPrompt from "../components/Custom-Prompt/index.js";
 
 //Styles
@@ -77,10 +76,6 @@ export const App = () => {
 
               <PrivateRoute exact path="/">
                 <h1>Hello World</h1>
-              </PrivateRoute>
-
-              <PrivateRoute path="/photos">
-                <Photos />
               </PrivateRoute>
 
               <PrivateRoute path="/profile">

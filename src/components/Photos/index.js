@@ -10,25 +10,22 @@ import {
   Carousel,
 } from "react-bootstrap";
 
-import { useAuth } from "../../contexts/AuthContext";
-
 import { storage } from "../../firebase/config";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 import "./index.css";
-/* import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; */
 
-export default function Photos() {
-  const { user } = useAuth();
+export default function Photos({ user }) {
   const [error, setError] = useState("");
 
   const [imgUrls, setImgUrls] = useState([]);
 
   useEffect(() => {
     const loadAllImages = () => {
-      const listRef = ref(storage, `${user.email}/Images`);
+      const listRef = ref(storage, `${user?.email}/Images`);
       listAll(listRef)
         .then((res) => {
           res.items.forEach(async (itemRef) => {
+            setImgUrls([]);
             const url = await getDownloadURL(itemRef);
             setImgUrls((prevState) => [...prevState, url]);
           });
@@ -36,8 +33,7 @@ export default function Photos() {
         .catch((error) => setError(error.message));
     };
     loadAllImages();
-    //eslint-disable-next-line
-  }, []);
+  }, [user]);
 
   const [showPhotos, setShowPhotos] = useState(false);
 
@@ -53,9 +49,9 @@ export default function Photos() {
   return (
     <Container className="bg-white">
       {error && <Alert variant="danger">{error}</Alert>}
-      <Card className="pt-3">
+      <Card>
         <Card.Header>
-          <Card.Title>Pictures</Card.Title>
+          <Card.Title as="h1">Pictures</Card.Title>
         </Card.Header>
 
         <Card.Body>
@@ -64,11 +60,7 @@ export default function Photos() {
               <Carousel activeIndex={index} onSelect={handleSelect}>
                 {imgUrls.map((url) => (
                   <Carousel.Item key={url}>
-                    <img
-                      className="d-block w-100"
-                      src={url}
-                      alt="Photos"
-                    />
+                    <img className="d-block w-100" src={url} alt="Photos" />
                   </Carousel.Item>
                 ))}
               </Carousel>
@@ -82,7 +74,7 @@ export default function Photos() {
                   src={url}
                   alt={`${user.displayName}-photos`}
                   id="photos"
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", borderRadius: "10px" }}
                   onClick={handleShowPhotos}
                 />
               </Col>

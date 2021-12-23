@@ -1,15 +1,10 @@
 import React from "react";
 import { Button, Card } from "react-bootstrap";
-
-import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
-
 import UploadAvatarModal from "./UploadAvatarModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export const Profile = () => {
-  const { user } = useAuth();
-
+export const Profile = ({ isUser, user }) => {
   return (
     <Card className="mb-4">
       <Card.Header className="mb-4">
@@ -17,27 +12,33 @@ export const Profile = () => {
       </Card.Header>
 
       <Card.Body>
-        <UploadAvatarModal />
+        <UploadAvatarModal user={user} isUser={isUser} />
 
         <Card.Text className="text-center">
           <strong>Email:</strong> {user.email}
-          <Link to="/update-profile" className="list-style-none ms-3">
-            <FontAwesomeIcon icon={["fas", "pen"]} />
-          </Link>
+          {isUser && (
+            <Link to="/update-profile" className="list-style-none ms-3">
+              <FontAwesomeIcon icon={["fas", "pen"]} />
+            </Link>
+          )}
         </Card.Text>
 
         <Card.Text className="text-center">
           <strong>Name:</strong> {user.displayName}
-          <Link to="/update-profile" className="list-style-none ms-3">
-            <FontAwesomeIcon icon={["fas", "pen"]} />
-          </Link>
+          {isUser && (
+            <Link to="/update-profile" className="list-style-none ms-3">
+              <FontAwesomeIcon icon={["fas", "pen"]} />
+            </Link>
+          )}
         </Card.Text>
 
-        <div className="text-center mb-3">
-          <Link to="/update-profile" className="text-white list-style-none">
-            <Button>Update Profile</Button>
-          </Link>
-        </div>
+        {isUser && (
+          <div className="text-center mb-3">
+            <Link to="/update-profile" className="text-white list-style-none">
+              <Button>Update Profile</Button>
+            </Link>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );

@@ -18,7 +18,7 @@ const Status = ({
 }) => (
   <div className="d-flex flex-column-reverse">
     {userProfile?.statuses?.map((status) => (
-      <Card className="my-3" key={status.id}>
+      <Card className="mb-3" key={status.id}>
         <Card.Header>
           <div className="mt-3 d-flex justify-content-between">
             <div>

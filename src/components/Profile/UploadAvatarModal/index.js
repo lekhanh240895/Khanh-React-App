@@ -26,8 +26,7 @@ import Avatar from "../Avatar/index.js";
 import "./index.css";
 import usePreventReload from "../../hooks/usePreventReload";
 
-export default function UploadAvatarModal() {
-  const { user } = useAuth();
+export default function UploadAvatarModal({ user, isUser}) {
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
@@ -122,6 +121,7 @@ export default function UploadAvatarModal() {
       compareValue: user.email,
     };
   }, [user.email]);
+  
   const userDocs = useFirestore("users", condition);
 
   const handleUpdatePhotoURL = (newPhotoURL) => {
@@ -171,7 +171,7 @@ export default function UploadAvatarModal() {
         }}
       />
 
-      <Avatar onShowUploadModal={handleShow} />
+      <Avatar onShowUploadModal={handleShow} user={user} isUser={isUser} />
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>

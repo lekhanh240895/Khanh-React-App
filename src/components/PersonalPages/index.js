@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Container } from "react-bootstrap";
 import "./index.css";
-
 import { storage } from "../../firebase/config";
 import { ref, getDownloadURL, list } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
@@ -16,6 +15,8 @@ import Pictures from "./Pictures";
 import Profile from "../Profile";
 import Status from "./Status";
 import StatusBar from "./StatusBar";
+import { useRouteMatch } from "react-router-dom";
+import Photos from "../Photos";
 
 export default function PersonalPages() {
   const { users, userDocs } = useAppContext();
@@ -24,8 +25,8 @@ export default function PersonalPages() {
     <div className="d-flex flex-column justify-content-center align-items-center">
       <Navbar variant="dark">
         <Container>
-          <h4 className="me-3">People you may know</h4>
-          <Nav>
+          <h3 className="me-3">People you may know</h3>
+          <Nav className="pb-2">
             {users
               .filter((user) => user.email !== userDocs[0]?.email)
               .map((user) => (
@@ -51,41 +52,18 @@ function PersonalPage({ users }) {
   const [isUser, setIsUser] = useState(false);
   const { updateDocument, userDocs } = useAppContext();
   const userProfile = users.find(({ uid }) => uid === profileUid);
+
   const [status, setStatus] = useState("");
   const [isPosted, setIsPosted] = useState(false);
+  const [imgUrls, setImgUrls] = useState([]);
 
-  const handlePostStatus = async (e) => {
-    e.preventDefault();
-    setIsPosted(false);
-
-    await updateDocument("users", userDocs[0].id, {
-      statuses: arrayUnion({
-        content: status,
-        isLiked: false,
-        /*     numOfLikes: 0, */
-        id: uuidv1(),
-        postedAt: new Date(),
-        isCommentFormOpened: false,
-        comments: [],
-      }),
-    });
-
-    setIsPosted(true);
-    e.target.reset();
-  };
-
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-    setIsPosted(true);
-  };
+  const { path } = useRouteMatch();
 
   useEffect(() => {
     if (userDocs[0]?.email === userProfile?.email) {
       setIsUser(true);
     }
   }, [userDocs, userProfile]);
-
-  const [imgUrls, setImgUrls] = useState([]);
 
   //Load Photos
   const deviceInfo = useDeviceInfo();
@@ -110,6 +88,32 @@ function PersonalPage({ users }) {
     };
     loadImg();
   }, [deviceInfo, userProfile?.email]);
+
+  //Status
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+    setIsPosted(true);
+  };
+
+  const handlePostStatus = async (e) => {
+    e.preventDefault();
+    setIsPosted(false);
+
+    await updateDocument("users", userDocs[0].id, {
+      statuses: arrayUnion({
+        content: status,
+        isLiked: false,
+        numOfLikes: 0,
+        id: uuidv1(),
+        postedAt: new Date(),
+        isCommentFormOpened: false,
+        comments: [],
+      }),
+    });
+
+    setIsPosted(true);
+    e.target.reset();
+  };
 
   const handleDeleteStatus = (status) => {
     updateDocument("users", userDocs[0].id, {
@@ -139,6 +143,7 @@ function PersonalPage({ users }) {
     });
   };
 
+  //Comment
   const handleToggleCommentForm = (status) => {
     let newStatuses = [];
     const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
@@ -272,37 +277,43 @@ function PersonalPage({ users }) {
 
   return (
     <Container className="bg-white">
-      <Row className="pt-3">
-        <Col md>
-          <Profile />
-          <Pictures imgUrls={imgUrls} user={userProfile} />
-        </Col>
+      {userProfile && (
+        <Row className="pt-3">
+          <Col md>
+            <Profile isUser={isUser} user={userProfile} />
+            <Pictures imgUrls={imgUrls} user={userProfile} />
+          </Col>
 
-        <Col md>
-          {isUser && (
-            <StatusBar
+          <Col md>
+            {isUser && (
+              <StatusBar
+                userProfile={userProfile}
+                imgUrls={imgUrls}
+                setImgUrls={setImgUrls}
+                handlePostStatus={handlePostStatus}
+                handleStatusChange={handleStatusChange}
+                isPosted={isPosted}
+              />
+            )}
+
+            <Status
               userProfile={userProfile}
-              imgUrls={imgUrls}
-              setImgUrls={setImgUrls}
-              handlePostStatus={handlePostStatus}
-              handleStatusChange={handleStatusChange}
-              isPosted={isPosted}
+              isUser={isUser}
+              handleDeleteStatus={handleDeleteStatus}
+              handleLikeStatus={handleLikeStatus}
+              handleToggleCommentForm={handleToggleCommentForm}
+              handleLikeComment={handleLikeComment}
+              handleDeleteComment={handleDeleteComment}
+              onPostComment={onPostComment}
+              handleCloseCommentForm={handleCloseCommentForm}
             />
-          )}
+          </Col>
+        </Row>
+      )}
 
-          <Status
-            userProfile={userProfile}
-            isUser={isUser}
-            handleDeleteStatus={handleDeleteStatus}
-            handleLikeStatus={handleLikeStatus}
-            handleToggleCommentForm={handleToggleCommentForm}
-            handleLikeComment={handleLikeComment}
-            handleDeleteComment={handleDeleteComment}
-            onPostComment={onPostComment}
-            handleCloseCommentForm={handleCloseCommentForm}
-          />
-        </Col>
-      </Row>
+      <Route path={`${path}/photos`}>
+        <Photos user={userProfile} />
+      </Route>
     </Container>
   );
 }
