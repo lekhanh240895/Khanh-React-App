@@ -3,7 +3,7 @@ import React from "react";
 export default function Avatar({user}) {
   return (
     <img
-      src={user.photoURL}
+      src={user?.photoURL}
       alt="Avatar"
       style={{
         borderRadius: "50%",

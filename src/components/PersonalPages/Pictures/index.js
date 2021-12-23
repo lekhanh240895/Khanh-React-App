@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function Pictures({ imgUrls, user }) {
   return (
-    <Card>
+    <Card className="mb-4">
       <Card.Header>
         <div className="d-flex justify-content-between">
           <Card.Title>Pictures</Card.Title>

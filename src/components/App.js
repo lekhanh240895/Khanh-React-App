@@ -2,33 +2,32 @@ import React, { useState, useEffect } from "react";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Import Components
+import NavigationBar from "./NavigationBar";
 import NoMatch from "./NoMatch";
 import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
+
+//Other Projects
 import Topics from "./Topics";
 import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
-/* import ProfilePage from "../components/ProfilePage/index"; */
+
+//A like Facebook App Project
 import Profile from "../components/Profile/index.js";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
-import NavigationBar from "./NavigationBar";
-import ForgotPassWord from "./ForgotPassword"; /*  */
+import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
-/* import Homepage from "./Homepage"; */
-// import { Homepages } from "../components/Homepage/Homepage.js";
-import Homepages from "./Homepage";
+import PersonalPages from "../components/PersonalPages/index";
 import Photos from "./Photos";
-
-/* import CustomPrompt from "./CustomPrompt/index"; */
 import CustomPrompt from "../components/Custom-Prompt/index.js";
 
-//Import Styles
+//Styles
 import "./FontAwesome";
 import "./App.css";
 import { Container } from "react-bootstrap";
 
-//Import Firebase tools
+//Firebase tools
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { AppProvider, useAppContext } from "../contexts/AppContext";
 import { auth } from "../firebase/config";
@@ -72,11 +71,15 @@ export const App = () => {
             <Switch>
               {users?.map((user) => (
                 <PrivateRoute path={`/${user.email}`} key={user.email}>
-                  <Homepages />
+                  <PersonalPages />
                 </PrivateRoute>
               ))}
 
-              <PrivateRoute exact path="/photos">
+              <PrivateRoute exact path="/">
+                <h1>Hello World</h1>
+              </PrivateRoute>
+
+              <PrivateRoute path="/photos">
                 <Photos />
               </PrivateRoute>
 

@@ -12,7 +12,7 @@ export default function Comment({
   onDeleteComment,
 }) {
   return (
-    <Row key={comment.id} className="my-3 py-3 bg-white">
+    <Row className="my-3 py-3 bg-white">
       <Col xs={1}>
         <Avatar user={userProfile} />
       </Col>

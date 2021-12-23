@@ -1,5 +1,12 @@
 import React from "react";
-import { Navbar, Container, Nav, NavDropdown, Button } from "react-bootstrap";
+import {
+  Navbar,
+  Container,
+  Nav,
+  NavDropdown,
+  Button,
+  Image,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
@@ -26,10 +33,9 @@ export default function NavigationBar({ handleSignOut }) {
       <Container fluid>
         <Navbar.Brand>
           <NavLink to={`/${user?.email}`} activeClassName="text-white">
-            <FontAwesomeIcon
-              className="me-2 "
-              icon={["fab", "react"]}
-              size="lg"
+            <Image
+              src={user?.photoURL}
+              style={{ width: "50px", height: "50px", borderRadius: "50%" }}
             />
           </NavLink>
         </Navbar.Brand>
@@ -40,11 +46,11 @@ export default function NavigationBar({ handleSignOut }) {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
-            <StyledNavLink>
+            {/* <StyledNavLink>
               <NavLink to="/profile" activeClassName="text-white">
                 Profile
               </NavLink>
-            </StyledNavLink>
+            </StyledNavLink> */}
 
             <StyledNavLink>
               <NavLink to="/todo-app" activeClassName="text-white">

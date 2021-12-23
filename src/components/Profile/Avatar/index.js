@@ -68,6 +68,7 @@ export default function Avatar({ onShowUploadModal }) {
       ) : (
         <div
           style={{
+            position: "relative",
             width: "100px",
             height: "100px",
             border: "1px solid #0B3D6B",

@@ -1,23 +1,23 @@
 import React from "react";
-import { Button,Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 
-import UploadFileModal from "./UploadModal";
+import UploadAvatarModal from "./UploadAvatarModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Profile = () => {
   const { user } = useAuth();
 
   return (
-    <Card className="d-flex flex-row justify-content-center align-items-center">
-      <Card.Body style={{ maxWidth: "400px" }}>
-        <Card.Header as="h1" className="mb-4">
-          Profile
-        </Card.Header>
+    <Card className="mb-4">
+      <Card.Header className="mb-4">
+        <Card.Title as="h1">Profile</Card.Title>
+      </Card.Header>
 
-        <UploadFileModal />
+      <Card.Body>
+        <UploadAvatarModal />
 
         <Card.Text className="text-center">
           <strong>Email:</strong> {user.email}

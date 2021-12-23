@@ -183,7 +183,7 @@ export const UpdateProfile = () => {
           </Button>
         </Form>
         <div className="text-center">
-          <Link to="/profile">Cancel</Link>
+          <Link to={`/${user.email}`}>Cancel</Link>
         </div>
       </Card.Body>
     </Card>

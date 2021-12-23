@@ -1,4 +1,4 @@
-import React, { useState, useMemo, /* useEffect */ } from "react";
+import React, { useState, useMemo /* useEffect */ } from "react";
 import {
   Button,
   Modal,
@@ -26,7 +26,7 @@ import Avatar from "../Avatar/index.js";
 import "./index.css";
 import usePreventReload from "../../hooks/usePreventReload";
 
-export default function UploadFileModal() {
+export default function UploadAvatarModal() {
   const { user } = useAuth();
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
@@ -146,7 +146,7 @@ export default function UploadFileModal() {
     }
   };
 
- /*  useEffect(() => {
+  /*  useEffect(() => {
     return () => {
       if (isBlocking & (fileUrl !== "")) {
         handleRemoveUploadFile(fileUrl);
