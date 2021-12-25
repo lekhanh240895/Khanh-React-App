@@ -1,88 +1,78 @@
 import React from "react";
-import {
-  Navbar,
-  Container,
-  Nav,
-  NavDropdown,
-  Button,
-  Image,
-} from "react-bootstrap";
+import { Navbar, Container, Nav, NavDropdown, Image } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-
-const StyledNavLink = styled.li`
-  font-size: 20px;
-  display: inline-block;
-  padding: 0.5rem;
-`;
+import "./index.css";
 
 export default function NavigationBar({ handleSignOut }) {
   const { user } = useAuth();
 
   return (
-    <Navbar
-      expand="md"
-      variant=""
-      style={{
-        background: "#0b3d6b",
-        marginBottom: "1rem",
-      }}
-    >
+    <Navbar expand="md" bg="dark" variant="dark" className="mb-4">
       <Container fluid>
         <Navbar.Brand>
-          <NavLink to={`/${user?.email}`} activeClassName="text-white">
-            <Image
-              src={user?.photoURL}
-              style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+          <NavLink exact to={"/"} activeClassName="text-white">
+            <FontAwesomeIcon
+              icon={["fas", "home"]}
+              style={{ width: "30px", height: "30px" }}
             />
           </NavLink>
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav">
-          <FontAwesomeIcon icon={["fas", "bars"]} className="text-white" />
+          <FontAwesomeIcon icon={["fas", "bars"]} />
         </Navbar.Toggle>
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
-            {/* <StyledNavLink>
-              <NavLink to="/profile" activeClassName="text-white">
-                Profile
-              </NavLink>
-            </StyledNavLink> */}
-
-            <StyledNavLink>
-              <NavLink to="/todo-app" activeClassName="text-white">
-                Todo App
-              </NavLink>
-            </StyledNavLink>
-
-            <StyledNavLink>
-              <NavLink to="/stories-app" activeClassName="text-white">
-                Hacker News Stories App
-              </NavLink>
-            </StyledNavLink>
-
-            <StyledNavLink>
-              <NavLink to="/topics" activeClassName="text-white">
-                Topics
-              </NavLink>
-            </StyledNavLink>
-
-            <NavDropdown
-              title={<FontAwesomeIcon icon={["fas", "cog"]} size="sm" />}
-              id="basic-nav-dropdown"
+            <NavLink
+              to={`/${user?.email}`}
+              activeClassName="text-white"
+              className="mx-2"
             >
-              <div className="m-0 px-1">
-                <Button
-                  variant="outline-primary"
-                  style={{ border: "none" }}
+              <div className="d-flex align-items-center">
+                <Image
+                  src={user?.photoURL}
+                  style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+                />
+                <span className="ms-2">{user?.displayName}</span>
+              </div>
+            </NavLink>
+
+            <NavLink
+              to="/todo-app"
+              activeClassName="text-white"
+              className="mx-2 py-1"
+            >
+              Todo App
+            </NavLink>
+
+            <NavLink
+              to="/stories-app"
+              activeClassName="text-white"
+              className="mx-2 py-1"
+            >
+              Hacker News Stories App
+            </NavLink>
+
+            <NavLink
+              to="/topics"
+              activeClassName="text-white"
+              className="mx-2 py-1"
+            >
+              Topics
+            </NavLink>
+
+            <NavDropdown id="basic-nav-dropdown">
+              <NavDropdown.Item>
+                <span
+                  style={{ border: "none", color: "#000" }}
                   onClick={handleSignOut}
                 >
                   Sign out
-                </Button>
-              </div>
+                </span>
+              </NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

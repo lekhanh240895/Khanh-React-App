@@ -22,6 +22,7 @@ export const ScrollTopArrow = ({ showBelow = 200 }) => {
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  
   return (
     <FontAwesomeIcon
       icon={["fas", "arrow-up"]}

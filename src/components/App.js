@@ -30,6 +30,9 @@ import { Container } from "react-bootstrap";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { AppProvider, useAppContext } from "../contexts/AppContext";
 import { auth } from "../firebase/config";
+import ChatIcon from "./ChatIcon";
+import ChatWindow from "./ChatWindow";
+import Homepage from "./Homepage/index";
 
 export const App = () => {
   const { user, logout } = useAuth();
@@ -75,7 +78,7 @@ export const App = () => {
               ))}
 
               <PrivateRoute exact path="/">
-                <h1>Hello World</h1>
+                <Homepage />
               </PrivateRoute>
 
               <PrivateRoute path="/profile">
@@ -110,6 +113,10 @@ export const App = () => {
                 <Topics />
               </PrivateRoute>
 
+              <PrivateRoute path="/messages">
+                <ChatWindow />
+              </PrivateRoute>
+
               <Route path="*">
                 <NoMatch />
               </Route>
@@ -118,6 +125,7 @@ export const App = () => {
         </AuthProvider>
 
         <ScrollTopArrow />
+        <ChatIcon />
       </Container>
     </Router>
   );
