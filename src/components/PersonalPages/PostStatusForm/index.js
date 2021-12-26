@@ -3,7 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import Avatar from "../Avatar";
 
 export default function PostStatusForm({
-  user,
+  userProfile,
   handlePostStatus,
   handleStatusChange,
   isPosted,
@@ -12,7 +12,7 @@ export default function PostStatusForm({
     <Form onSubmit={handlePostStatus}>
       <div className="d-flex align-items-center justify-content-between px-3">
         <div>
-          <Avatar user={user} />
+          <Avatar userProfile={userProfile} />
         </div>
         <Form.Control
           type="text"

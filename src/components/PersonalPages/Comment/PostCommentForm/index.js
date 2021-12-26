@@ -2,9 +2,16 @@ import React from "react";
 import { Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
+import Avatar from "../../Avatar";
+import { useAppContext } from "../../../../contexts/AppContext";
 
-export default function PostCommentForm({ onPostComment, onCloseCommentForm }) {
+export default function PostCommentForm({
+  userProfile,
+  onPostComment,
+  onCloseCommentForm,
+}) {
   const { register, handleSubmit, reset } = useForm();
+  const { userDoc } = useAppContext();
   return (
     <Form
       onSubmit={handleSubmit((data) => {
@@ -16,7 +23,13 @@ export default function PostCommentForm({ onPostComment, onCloseCommentForm }) {
         className="d-flex justify-content-between align-items-center my-3"
         style={{ position: "relative" }}
       >
-        <Form.Control {...register(`comment`)} className="me-2" placeholder="Write your comments"/>
+        <Avatar userProfile={userDoc} />
+
+        <Form.Control
+          {...register(`comment`)}
+          className="me-2"
+          placeholder="Write your comments"
+        />
 
         <FontAwesomeIcon
           icon={["fas", "times"]}

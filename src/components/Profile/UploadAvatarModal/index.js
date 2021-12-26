@@ -1,4 +1,4 @@
-import React, { useState, useMemo /* useEffect */ } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Modal,
@@ -20,13 +20,12 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { useAppContext } from "../../../contexts/AppContext";
-import useFirestore from "../../hooks/useFirestore";
 import { v1 as uuidv1 } from "uuid";
 import Avatar from "../Avatar/index.js";
 import "./index.css";
 import usePreventReload from "../../hooks/usePreventReload";
 
-export default function UploadAvatarModal({ user, isUser}) {
+export default function UploadAvatarModal({ user, isUser }) {
   const [error, setError] = useState("");
   const [show, setShow] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
@@ -36,7 +35,7 @@ export default function UploadAvatarModal({ user, isUser}) {
   const [fileUrl, setFileUrl] = useState("");
   const [progress, setProgress] = useState();
   const { updateUserProfile } = useAuth();
-  const { updateDocument } = useAppContext();
+  const { updateDocument, userDoc } = useAppContext();
 
   const handleClose = () => {
     setShow(false);
@@ -114,18 +113,8 @@ export default function UploadAvatarModal({ user, isUser}) {
     }
   };
 
-  const condition = useMemo(() => {
-    return {
-      fieldName: "email",
-      operator: "==",
-      compareValue: user.email,
-    };
-  }, [user.email]);
-  
-  const userDocs = useFirestore("users", condition);
-
   const handleUpdatePhotoURL = (newPhotoURL) => {
-    updateDocument("users", userDocs[0].id, {
+    updateDocument("users", userDoc.id, {
       photoURL: newPhotoURL,
     });
   };

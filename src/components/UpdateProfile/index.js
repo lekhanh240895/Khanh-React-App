@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
-import { Form, Card, Button, Alert /* ProgressBar */ } from "react-bootstrap";
+import React, { useRef, useState, useEffect } from "react";
+import { Form, Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory, Prompt } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useAppContext } from "../../contexts/AppContext";
-import useFirestore from "../hooks/useFirestore";
 import usePreventReload from "../hooks/usePreventReload";
 
 export const UpdateProfile = () => {
@@ -16,7 +15,7 @@ export const UpdateProfile = () => {
   const history = useHistory();
   const [isBlocking, setIsBlocking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateDocument } = useAppContext();
+  const { updateDocument, userDoc } = useAppContext();
   const { user, updateUserEmail, updateUserPassword, updateUserProfile } =
     useAuth();
 
@@ -41,18 +40,8 @@ export const UpdateProfile = () => {
     passwordConfirmRef.current?.value,
   ]);
 
-  const condition = useMemo(() => {
-    return {
-      fieldName: "email",
-      operator: "==",
-      compareValue: user.email,
-    };
-  }, [user.email]);
-
-  const userDocs = useFirestore("users", condition);
-
   const handleUpdateDocument = () => {
-    updateDocument("users", userDocs[0].id, {
+    updateDocument("users", userDoc.id, {
       displayName: user.displayName,
       email: user.email,
       photoURL: user.photoURL,
@@ -89,7 +78,7 @@ export const UpdateProfile = () => {
       .then(() => {
         setIsSucced(true);
         handleUpdateDocument();
-        setTimeout(() => history.push("/profile"), 1000);
+        setTimeout(() => history.push(`/${user.email}`), 1000);
       })
       .catch((error) => {
         const errMessage = error.message.replace("Firebase: ", "");

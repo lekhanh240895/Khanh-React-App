@@ -6,7 +6,6 @@ import Moment from "react-moment";
 
 export default function Comment({
   comment,
-  userProfile,
   onLikeComment,
   isUser,
   onDeleteComment,
@@ -14,13 +13,13 @@ export default function Comment({
   return (
     <Row className="my-3 py-3 mx-1 bg-white">
       <Col xs={1}>
-        <Avatar user={userProfile} />
+        <Avatar userProfile={comment.commentUserProfile} />
       </Col>
 
       <Col xs className="d-flex justify-content-between ms-3">
         <div>
           <h5 style={{ fontSize: "14px", fontWeight: "600" }}>
-            {userProfile.displayName}
+            {comment.commentUserProfile.displayName}
           </h5>
 
           <p style={{ marginTop: "-5px", marginBottom: "-2px" }}>

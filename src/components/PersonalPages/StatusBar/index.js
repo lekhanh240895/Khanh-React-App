@@ -14,7 +14,7 @@ const StatusBar = ({
     <Card className="mb-4">
       <Card.Body className="px-0 my-2">
         <PostStatusForm
-          user={userProfile}
+          userProfile={userProfile}
           handlePostStatus={handlePostStatus}
           handleStatusChange={handleStatusChange}
           isPosted={isPosted}

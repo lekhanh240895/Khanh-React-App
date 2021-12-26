@@ -12,7 +12,6 @@ import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
 
 //A like Facebook App Project
-import Profile from "../components/Profile/index.js";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
@@ -79,10 +78,6 @@ export const App = () => {
 
               <PrivateRoute exact path="/">
                 <Homepage />
-              </PrivateRoute>
-
-              <PrivateRoute path="/profile">
-                <Profile />
               </PrivateRoute>
 
               <PrivateRoute path="/todo-app">

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, Container } from "react-bootstrap";
 import "./index.css";
 import { storage } from "../../firebase/config";
 import { ref, getDownloadURL, list } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
 import { useAppContext } from "../../contexts/AppContext";
-import { arrayRemove, arrayUnion } from "firebase/firestore";
 import { v1 as uuidv1 } from "uuid";
 
 import { Route, useParams, NavLink } from "react-router-dom";
@@ -17,9 +16,11 @@ import Status from "./Status";
 import StatusBar from "./StatusBar";
 import { useRouteMatch } from "react-router-dom";
 import Photos from "../Photos";
+import useFirestore from "../../components/hooks/useFirestore";
+import { find, findIndex, orderBy, reject } from "lodash";
 
 export default function PersonalPages() {
-  const { users, userDocs } = useAppContext();
+  const { users, userDoc } = useAppContext();
 
   return (
     <div className="d-flex flex-column justify-content-center align-items-center">
@@ -28,11 +29,11 @@ export default function PersonalPages() {
           <h3 className="me-3">People you may know</h3>
           <Nav className="pb-2">
             {users
-              .filter((user) => user.email !== userDocs[0]?.email)
+              .filter((user) => user.email !== userDoc?.email)
               .map((user) => (
                 <li key={user.email}>
                   <NavLink to={`/${user.email}`}>
-                    <Avatar user={user} />
+                    <Avatar userProfile={user} />
                   </NavLink>
                 </li>
               ))}
@@ -41,29 +42,30 @@ export default function PersonalPages() {
       </Navbar>
 
       <Route path={`/:profileUid`}>
-        <PersonalPage users={users} />
+        <PersonalPage users={users} userDoc={userDoc} />
       </Route>
     </div>
   );
 }
 
-function PersonalPage({ users }) {
+function PersonalPage({ users, userDoc }) {
   const { profileUid } = useParams();
   const [isUser, setIsUser] = useState(false);
-  const { updateDocument, userDocs } = useAppContext();
+  const { updateDocument, addDocument, delDocument } = useAppContext();
   const userProfile = users.find(({ uid }) => uid === profileUid);
+
+  const [imgUrls, setImgUrls] = useState([]);
 
   const [status, setStatus] = useState("");
   const [isPosted, setIsPosted] = useState(false);
-  const [imgUrls, setImgUrls] = useState([]);
 
   const { path } = useRouteMatch();
 
   useEffect(() => {
-    if (userDocs[0]?.email === userProfile?.email) {
+    if (userDoc?.email === userProfile?.email) {
       setIsUser(true);
     }
-  }, [userDocs, userProfile]);
+  }, [userDoc, userProfile]);
 
   //Load Photos
   const deviceInfo = useDeviceInfo();
@@ -89,7 +91,19 @@ function PersonalPage({ users }) {
     loadImg();
   }, [deviceInfo, userProfile?.email]);
 
-  //Status
+  //Get Statuses
+  const condition = useMemo(() => {
+    return {
+      fieldName: "uid",
+      operator: "==",
+      compareValue: userProfile?.uid,
+    };
+  }, [userProfile]);
+
+  const statuses = useFirestore("statuses", condition);
+  const orderedStatuses = orderBy(statuses, "createdAt", "desc");
+
+  //Status Actions
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
     setIsPosted(true);
@@ -99,16 +113,18 @@ function PersonalPage({ users }) {
     e.preventDefault();
     setIsPosted(false);
 
-    await updateDocument("users", userDocs[0].id, {
-      statuses: arrayUnion({
-        content: status,
-        isLiked: false,
-        numOfLikes: 0,
-        id: uuidv1(),
-        postedAt: new Date(),
-        isCommentFormOpened: false,
-        comments: [],
-      }),
+    await addDocument("statuses", {
+      content: status,
+      isLiked: false,
+      isLikedByUser: false,
+      likedPeople: [],
+      postedAt: new Date(),
+      comments: [],
+      displayName: userProfile.displayName,
+      photoURL: userProfile.photoURL,
+      uid: userProfile.uid,
+      id: uuidv1(),
+      isCommentFormOpened: false,
     });
 
     setIsPosted(true);
@@ -116,146 +132,101 @@ function PersonalPage({ users }) {
   };
 
   const handleDeleteStatus = (status) => {
-    updateDocument("users", userDocs[0].id, {
-      statuses: arrayRemove(status),
-    });
+    const selectedStatus = find(orderedStatuses, { id: status.id });
+
+    delDocument("statuses", selectedStatus.id);
   };
 
+  // isUser =>
+  /// !isUser =>
   const handleLikeStatus = (status) => {
-    let newStatuses = [];
-    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+    const selectedStatus = find(orderedStatuses, { id: status.id });
+    const { displayName, photoURL } = userDoc;
 
-    userDocs[0].statuses.forEach((status) => {
-      newStatuses.push({
-        content: status.content,
-        isLiked: status.isLiked,
-        id: status.id,
-        postedAt: status.postedAt,
-        isCommentFormOpened: status.isCommentFormOpened,
-        comments: status.comments,
-      });
-    });
-
-    newStatuses[objIndex].isLiked = !status.isLiked;
-
-    updateDocument("users", userDocs[0].id, {
-      statuses: newStatuses,
-    });
+    if (isUser) {
+      if (!selectedStatus.isLikedByUser) {
+        updateDocument("statuses", selectedStatus.id, {
+          isLikedByUser: !status.isLikedByUser,
+          likedPeople: selectedStatus.likedPeople.concat({
+            displayName,
+            photoURL,
+          }),
+        });
+      } else {
+        updateDocument("statuses", selectedStatus.id, {
+          isLikedByUser: !status.isLikedByUser,
+          likedPeople: reject(selectedStatus.likedPeople, {
+            displayName,
+            photoURL,
+          }),
+        });
+      }
+    } else {
+      if (!selectedStatus.isLiked) {
+        updateDocument("statuses", selectedStatus.id, {
+          isLiked: !status.isLiked,
+          likedPeople: selectedStatus.likedPeople.concat({
+            displayName,
+            photoURL,
+          }),
+        });
+      } else {
+        updateDocument("statuses", selectedStatus.id, {
+          isLiked: !status.isLiked,
+          likedPeople: reject(selectedStatus.likedPeople, {
+            displayName,
+            photoURL,
+          }),
+        });
+      }
+    }
   };
 
   //Comment
   const handleToggleCommentForm = (status) => {
-    let newStatuses = [];
-    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+    const selectedStatus = find(orderedStatuses, { id: status.id });
 
-    userDocs[0].statuses.forEach((status) => {
-      newStatuses.push({
-        content: status.content,
-        isLiked: status.isLiked,
-        id: status.id,
-        postedAt: status.postedAt,
-        isCommentFormOpened: false,
-        comments: status.comments,
-      });
-    });
-
-    newStatuses[objIndex].isCommentFormOpened = !status.isCommentFormOpened;
-
-    updateDocument("users", userDocs[0].id, {
-      statuses: newStatuses,
+    updateDocument("statuses", selectedStatus.id, {
+      isCommentFormOpened: !status.isCommentFormOpened,
     });
   };
 
   const handleCloseCommentForm = (status) => {
-    let newStatuses = [];
-    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+    const selectedStatus = find(orderedStatuses, { id: status.id });
 
-    userDocs[0].statuses.forEach((status) => {
-      newStatuses.push({
-        content: status.content,
-        isLiked: status.isLiked,
-        id: status.id,
-        postedAt: status.postedAt,
-        isCommentFormOpened: status.isCommentFormOpened,
-        comments: status.comments,
-      });
-    });
-
-    newStatuses[objIndex].isCommentFormOpened = false;
-
-    updateDocument("users", userDocs[0].id, {
-      statuses: newStatuses,
+    updateDocument("statuses", selectedStatus.id, {
+      isCommentFormOpened: false,
     });
   };
 
   const onPostComment = async (data, status) => {
-    let newStatuses = [];
-    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+    const selectedStatus = find(orderedStatuses, { id: status.id });
 
-    userDocs[0].statuses.forEach((status) => {
-      newStatuses.push({
-        content: status.content,
-        isLiked: status.isLiked,
-        id: status.id,
-        postedAt: status.postedAt,
-        isCommentFormOpened: status.isCommentFormOpened,
-        comments: status.comments,
-      });
-    });
-
-    newStatuses[objIndex].comments = newStatuses[objIndex].comments.concat({
-      content: data.comment,
-      commentedAt: new Date(),
-      id: uuidv1(),
-      isLiked: false,
-    });
-
-    await updateDocument("users", userDocs[0].id, {
-      statuses: newStatuses,
+    await updateDocument("statuses", selectedStatus.id, {
+      comments: selectedStatus.comments.concat({
+        content: data.comment,
+        commentedAt: new Date(),
+        id: uuidv1(),
+        isLiked: false,
+        commentUserProfile: userDoc,
+      }),
     });
   };
 
   const handleDeleteComment = (status, comment) => {
-    let newStatuses = [];
-    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+    const selectedStatus = find(orderedStatuses, { id: status.id });
 
-    userDocs[0].statuses.forEach((status) => {
-      newStatuses.push({
-        content: status.content,
-        isLiked: status.isLiked,
-        id: status.id,
-        postedAt: status.postedAt,
-        isCommentFormOpened: status.isCommentFormOpened,
-        comments: status.comments,
-      });
-    });
-
-    newStatuses[objIndex].comments = newStatuses[objIndex].comments.filter(
-      (dbComment) => dbComment.id !== comment.id
-    );
-
-    updateDocument("users", userDocs[0].id, {
-      statuses: newStatuses,
+    updateDocument("statuses", selectedStatus.id, {
+      comments: reject(status.comments, comment),
     });
   };
 
   const handleLikeComment = async (status, comment) => {
-    let newStatuses = [];
-    const objIndex = userDocs[0].statuses.findIndex((e) => e.id === status.id);
+    const selectedStatus = find(orderedStatuses, { id: status.id });
 
-    userDocs[0].statuses.forEach((status) => {
-      newStatuses.push({
-        content: status.content,
-        isLiked: status.isLiked,
-        id: status.id,
-        postedAt: status.postedAt,
-        isCommentFormOpened: status.isCommentFormOpened,
-        comments: status.comments,
-      });
-    });
+    const selectedCommentIndex = findIndex(status.comments, { id: comment.id });
 
     const newComments = [];
-    const commentIndex = status.comments.findIndex((e) => e.id === comment.id);
 
     status.comments.forEach((dbComment) => {
       newComments.push({
@@ -263,15 +234,14 @@ function PersonalPage({ users }) {
         commentedAt: dbComment.commentedAt,
         id: dbComment.id,
         isLiked: dbComment.isLiked,
+        commentUserProfile: dbComment.commentUserProfile,
       });
     });
 
-    newComments[commentIndex].isLiked = !comment.isLiked;
-
-    newStatuses[objIndex].comments = newComments;
-
-    await updateDocument("users", userDocs[0].id, {
-      statuses: newStatuses,
+    newComments[selectedCommentIndex].isLiked = !comment.isLiked;
+    console.log({ newComments });
+    updateDocument("statuses", selectedStatus.id, {
+      comments: newComments,
     });
   };
 
@@ -297,6 +267,7 @@ function PersonalPage({ users }) {
             )}
 
             <Status
+              statuses={orderedStatuses}
               userProfile={userProfile}
               isUser={isUser}
               handleDeleteStatus={handleDeleteStatus}
