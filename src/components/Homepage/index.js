@@ -2,53 +2,29 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { useAppContext } from "../../contexts/AppContext";
 import ChatWindow from "../ChatWindow";
-import Status from "../PersonalPages/Status";
+import Statuses from "../PersonalPages/Statuses";
 import useFirestore from "../hooks/useFirestore";
 import { orderBy } from "lodash";
+import StatusBar from "../PersonalPages/StatusBar";
 
-export default function Homepage({
-  isUser,
-  handleDeleteStatus,
-  handleLikeStatus,
-  handleToggleCommentForm,
-  handleLikeComment,
-  handleDeleteComment,
-  onPostComment,
-  handleCloseCommentForm,
-}) {
-  const { users } = useAppContext();
+export default function Homepage({ imgUrls, setImgUrls }) {
+  const { userDoc } = useAppContext();
   const statuses = useFirestore("statuses", "");
 
+  const orderedUsereStatuses = orderBy(statuses, ["createdAt"], "desc");
+  console.log("All Statuses", { orderedUsereStatuses });
   return (
     <Row>
       <Col sm={10}>
-        {users.map((user) => {
-          const userStatuses = statuses.filter(
-            (status) => status.uid === user.uid
-          );
-          const orderedUsereStatuses = orderBy(
-            userStatuses,
-            ["createdAt"],
-            "desc"
-          );
+        <StatusBar
+          userProfile={userDoc}
+          imgUrls={imgUrls}
+          setImgUrls={setImgUrls}
+        />
 
-          return (
-            <Status
-              userProfile={user}
-              key={user.email}
-              statuses={orderedUsereStatuses}
-              isUser={isUser}
-              handleDeleteStatus={handleDeleteStatus}
-              handleLikeStatus={handleLikeStatus}
-              handleToggleCommentForm={handleToggleCommentForm}
-              handleLikeComment={handleLikeComment}
-              handleDeleteComment={handleDeleteComment}
-              onPostComment={onPostComment}
-              handleCloseCommentForm={handleCloseCommentForm}
-            />
-          );
-        })}
+        <Statuses statuses={orderedUsereStatuses} userProfile={userDoc} />
       </Col>
+
       <Col sm className="d-none d-sm-block">
         <ChatWindow />
       </Col>

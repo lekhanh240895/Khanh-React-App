@@ -17,7 +17,6 @@ import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
 import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
-import PersonalPages from "../components/PersonalPages/index";
 import CustomPrompt from "../components/Custom-Prompt/index.js";
 
 //Styles
@@ -32,6 +31,7 @@ import { auth } from "../firebase/config";
 import ChatIcon from "./ChatIcon";
 import ChatWindow from "./ChatWindow";
 import Homepage from "./Homepage/index";
+import PersonalPage from "../components/PersonalPages/index";
 
 export const App = () => {
   const { user, logout } = useAuth();
@@ -40,9 +40,7 @@ export const App = () => {
 
   useEffect(() => {
     if (user) {
-      setTimeout(() => {
-        return setShowNavbar(true);
-      }, 1000);
+      return setShowNavbar(true);
     }
 
     setShowNavbar(false);
@@ -72,7 +70,7 @@ export const App = () => {
             <Switch>
               {users?.map((user) => (
                 <PrivateRoute path={`/${user.email}`} key={user.email}>
-                  <PersonalPages />
+                  <PersonalPage userProfile={user} />
                 </PrivateRoute>
               ))}
 

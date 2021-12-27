@@ -1,0 +1,8 @@
+#friends-list {
+  text-decoration: none;
+  color: #000;
+}
+
+#friends-list span:hover {
+  text-decoration: underline;
+}

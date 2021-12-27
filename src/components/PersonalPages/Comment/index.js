@@ -12,7 +12,7 @@ export default function Comment({
 }) {
   return (
     <Row className="my-3 py-3 mx-1 bg-white">
-      <Col xs={1}>
+      <Col xs={1} className="ps-2 ps-sm-3">
         <Avatar userProfile={comment.commentUserProfile} />
       </Col>
 
