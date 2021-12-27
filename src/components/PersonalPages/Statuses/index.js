@@ -3,7 +3,7 @@ import { find, findIndex, reject } from "lodash";
 import { useAppContext } from "../../../contexts/AppContext";
 import Status from "../Status";
 
-const Statuses = ({ isUser, statuses, userProfile }) => {
+const Statuses = ({ isUser, statuses }) => {
   const { updateDocument, delDocument, userDoc } = useAppContext();
 
   const handleDeleteStatus = (status) => {
@@ -122,7 +122,6 @@ const Statuses = ({ isUser, statuses, userProfile }) => {
     <div className="d-flex flex-column">
       {statuses.map((status) => (
         <Status
-          userProfile={userProfile}
           key={status.id}
           status={status}
           isUser={isUser}

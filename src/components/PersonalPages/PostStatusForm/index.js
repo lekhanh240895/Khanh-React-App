@@ -27,10 +27,9 @@ export default function PostStatusForm({ userProfile }) {
       likedPeople: [],
       postedAt: new Date(),
       comments: [],
-      email: userDoc.email,
-      displayName: userDoc.displayName,
-      photoURL: userDoc.photoURL,
-      uid: userProfile.uid,
+      postStatusUserProfile: userDoc,
+      email: userProfile.email,
+      userProfile: userProfile,
       id: uuidv1(),
       isCommentFormOpened: false,
     });

@@ -7,7 +7,6 @@ import PostCommentForm from "../Comment/PostCommentForm";
 
 const Status = ({
   userDoc,
-  userProfile,
   status,
   isUser,
   handleDeleteStatus,
@@ -21,110 +20,86 @@ const Status = ({
   return (
     <Card className="mb-3">
       <Card.Header>
-        {status.email !== userProfile.email ? (
-          <Row className="mt-3" style={{ lineHeight: "0.5" }}>
-            <Col xs={2}>
-              <Link to={`/${status.email}`}>
-                <Image
-                  src={status.photoURL}
-                  alt="Avatar"
-                  style={{
-                    borderRadius: "50%",
-                    width: "50px",
-                    height: "50px",
-                    marginLeft: "10px",
-                  }}
-                />
-              </Link>
-            </Col>
+        <div className="d-flex my-2 justify-content-between">
+          <div style={{ lineHeight: "1" }}>
+            <Link to={`/${status.postStatusUserProfile?.email}`}>
+              <Image
+                className="float-start"
+                src={status.postStatusUserProfile?.photoURL}
+                alt="Avatar"
+                style={{
+                  borderRadius: "50%",
+                  width: "50px",
+                  height: "50px",
+                }}
+              />
+            </Link>
 
-            <Col xs={1} className="mt-3">
-              <div>
+            <h4 style={{ paddingLeft: "60px" }}>
+              {status.postStatusUserProfile?.displayName}
+            </h4>
+
+            <p
+              style={{
+                fontSize: "14px",
+                fontStyle: "italic",
+                paddingLeft: "60px",
+              }}
+            >
+              <Moment fromNow unix>
+                {status.postedAt.seconds}
+              </Moment>
+            </p>
+          </div>
+
+          {status.postStatusUserProfile?.uid !== status.userProfile.uid && (
+            <>
+              <span style={{ fontSize: "20px", margin: "15px 15px 0 15px" }}>
                 <FontAwesomeIcon icon={["fas", "arrow-right"]} />
+              </span>
+
+              <div className="flex-grow-1">
+                <Link to={`/${status.userProfile?.email}`}>
+                  <Image
+                    className="float-start"
+                    src={status.userProfile?.photoURL}
+                    alt="Avatar"
+                    style={{
+                      borderRadius: "50%",
+                      width: "50px",
+                      height: "50px",
+                      marginRight: "10px",
+                    }}
+                  />
+                </Link>
+
+                <h4>{status.userProfile?.displayName}</h4>
               </div>
-            </Col>
+            </>
+          )}
 
-            <Col xs={2}>
-              <Link to={`/${userProfile?.email}`}>
-                <Image
-                  src={userProfile?.photoURL}
-                  alt="Avatar"
-                  style={{
-                    borderRadius: "50%",
-                    width: "50px",
-                    height: "50px",
-                    marginLeft: "10px",
-                  }}
-                />
-              </Link>
-            </Col>
-
-            <Col xs>
-              <h4>{userProfile?.displayName}</h4>
-              <p
-                style={{
-                  fontSize: "14px",
-
-                  fontStyle: "italic",
-                }}
-              >
-                <Moment fromNow unix>
-                  {status.postedAt.seconds}
-                </Moment>
-              </p>
-            </Col>
-          </Row>
-        ) : (
-          <Row className="mt-3" style={{ lineHeight: "0.5" }}>
-            <Col xs={1}>
-              <Link to={`/${status.email}`}>
-                <Image
-                  src={status.photoURL}
-                  alt="Avatar"
-                  style={{
-                    borderRadius: "50%",
-                    width: "50px",
-                    height: "50px",
-                    marginLeft: "10px",
-                  }}
-                />
-              </Link>
-            </Col>
-
-            <Col xs={10} className="ps-5">
-              <h4>{status.displayName}</h4>
-              <p
-                style={{
-                  fontSize: "14px",
-
-                  fontStyle: "italic",
-                }}
-              >
-                <Moment fromNow unix>
-                  {status.postedAt.seconds}
-                </Moment>
-              </p>
-            </Col>
-
-            <Col xs={1}>
-              {isUser && (
-                <span onClick={() => handleDeleteStatus(status)}>
-                  <FontAwesomeIcon icon={["far", "trash-alt"]} />
-                </span>
-              )}
-            </Col>
-          </Row>
-        )}
+          {isUser && (
+            <span
+              onClick={() => handleDeleteStatus(status)}
+              style={{ cursor: "pointer" }}
+            >
+              <FontAwesomeIcon icon={["far", "trash-alt"]} />
+            </span>
+          )}
+        </div>
       </Card.Header>
 
-      <Card.Body>{status.content}</Card.Body>
+      <Card.Body>
+        <p style={{ fontSize: "18px" }}>{status.content}</p>
+      </Card.Body>
 
       <Card.Footer>
         <Row className="text-center my-2">
           <Col
             onClick={() => handleLikeStatus(status)}
             id="status-like"
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", height: "5vh" }}
+            className="d-flex align-items-center justify-content-center"
           >
             <span>
               <FontAwesomeIcon
@@ -153,7 +128,8 @@ const Status = ({
           <Col
             onClick={() => handleToggleCommentForm(status)}
             id="status-comment"
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", height: "5vh" }}
+            className="d-flex align-items-center justify-content-center"
           >
             <span>
               <FontAwesomeIcon
@@ -162,7 +138,13 @@ const Status = ({
                 size="lg"
               />
             </span>
-            <span>Comment</span>
+            <span>
+              {!status.comments.length
+                ? "Comment"
+                : status.comments.length === 1
+                ? `${status.comments.length} Comment`
+                : `${status.comments.length} Comments`}
+            </span>
           </Col>
         </Row>
 

@@ -11,8 +11,7 @@ export default function Homepage({ imgUrls, setImgUrls }) {
   const { userDoc } = useAppContext();
   const statuses = useFirestore("statuses", "");
 
-  const orderedUsereStatuses = orderBy(statuses, ["createdAt"], "desc");
-  console.log("All Statuses", { orderedUsereStatuses });
+  const orderedStatuses = orderBy(statuses, "createdAt", "desc");
   return (
     <Row>
       <Col sm={10}>
@@ -22,7 +21,7 @@ export default function Homepage({ imgUrls, setImgUrls }) {
           setImgUrls={setImgUrls}
         />
 
-        <Statuses statuses={orderedUsereStatuses} userProfile={userDoc} />
+        <Statuses statuses={orderedStatuses} userProfile={userDoc} />
       </Col>
 
       <Col sm className="d-none d-sm-block">

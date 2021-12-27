@@ -25,9 +25,9 @@ export default function PersonalPage({ userProfile }) {
   //Get User Statuses
   const condition = useMemo(() => {
     return {
-      fieldName: "uid",
+      fieldName: "email",
       operator: "==",
-      compareValue: userProfile?.uid,
+      compareValue: userProfile?.email,
     };
   }, [userProfile]);
 
@@ -72,22 +72,23 @@ export default function PersonalPage({ userProfile }) {
         <Row className="pt-3">
           <Col md>
             <Profile isUser={isUser} user={userProfile} />
-            <Pictures imgUrls={imgUrls} user={userProfile} />
+            <Pictures
+              imgUrls={imgUrls}
+              setImgUrls={setImgUrls}
+              user={userProfile}
+            />
             <Friends users={users} userProfile={userProfile} />
           </Col>
 
           <Col md>
             <StatusBar
+              isUser={isUser}
               userProfile={userProfile}
               imgUrls={imgUrls}
               setImgUrls={setImgUrls}
             />
 
-            <Statuses
-              isUser={isUser}
-              statuses={orderedStatuses}
-              userProfile={userProfile}
-            />
+            <Statuses isUser={isUser} statuses={orderedStatuses} />
           </Col>
         </Row>
       )}

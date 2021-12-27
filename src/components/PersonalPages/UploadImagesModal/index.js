@@ -105,7 +105,7 @@ const UploadImagesModal = ({ userProfile }) => {
   };
 
   return (
-    <div>
+    <>
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Prompt
@@ -228,7 +228,7 @@ const UploadImagesModal = ({ userProfile }) => {
           <FontAwesomeIcon icon={["fas", "images"]} size="lg" />
         </span>
       </OverlayTrigger>
-    </div>
+    </>
   );
 };
 
