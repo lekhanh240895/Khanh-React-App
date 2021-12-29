@@ -6,20 +6,23 @@ import { v1 as uuidv1 } from "uuid";
 
 export default function PostStatusForm({ userProfile }) {
   const [status, setStatus] = useState("");
-  const [isPosted, setIsPosted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { addDocument, userDoc } = useAppContext();
   const isUser = userDoc?.email === userProfile?.email;
 
   //Post Status
   const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-    setIsPosted(true);
+    if (e.target.value) {
+      setIsLoading(true);
+      setStatus(e.target.value);
+    } else {
+      setIsLoading(false);
+    }
   };
 
   const handlePostStatus = async (e) => {
     e.preventDefault();
-    setIsPosted(false);
-
+    setIsLoading(true);
     await addDocument("statuses", {
       content: status,
       likedPeople: [],
@@ -31,8 +34,7 @@ export default function PostStatusForm({ userProfile }) {
       id: uuidv1(),
       isCommentTabOpened: true,
     });
-
-    setIsPosted(true);
+    setIsLoading(false);
     e.target.reset();
   };
   return (
@@ -57,7 +59,7 @@ export default function PostStatusForm({ userProfile }) {
           className="mx-2"
         />
 
-        <Button type="submit" disabled={!isPosted}>
+        <Button type="submit" disabled={!isLoading}>
           Post
         </Button>
       </div>

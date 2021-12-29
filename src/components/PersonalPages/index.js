@@ -34,8 +34,6 @@ export default function PersonalPage({ userProfile }) {
   const userStatuses = useFirestore("statuses", condition);
   const orderedStatuses = orderBy(userStatuses, "createdAt", "desc");
 
-  console.log("UserStatus", { orderedStatuses });
-
   useEffect(() => {
     if (userDoc?.email === userProfile?.email) {
       setIsUser(true);
@@ -95,10 +93,6 @@ export default function PersonalPage({ userProfile }) {
 
       <Route path={`${path}/photos`}>
         <Photos user={userProfile} />
-      </Route>
-
-      <Route path={`${path}/friends`}>
-        <Friends users={users} userProfile={userProfile} />
       </Route>
     </Container>
   );

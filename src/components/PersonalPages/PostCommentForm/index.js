@@ -7,6 +7,7 @@ import { useAppContext } from "../../../contexts/AppContext";
 export default function PostCommentForm({ onPostComment }) {
   const { register, handleSubmit, reset } = useForm();
   const { userDoc } = useAppContext();
+
   return (
     <Form
       onSubmit={handleSubmit((data) => {
@@ -23,7 +24,7 @@ export default function PostCommentForm({ onPostComment }) {
         </div>
 
         <Form.Control
-          {...register(`comment`)}
+          {...register("comment", { required: true })}
           className="me-2"
           placeholder="Write your comments"
         />

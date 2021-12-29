@@ -88,7 +88,6 @@ export const AuthProvider = ({ children }) => {
     updateUserProfile,
   };
 
-  console.log({ user });
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}

@@ -7,7 +7,6 @@ import NoMatch from "./NoMatch";
 import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
 
 //Other Projects
-import Topics from "./Topics";
 import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
 
@@ -100,10 +99,6 @@ export const App = () => {
 
               <PrivateRoute path="/update-profile">
                 <UpdateProfile />
-              </PrivateRoute>
-
-              <PrivateRoute path="/topics">
-                <Topics />
               </PrivateRoute>
 
               <PrivateRoute path="/messages">

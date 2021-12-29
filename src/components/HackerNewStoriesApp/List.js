@@ -40,13 +40,13 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             type="button"
             onClick={() => handleSort("TITLE")}
             style={{
-              width: "35%",
-              fontSize: "18px",
+              width: "20%",
+              fontSize: "14px",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
           >
-            <span className="p-2">Title</span>
+            <span>Title</span>
             {sort.isSorted & (sort.sortKey === "TITLE") ? (
               sort.isReversed ? (
                 <FontAwesomeIcon icon={["fas", "arrow-down"]} />
@@ -60,13 +60,13 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             type="button"
             onClick={() => handleSort("AUTHOR")}
             style={{
-              width: "15%",
-              fontSize: "18px",
+              width: "20%",
+              fontSize: "14px",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
           >
-            <span className="p-2">Author</span>
+            <span>Author</span>
             {sort.isSorted & (sort.sortKey === "AUTHOR") ? (
               sort.isReversed ? (
                 <FontAwesomeIcon icon={["fas", "arrow-down"]} />
@@ -81,12 +81,12 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             onClick={() => handleSort("NUM_COMMENTS")}
             style={{
               width: "20%",
-              fontSize: "18px",
+              fontSize: "14px",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
           >
-            <span className="p-2">Comments</span>
+            <span>Comments</span>
             {sort.isSorted & (sort.sortKey === "NUM_COMMENTS") ? (
               sort.isReversed ? (
                 <FontAwesomeIcon icon={["fas", "arrow-up"]} />
@@ -100,13 +100,13 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             type="button"
             onClick={() => handleSort("POINTS")}
             style={{
-              width: "15%",
-              fontSize: "18px",
+              width: "20%",
+              fontSize: "14px",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
           >
-            <span className="p-2">Points</span>
+            <span>Points</span>
             {sort.isSorted & (sort.sortKey === "POINTS") ? (
               sort.isReversed ? (
                 <FontAwesomeIcon icon={["fas", "arrow-up"]} />
@@ -118,14 +118,14 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
 
           <SC.StyledButtonSmall
             style={{
-              width: "15%",
-              fontSize: "18px",
+              width: "20%",
+              fontSize: "14px",
               textTransform: "uppercase",
               fontWeight: "600",
-              cursor: "text"
+              cursor: "text",
             }}
           >
-            <span className="p-2">Actions</span>
+            <span>Action</span>
           </SC.StyledButtonSmall>
         </SC.StyledItem>
       </div>
@@ -150,16 +150,16 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
 
 const Item = React.memo(({ item, onRemoveItem }) => (
   <SC.StyledItem>
-    <SC.StyledColumn style={{ textAlign: "left", width: "35%" }}>
+    <SC.StyledColumn style={{ textAlign: "left", width: "20%" }}>
       <a href={item.url}>{item.title}</a>
     </SC.StyledColumn>
-    <SC.StyledColumn style={{ textTransform: "capitalize", width: "15%" }}>
+    <SC.StyledColumn style={{ textTransform: "capitalize", width: "20%" }}>
       {item.author}
     </SC.StyledColumn>
     <SC.StyledColumn width="20%">{item.num_comments}</SC.StyledColumn>
-    <SC.StyledColumn width="15%">{item.points}</SC.StyledColumn>
+    <SC.StyledColumn width="20%">{item.points}</SC.StyledColumn>
 
-    <SC.StyledColumn width="15%">
+    <SC.StyledColumn width="20%">
       <SC.StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
         <FontAwesomeIcon icon={["fas", "check"]} size="sm" />
       </SC.StyledButtonSmall>

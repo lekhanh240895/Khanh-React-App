@@ -22,23 +22,53 @@ export default function Comment({
   return (
     <Row className="p-3 pb-0 mb-3 bg-white">
       <Col xs={11} style={{ lineHeight: "0.5" }}>
-        <Link to={`/${comment.email}`}>
-          <Image
-            className="float-start"
-            src={comment.photoURL}
-            alt="Avatar"
-            style={{
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              marginRight: "10px",
-            }}
-          />
+        <Link to={`/${comment.email}`} style={{ textDecoration: "none" }}>
+          {comment.photoURL ? (
+            <Image
+              src={comment.photoURL}
+              alt="Avatar"
+              style={{
+                float: " left",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                marginLeft: "-10px",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                float: " left",
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                background: "pink",
+                marginLeft: "-10px",
+              }}
+              className="text-white d-flex justify-content-center align-items-center"
+            >
+              <span style={{ fontSize: "20px", fontWeight: "600" }}>
+                {comment.displayName?.charAt(0)}
+              </span>
+            </div>
+          )}
         </Link>
 
-        <h5>{comment.displayName}</h5>
+        <h5
+          style={{
+            paddingLeft: "50px",
+          }}
+        >
+          {comment.displayName}
+        </h5>
 
-        <p style={{ paddingLeft: "50px", lineHeight: "1.5" }}>
+        <p
+          style={{
+            paddingLeft: "50px",
+            lineHeight: "1.5",
+            margin: "-5px 0 5px 0",
+          }}
+        >
           {comment.content}
         </p>
 

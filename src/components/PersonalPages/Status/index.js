@@ -26,7 +26,7 @@ const Status = ({
   return (
     <Card className="mb-3">
       <Card.Header>
-        <Row className="mt-2">
+        <Row className="my-2">
           <Col xs={11} style={{ lineHeight: "1" }}>
             <div>
               <Link to={`/${status.postStatusUserProfile?.email}`}>

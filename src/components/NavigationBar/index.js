@@ -15,7 +15,7 @@ export default function NavigationBar({ handleSignOut }) {
         <Navbar.Brand>
           <NavLink exact to={"/"} activeClassName="text-white">
             <FontAwesomeIcon
-              icon={["fas", "home"]}
+              icon={["fab", "korvue"]}
               style={{ width: "30px", height: "30px" }}
             />
           </NavLink>
@@ -26,7 +26,7 @@ export default function NavigationBar({ handleSignOut }) {
         </Navbar.Toggle>
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mx-auto d-flex align-items-center">
+          <Nav className="mx-auto d-flex align-items-md-center">
             <NavLink
               to={`/${user?.email}`}
               activeClassName="text-white"
@@ -55,15 +55,7 @@ export default function NavigationBar({ handleSignOut }) {
               Hacker News Stories App
             </NavLink>
 
-            <NavLink
-              to="/topics"
-              activeClassName="text-white"
-              className="mx-2 py-1"
-            >
-              Topics
-            </NavLink>
-
-            <NavDropdown id="basic-nav-dropdown">
+            <NavDropdown id="basic-nav-dropdown" className="ms-2">
               <NavDropdown.Item>
                 <span
                   style={{ border: "none", color: "#000" }}
