@@ -1,9 +1,10 @@
 import React from "react";
-import { Navbar, Container, Nav, NavDropdown, Image } from "react-bootstrap";
+import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./index.css";
+import Avatar from "../PersonalPages/Avatar";
 
 export default function NavigationBar({ handleSignOut }) {
   const { user } = useAuth();
@@ -25,17 +26,15 @@ export default function NavigationBar({ handleSignOut }) {
         </Navbar.Toggle>
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mx-auto">
+          <Nav className="mx-auto d-flex align-items-center">
             <NavLink
               to={`/${user?.email}`}
               activeClassName="text-white"
-              className="mx-2"
+              className="mx-2 py-1"
             >
               <div className="d-flex align-items-center">
-                <Image
-                  src={user?.photoURL}
-                  style={{ width: "40px", height: "40px", borderRadius: "50%" }}
-                />
+                <Avatar userProfile={user} />
+
                 <span className="ms-2">{user?.displayName}</span>
               </div>
             </NavLink>

@@ -21,7 +21,7 @@ import {
 } from "firebase/storage";
 import { useAppContext } from "../../../contexts/AppContext";
 import { v1 as uuidv1 } from "uuid";
-import Avatar from "../Avatar/index.js";
+import AvatarWithUpload from "../AvatarWithUpload/index.js";
 import "./index.css";
 import usePreventReload from "../../hooks/usePreventReload";
 
@@ -160,7 +160,11 @@ export default function UploadAvatarModal({ user, isUser }) {
         }}
       />
 
-      <Avatar onShowUploadModal={handleShow} user={user} isUser={isUser} />
+      <AvatarWithUpload
+        onShowUploadModal={handleShow}
+        user={user}
+        isUser={isUser}
+      />
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>

@@ -3,7 +3,8 @@ import Moment from "react-moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import Comment from "../Comment";
-import PostCommentForm from "../Comment/PostCommentForm";
+import { some } from "lodash";
+import PostCommentForm from "../PostCommentForm";
 
 const Status = ({
   userDoc,
@@ -11,54 +12,81 @@ const Status = ({
   isUser,
   handleDeleteStatus,
   handleLikeStatus,
-  handleToggleCommentForm,
+  handleToggleCommentTab,
   handleLikeComment,
   handleDeleteComment,
   onPostComment,
-  handleCloseCommentForm,
 }) => {
+  const isStatusOfUser = status.postStatusUserProfile?.uid === userDoc?.uid;
+  const isUserLikedStatus = some(status.likedPeople, { uid: userDoc?.uid });
+  const likedStatusList = status.likedPeople.map(
+    (person) => person.displayName
+  );
+
   return (
     <Card className="mb-3">
       <Card.Header>
-        <div className="d-flex my-2 justify-content-between">
-          <div style={{ lineHeight: "1" }}>
-            <Link to={`/${status.postStatusUserProfile?.email}`}>
-              <Image
-                className="float-start"
-                src={status.postStatusUserProfile?.photoURL}
-                alt="Avatar"
+        <Row className="mt-2">
+          <Col xs={11} style={{ lineHeight: "1" }}>
+            <div>
+              <Link to={`/${status.postStatusUserProfile?.email}`}>
+                {status.postStatusUserProfile?.photoURL ? (
+                  <Image
+                    src={status.postStatusUserProfile?.photoURL}
+                    alt="Avatar"
+                    style={{
+                      float: "left",
+                      borderRadius: "50%",
+                      width: "50px",
+                      height: "50px",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      float: "left",
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      background: "pink",
+                    }}
+                    className="text-white d-flex justify-content-center align-items-center"
+                  >
+                    <span style={{ fontSize: "20px", fontWeight: "600" }}>
+                      {status.postStatusUserProfile?.displayName?.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </Link>
+
+              <h4 style={{ paddingLeft: "60px" }}>
+                {status.postStatusUserProfile?.displayName}
+              </h4>
+
+              <p
                 style={{
-                  borderRadius: "50%",
-                  width: "50px",
-                  height: "50px",
+                  fontSize: "14px",
+                  fontStyle: "italic",
+                  paddingLeft: "60px",
                 }}
-              />
-            </Link>
+              >
+                <Moment fromNow unix>
+                  {status.postedAt.seconds}
+                </Moment>
+              </p>
+            </div>
 
-            <h4 style={{ paddingLeft: "60px" }}>
-              {status.postStatusUserProfile?.displayName}
-            </h4>
+            {status.postStatusUserProfile?.uid !== status.userProfile.uid && (
+              <div>
+                <div
+                  style={{
+                    fontSize: "20px",
+                    padding: "0 0 15px 15px",
+                  }}
+                >
+                  <FontAwesomeIcon icon={["fas", "arrow-down"]} />
+                </div>
 
-            <p
-              style={{
-                fontSize: "14px",
-                fontStyle: "italic",
-                paddingLeft: "60px",
-              }}
-            >
-              <Moment fromNow unix>
-                {status.postedAt.seconds}
-              </Moment>
-            </p>
-          </div>
-
-          {status.postStatusUserProfile?.uid !== status.userProfile.uid && (
-            <>
-              <span style={{ fontSize: "20px", margin: "15px 15px 0 15px" }}>
-                <FontAwesomeIcon icon={["fas", "arrow-right"]} />
-              </span>
-
-              <div className="flex-grow-1">
                 <Link to={`/${status.userProfile?.email}`}>
                   <Image
                     className="float-start"
@@ -73,20 +101,24 @@ const Status = ({
                   />
                 </Link>
 
-                <h4>{status.userProfile?.displayName}</h4>
+                <h4 style={{ paddingLeft: "60px" }}>
+                  {status.userProfile?.displayName}
+                </h4>
               </div>
-            </>
-          )}
+            )}
+          </Col>
 
-          {isUser && (
-            <span
-              onClick={() => handleDeleteStatus(status)}
-              style={{ cursor: "pointer" }}
-            >
-              <FontAwesomeIcon icon={["far", "trash-alt"]} />
-            </span>
-          )}
-        </div>
+          <Col xs={1}>
+            {(isUser || isStatusOfUser) && (
+              <span
+                onClick={() => handleDeleteStatus(status)}
+                style={{ cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={["far", "trash-alt"]} />
+              </span>
+            )}
+          </Col>
+        </Row>
       </Card.Header>
 
       <Card.Body>
@@ -94,7 +126,7 @@ const Status = ({
       </Card.Body>
 
       <Card.Footer>
-        <Row className="text-center my-2">
+        <Row className="text-center mb-2">
           <Col
             onClick={() => handleLikeStatus(status)}
             id="status-like"
@@ -103,19 +135,13 @@ const Status = ({
           >
             <span>
               <FontAwesomeIcon
-                icon={
-                  status.isLikedByUser & isUser || status.isLiked & !isUser
-                    ? ["fas", "heart"]
-                    : ["far", "heart"]
-                }
-                className={
-                  status.isLikedByUser & isUser || status.isLiked & !isUser
-                    ? "status-liked me-2"
-                    : "me-2"
-                }
+                icon={isUserLikedStatus ? ["fas", "heart"] : ["far", "heart"]}
+                className={isUserLikedStatus ? "status-liked me-2" : "me-2"}
                 size="lg"
+                onClick={() => handleLikeStatus(status)}
               />
             </span>
+
             <span>
               {!status.likedPeople.length
                 ? "Like"
@@ -126,7 +152,7 @@ const Status = ({
           </Col>
 
           <Col
-            onClick={() => handleToggleCommentForm(status)}
+            onClick={() => handleToggleCommentTab(status)}
             id="status-comment"
             style={{ cursor: "pointer", height: "5vh" }}
             className="d-flex align-items-center justify-content-center"
@@ -149,19 +175,16 @@ const Status = ({
         </Row>
 
         {status.likedPeople.length > 0 && (
-          <div className="d-flex mb-2">
-            {status.likedPeople.map((person) => (
-              <span key={person.displayName} className="me-1">
-                {person.displayName}
-              </span>
-            ))}
+          <div className="mb-2">
+            <span>{likedStatusList.join(", ")}</span>
+            &nbsp;
             <span>liked this.</span>
           </div>
         )}
 
         <div
           style={{
-            display: status.isCommentFormOpened ? "block" : "none",
+            display: status.isCommentTabOpened ? "block" : "none",
           }}
         >
           {status.comments?.map((comment) => (
@@ -173,13 +196,13 @@ const Status = ({
                 handleDeleteComment(status, comment)
               }
               isUser={isUser}
+              userDoc={userDoc}
             />
           ))}
 
           <PostCommentForm
             userProfile={userDoc}
             onPostComment={(data) => onPostComment(data, status)}
-            onCloseCommentForm={() => handleCloseCommentForm(status)}
           />
         </div>
       </Card.Footer>

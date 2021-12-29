@@ -1,23 +1,31 @@
 import React from "react";
-import { Image } from "react-bootstrap";
+import { Col, Image, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
+import { some } from "lodash";
 
 export default function Comment({
   comment,
   onLikeComment,
   isUser,
   onDeleteComment,
+  userDoc,
 }) {
+  const isCommentOfUser = comment.uid === userDoc?.uid;
+  const isUserLikedComment = some(comment.likedPeople, { uid: userDoc?.uid });
+  const likedCommentList = comment.likedPeople.map(
+    (person) => person.displayName
+  );
+
   return (
-    <div className="p-3 mb-3 bg-white d-flex justify-content-between">
-      <div className="flex-fill" style={{ lineHeight: "0.7" }}>
-        <Link to={`/${comment.commentUserProfile?.email}`}>
+    <Row className="p-3 pb-0 mb-3 bg-white">
+      <Col xs={11} style={{ lineHeight: "0.5" }}>
+        <Link to={`/${comment.email}`}>
           <Image
             className="float-start"
-            src={comment.commentUserProfile?.photoURL}
+            src={comment.photoURL}
             alt="Avatar"
             style={{
               borderRadius: "50%",
@@ -28,9 +36,11 @@ export default function Comment({
           />
         </Link>
 
-        <h5>{comment.commentUserProfile.displayName}</h5>
+        <h5>{comment.displayName}</h5>
 
-        <p>{comment.content}</p>
+        <p style={{ paddingLeft: "50px", lineHeight: "1.5" }}>
+          {comment.content}
+        </p>
 
         <p style={{ paddingLeft: "50px" }}>
           <span
@@ -40,8 +50,9 @@ export default function Comment({
           >
             <FontAwesomeIcon
               icon={
-                comment.isLiked ? ["fas", "thumbs-up"] : ["far", "thumbs-up"]
+                isUserLikedComment ? ["fas", "thumbs-up"] : ["far", "thumbs-up"]
               }
+              className={isUserLikedComment ? " comment-liked" : ""}
               size="sm"
             />
           </span>
@@ -58,24 +69,37 @@ export default function Comment({
           <span
             style={{
               fontSize: "14px",
-              fontStyle: "italic",
             }}
           >
-            <Moment fromNow unix>
-              {comment.commentedAt.seconds}
-            </Moment>
+            {comment.likedPeople.length > 0 && (
+              <span>{likedCommentList.join(", ")} liked this.</span>
+            )}
           </span>
         </p>
-      </div>
 
-      {isUser && (
-        <span
-          onClick={() => onDeleteComment(comment)}
-          style={{ cursor: "pointer" }}
+        <p
+          style={{
+            fontSize: "14px",
+            fontStyle: "italic",
+            paddingLeft: " 50px",
+          }}
         >
-          <FontAwesomeIcon icon={["far", "trash-alt"]} />
-        </span>
-      )}
-    </div>
+          <Moment fromNow unix>
+            {comment.commentedAt.seconds}
+          </Moment>
+        </p>
+      </Col>
+
+      <Col xs={1}>
+        {(isUser || isCommentOfUser) && (
+          <span
+            onClick={() => onDeleteComment(comment)}
+            style={{ cursor: "pointer" }}
+          >
+            <FontAwesomeIcon icon={["far", "trash-alt"]} />
+          </span>
+        )}
+      </Col>
+    </Row>
   );
 }

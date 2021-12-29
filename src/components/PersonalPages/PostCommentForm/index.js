@@ -1,15 +1,10 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import Avatar from "../../Avatar";
-import { useAppContext } from "../../../../contexts/AppContext";
+import Avatar from "../Avatar";
+import { useAppContext } from "../../../contexts/AppContext";
 
-export default function PostCommentForm({
-  userProfile,
-  onPostComment,
-  onCloseCommentForm,
-}) {
+export default function PostCommentForm({ onPostComment }) {
   const { register, handleSubmit, reset } = useForm();
   const { userDoc } = useAppContext();
   return (
@@ -33,15 +28,6 @@ export default function PostCommentForm({
           placeholder="Write your comments"
         />
 
-        <FontAwesomeIcon
-          icon={["fas", "times"]}
-          style={{
-            position: "absolute",
-            right: "70px",
-            top: "5px",
-          }}
-          onClick={onCloseCommentForm}
-        />
         <Button type="submit">Post</Button>
       </div>
     </Form>

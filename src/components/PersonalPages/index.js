@@ -96,6 +96,10 @@ export default function PersonalPage({ userProfile }) {
       <Route path={`${path}/photos`}>
         <Photos user={userProfile} />
       </Route>
+
+      <Route path={`${path}/friends`}>
+        <Friends users={users} userProfile={userProfile} />
+      </Route>
     </Container>
   );
 }

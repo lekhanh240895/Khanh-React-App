@@ -4,7 +4,7 @@
 }
 
 .status-liked {
-  color: red;
+  color: rgb(255, 42, 42);
   animation: status-liked alternate-reverse 1s ease-in;
 }
 

@@ -7,6 +7,7 @@ import { useAppContext } from "../../contexts/AppContext";
 export const SignUp = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
+
   const passwordConfirmRef = useRef();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +30,6 @@ export const SignUp = () => {
         emailRef.current.value,
         passwordRef.current.value
       );
-      setTimeout(() => history.push("/"), 1000);
       setIsSucced(true);
 
       addDocument("users", {
@@ -39,6 +39,8 @@ export const SignUp = () => {
         uid: userCredential.user.email,
         providerID: userCredential.user.providerData[0].providerId,
       });
+
+      setTimeout(() => history.push("/update-profile"), 1000);
     } catch (error) {
       const errMessage = error.message.replace("Firebase: ", "");
       setError(errMessage);

@@ -22,8 +22,6 @@ export default function PostStatusForm({ userProfile }) {
 
     await addDocument("statuses", {
       content: status,
-      isLiked: false,
-      isLikedByUser: false,
       likedPeople: [],
       postedAt: new Date(),
       comments: [],
@@ -31,7 +29,7 @@ export default function PostStatusForm({ userProfile }) {
       email: userProfile.email,
       userProfile: userProfile,
       id: uuidv1(),
-      isCommentFormOpened: false,
+      isCommentTabOpened: true,
     });
 
     setIsPosted(true);

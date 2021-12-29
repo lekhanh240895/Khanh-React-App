@@ -1,5 +1,5 @@
 import { v1 as uuidv1 } from "uuid";
-import { find, findIndex, reject } from "lodash";
+import { find, reject, some } from "lodash";
 import { useAppContext } from "../../../contexts/AppContext";
 import Status from "../Status";
 
@@ -14,74 +14,54 @@ const Statuses = ({ isUser, statuses }) => {
 
   const handleLikeStatus = (status) => {
     const selectedStatus = find(statuses, { id: status.id });
-    const { displayName, photoURL } = userDoc;
+    const { displayName, email, photoURL, uid } = userDoc;
 
-    if (isUser) {
-      if (!selectedStatus.isLikedByUser) {
-        updateDocument("statuses", selectedStatus.id, {
-          isLikedByUser: !status.isLikedByUser,
-          likedPeople: selectedStatus.likedPeople.concat({
-            displayName,
-            photoURL,
-          }),
-        });
-      } else {
-        updateDocument("statuses", selectedStatus.id, {
-          isLikedByUser: !status.isLikedByUser,
-          likedPeople: reject(selectedStatus.likedPeople, {
-            displayName,
-            photoURL,
-          }),
-        });
-      }
+    const isUserLikedStatus = some(status.likedPeople, { uid: uid });
+
+    if (!isUserLikedStatus) {
+      updateDocument("statuses", selectedStatus.id, {
+        likedPeople: selectedStatus.likedPeople.concat({
+          displayName,
+          email,
+          photoURL,
+          uid,
+        }),
+      });
     } else {
-      if (!selectedStatus.isLiked) {
-        updateDocument("statuses", selectedStatus.id, {
-          isLiked: !status.isLiked,
-          likedPeople: selectedStatus.likedPeople.concat({
-            displayName,
-            photoURL,
-          }),
-        });
-      } else {
-        updateDocument("statuses", selectedStatus.id, {
-          isLiked: !status.isLiked,
-          likedPeople: reject(selectedStatus.likedPeople, {
-            displayName,
-            photoURL,
-          }),
-        });
-      }
+      updateDocument("statuses", selectedStatus.id, {
+        likedPeople: reject(selectedStatus.likedPeople, {
+          displayName,
+          email,
+          photoURL,
+          uid,
+        }),
+      });
     }
   };
 
   //Comment
-  const handleToggleCommentForm = (status) => {
+  const handleToggleCommentTab = (status) => {
     const selectedStatus = find(statuses, { id: status.id });
 
     updateDocument("statuses", selectedStatus.id, {
-      isCommentFormOpened: !status.isCommentFormOpened,
+      isCommentTabOpened: !status.isCommentTabOpened,
     });
   };
 
-  const handleCloseCommentForm = (status) => {
+  const onPostComment = (data, status) => {
     const selectedStatus = find(statuses, { id: status.id });
+    const { displayName, photoURL, email, uid } = userDoc;
 
     updateDocument("statuses", selectedStatus.id, {
-      isCommentFormOpened: false,
-    });
-  };
-
-  const onPostComment = async (data, status) => {
-    const selectedStatus = find(statuses, { id: status.id });
-
-    await updateDocument("statuses", selectedStatus.id, {
       comments: selectedStatus.comments.concat({
         content: data.comment,
         commentedAt: new Date(),
         id: uuidv1(),
-        isLiked: false,
-        commentUserProfile: userDoc,
+        displayName,
+        photoURL,
+        email,
+        uid,
+        likedPeople: [],
       }),
     });
   };
@@ -96,22 +76,37 @@ const Statuses = ({ isUser, statuses }) => {
 
   const handleLikeComment = async (status, comment) => {
     const selectedStatus = find(statuses, { id: status.id });
+    const selectedComment = find(selectedStatus.comments, { id: comment.id });
 
-    const selectedCommentIndex = findIndex(status.comments, { id: comment.id });
+    const { displayName, photoURL, email, uid } = userDoc;
 
-    const newComments = [];
-
-    status.comments.forEach((dbComment) => {
-      newComments.push({
-        content: dbComment.content,
-        commentedAt: dbComment.commentedAt,
-        id: dbComment.id,
-        isLiked: dbComment.isLiked,
-        commentUserProfile: dbComment.commentUserProfile,
-      });
+    const isUserLikedComment = some(selectedComment.likedPeople, {
+      uid: uid,
     });
 
-    newComments[selectedCommentIndex].isLiked = !comment.isLiked;
+    const newComments = selectedStatus.comments.map((dbComment) => {
+      return dbComment.id === comment.id
+        ? !isUserLikedComment
+          ? {
+              ...dbComment,
+              likedPeople: dbComment.likedPeople.concat({
+                displayName,
+                email,
+                photoURL,
+                uid,
+              }),
+            }
+          : {
+              ...dbComment,
+              likedPeople: reject(dbComment.likedPeople, {
+                displayName,
+                email,
+                photoURL,
+                uid,
+              }),
+            }
+        : dbComment;
+    });
 
     updateDocument("statuses", selectedStatus.id, {
       comments: newComments,
@@ -128,11 +123,10 @@ const Statuses = ({ isUser, statuses }) => {
           userDoc={userDoc}
           handleDeleteStatus={handleDeleteStatus}
           handleLikeStatus={handleLikeStatus}
-          handleToggleCommentForm={handleToggleCommentForm}
+          handleToggleCommentTab={handleToggleCommentTab}
           handleLikeComment={handleLikeComment}
           handleDeleteComment={handleDeleteComment}
           onPostComment={onPostComment}
-          handleCloseCommentForm={handleCloseCommentForm}
         />
       ))}
     </div>

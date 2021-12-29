@@ -1,7 +1,7 @@
 import { Card } from "react-bootstrap";
 import PostStatusForm from "../PostStatusForm";
 
-const StatusBar = ({ isUser, userProfile, imgUrls, setImgUrls }) => {
+const StatusBar = ({ userProfile }) => {
   return (
     <Card className="mb-4">
       <Card.Body className="px-0 my-2">

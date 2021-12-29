@@ -171,6 +171,7 @@ export const UpdateProfile = () => {
             Update profile
           </Button>
         </Form>
+        
         <div className="text-center">
           <Link to={`/${user.email}`}>Cancel</Link>
         </div>

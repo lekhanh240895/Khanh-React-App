@@ -110,9 +110,9 @@ export const App = () => {
                 <ChatWindow />
               </PrivateRoute>
 
-              <Route path="*">
+              <PrivateRoute path="*">
                 <NoMatch />
-              </Route>
+              </PrivateRoute>
             </Switch>
           </AppProvider>
         </AuthProvider>

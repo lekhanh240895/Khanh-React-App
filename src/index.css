@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins");
-
 body {
   margin: 0;
 
@@ -10,7 +9,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #83a4d4; /* Fallback for older browser */
-  background: linear-gradient(to left, #b6fbff, #83a4d4);
+  background: linear-gradient(to left, #b6fbff, rgba(255, 192, 203, 0.527));
 }
 
 code {
