@@ -15,18 +15,30 @@ export const Profile = ({ isUser, user }) => {
         <UploadAvatarModal user={user} isUser={isUser} />
 
         <Card.Text className="text-center">
-          <strong>Email:</strong> {user.email}
+          <span style={{ fontSize: "24px" }}>
+            <strong>Email:</strong> {user.email}
+          </span>
           {isUser && (
-            <Link to="/update-profile" className="list-style-none ms-3">
+            <Link
+              to="/update-profile"
+              className="list-style-none ms-3"
+              style={{ fontSize: "18px" }}
+            >
               <FontAwesomeIcon icon={["fas", "pen"]} />
             </Link>
           )}
         </Card.Text>
 
         <Card.Text className="text-center">
-          <strong>Name:</strong> {user.displayName}
+          <span style={{ fontSize: "24px" }}>
+            <strong>Name:</strong> {user.displayName}
+          </span>
           {isUser && (
-            <Link to="/update-profile" className="list-style-none ms-3">
+            <Link
+              to="/update-profile"
+              className="list-style-none ms-3"
+              style={{ fontSize: "18px" }}
+            >
               <FontAwesomeIcon icon={["fas", "pen"]} />
             </Link>
           )}
@@ -35,7 +47,7 @@ export const Profile = ({ isUser, user }) => {
         {isUser && (
           <div className="text-center mb-3">
             <Link to="/update-profile" className="text-white list-style-none">
-              <Button>Update Profile</Button>
+              <Button size="lg">Update Profile</Button>
             </Link>
           </div>
         )}

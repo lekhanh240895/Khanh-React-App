@@ -28,38 +28,51 @@ export const ForgotPassWord = () => {
     setIsLoading(false);
   };
   return (
-    <Card className="d-flex flex-row justify-content-center align-items-center">
-      <Card.Body style={{ maxWidth: "400px" }}>
-      <Card.Header as="h1"  className="mb-4">Reset Password</Card.Header>
-        {message && <Alert variant="success">{message}</Alert>}
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "100vh" }}
+    >
+      <Card
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          boxShadow: "10px 10px 5px 5px grey",
+        }}
+      >
+        <Card.Header as="h1" className="mb-4">
+          Reset Password
+        </Card.Header>
+        <Card.Body>
+          {message && <Alert variant="success">{message}</Alert>}
 
-        {error && <Alert variant="danger">{error}</Alert>}
+          {error && <Alert variant="danger">{error}</Alert>}
 
-        <Form onSubmit={handleResetPassword}>
-          <Form.Group>
-            <Form.Label htmlFor="email">Your Email:</Form.Label>
-            <Form.Control
-              id="email"
-              type="email"
-              ref={emailRef}
-              required
-            ></Form.Control>
-          </Form.Group>
+          <Form onSubmit={handleResetPassword}>
+            <Form.Group>
+              <Form.Label htmlFor="email">Your Email:</Form.Label>
+              <Form.Control
+                id="email"
+                type="email"
+                ref={emailRef}
+                required
+              ></Form.Control>
+            </Form.Group>
 
-          <Button disabled={isLoading} type="submit" className="w-100 my-3">
-            Reset password
-          </Button>
-        </Form>
+            <Button disabled={isLoading} type="submit" className="w-100 my-3">
+              Reset password
+            </Button>
+          </Form>
 
-        <div className="">
-          Already have an account? <Link to="/login">Login</Link>
-        </div>
+          <div className="">
+            Already have an account? <Link to="/login">Login</Link>
+          </div>
 
-        <div>
-          Create new account? <Link to="/signup">Sign Up</Link>
-        </div>
-      </Card.Body>
-    </Card>
+          <div>
+            Create new account? <Link to="/signup">Sign Up</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 

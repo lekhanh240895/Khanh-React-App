@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import useFirestore from "../components/hooks/useFirestore";
 import { useAuth } from "./AuthContext";
 import { db } from "../firebase/config";
@@ -18,6 +18,10 @@ export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const { user } = useAuth();
+  const [isAddRoomShowed, setIsAddRoomShowed] = useState(false);
+  const [isInviteMemberShowed, setIsInviteMemberShowed] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState("");
+  const [showChatSidebar, setShowChatSidebar] = useState(false);
 
   const addDocument = async (FirestoreCollection, data) => {
     await addDoc(collection(db, FirestoreCollection), {
@@ -38,9 +42,65 @@ export const AppProvider = ({ children }) => {
   };
 
   const users = useFirestore("users", "");
-  const userDoc = find(users, { email: user?.email });
+  const userDoc = React.useMemo(
+    () => find(users, { email: user?.email }),
+    [users, user]
+  );
 
-  const value = { users, userDoc, addDocument, updateDocument, delDocument };
+  const roomsCondition = React.useMemo(() => {
+    return {
+      fieldName: "members",
+      operator: "array-contains",
+      compareValue: user?.uid,
+    };
+  }, [user]);
+
+  const rooms = useFirestore("rooms", roomsCondition);
+
+  const selectedRoom = React.useMemo(
+    () => find(rooms, { id: selectedRoomId }) || {},
+    [rooms, selectedRoomId]
+  );
+
+  const usersCondition = React.useMemo(() => {
+    return {
+      fieldName: "uid",
+      operator: "in",
+      compareValue: selectedRoom.members,
+    };
+  }, [selectedRoom.members]);
+
+  const members = useFirestore("users", usersCondition);
+
+  const messagesCondition = React.useMemo(() => {
+    return {
+      fieldName: "roomId",
+      operator: "==",
+      compareValue: selectedRoomId,
+    };
+  }, [selectedRoomId]);
+
+  const messages = useFirestore("messages", messagesCondition);
+
+  const value = {
+    users,
+    userDoc,
+    addDocument,
+    updateDocument,
+    delDocument,
+    rooms,
+    isAddRoomShowed,
+    setIsAddRoomShowed,
+    selectedRoomId,
+    setSelectedRoomId,
+    selectedRoom,
+    members,
+    isInviteMemberShowed,
+    setIsInviteMemberShowed,
+    showChatSidebar,
+    setShowChatSidebar,
+    messages,
+  };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

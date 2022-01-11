@@ -49,66 +49,77 @@ export const SignUp = () => {
     setIsLoading(false);
   };
   return (
-    <Card className="d-flex flex-row justify-content-center align-items-center">
-      <Card.Body style={{ maxWidth: "400px" }}>
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "100vh" }}
+    >
+      <Card
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          boxShadow: "10px 10px 5px 5px grey",
+        }}
+      >
         <Card.Header as="h1" className="mb-4">
           Sign Up
         </Card.Header>
 
-        {error && <Alert variant="danger">{error}</Alert>}
+        <Card.Body>
+          {error && <Alert variant="danger">{error}</Alert>}
 
-        {isSucced && (
-          <Alert
-            variant="success"
-            className="text-center"
-            style={{ fontWeight: "600", fontSize: "1.5rem" }}
-          >
-            Signup Successfull. Redirecting....
-          </Alert>
-        )}
+          {isSucced && (
+            <Alert
+              variant="success"
+              className="text-center"
+              style={{ fontWeight: "600", fontSize: "1.5rem" }}
+            >
+              Signup Successfull. Redirecting....
+            </Alert>
+          )}
 
-        <Form onSubmit={handleSignUpSubmit}>
-          <Form.Group>
-            <Form.Label htmlFor="email">Email:</Form.Label>
-            <Form.Control
-              id="email"
-              type="email"
-              ref={emailRef}
-              required
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label htmlFor="password">Password:</Form.Label>
-            <Form.Control
-              id="password"
-              type="password"
-              ref={passwordRef}
-              required
-            ></Form.Control>
-          </Form.Group>
+          <Form onSubmit={handleSignUpSubmit}>
+            <Form.Group>
+              <Form.Label htmlFor="email">Email:</Form.Label>
+              <Form.Control
+                id="email"
+                type="email"
+                ref={emailRef}
+                required
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="password">Password:</Form.Label>
+              <Form.Control
+                id="password"
+                type="password"
+                ref={passwordRef}
+                required
+              ></Form.Control>
+            </Form.Group>
 
-          <Form.Group>
-            <Form.Label htmlFor="passwordConfirm">
-              Confirm Your Password:
-            </Form.Label>
-            <Form.Control
-              id="passwordConfirm"
-              type="password"
-              ref={passwordConfirmRef}
-              required
-            ></Form.Control>
-          </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="passwordConfirm">
+                Confirm Your Password:
+              </Form.Label>
+              <Form.Control
+                id="passwordConfirm"
+                type="password"
+                ref={passwordConfirmRef}
+                required
+              ></Form.Control>
+            </Form.Group>
 
-          <Button disabled={isLoading} type="submit" className="w-100 my-3">
-            Sign Up
-          </Button>
-        </Form>
+            <Button disabled={isLoading} type="submit" className="w-100 my-3">
+              Sign Up
+            </Button>
+          </Form>
 
-        <div className="">
-          Already have an account? <Link to="/login">Login</Link>
-        </div>
-      </Card.Body>
-    </Card>
+          <div className="">
+            Already have an account? <Link to="/login">Login</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 

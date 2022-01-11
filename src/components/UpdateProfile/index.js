@@ -90,93 +90,103 @@ export const UpdateProfile = () => {
   };
 
   return (
-    <Card className="d-flex flex-row justify-content-center align-items-center">
-      <Card.Body style={{ maxWidth: "400px" }}>
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "100vh" }}
+    >
+      <Card
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          boxShadow: "10px 10px 5px 5px grey",
+        }}
+      >
         <Card.Header as="h1" className="mb-4">
           Update Profile
         </Card.Header>
+        <Card.Body s>
+          <Prompt
+            when={isBlocking}
+            message={JSON.stringify({
+              header: "Leave this page?",
+              content:
+                "You are not finishing your works. Are you sure want to leave?",
+            })}
+          />
 
-        <Prompt
-          when={isBlocking}
-          message={JSON.stringify({
-            header: "Leave this page?",
-            content:
-              "You are not finishing your works. Are you sure want to leave?",
-          })}
-        />
+          {isSucced && (
+            <Alert
+              variant="success"
+              className="text-center"
+              style={{ fontWeight: "600", fontSize: "1.5rem" }}
+            >
+              Update Successfull. Redirecting....
+            </Alert>
+          )}
+          {error && <Alert variant="danger">{error}</Alert>}
 
-        {isSucced && (
-          <Alert
-            variant="success"
-            className="text-center"
-            style={{ fontWeight: "600", fontSize: "1.5rem" }}
-          >
-            Update Successfull. Redirecting....
-          </Alert>
-        )}
-        {error && <Alert variant="danger">{error}</Alert>}
+          <Form onSubmit={handleUpdateProfileSubmit}>
+            <Form.Group>
+              <Form.Label htmlFor="displayName">Display Name:</Form.Label>
+              <Form.Control
+                id="displayName"
+                type="text"
+                ref={displayNameRef}
+                defaultValue={user?.displayName}
+                required
+                onChange={(e) => {
+                  setIsBlocking(e.target.value.length > 0);
+                }}
+              ></Form.Control>
+            </Form.Group>
 
-        <Form onSubmit={handleUpdateProfileSubmit}>
-          <Form.Group>
-            <Form.Label htmlFor="displayName">Display Name:</Form.Label>
-            <Form.Control
-              id="displayName"
-              type="text"
-              ref={displayNameRef}
-              defaultValue={user?.displayName}
-              required
-              onChange={(e) => {
-                setIsBlocking(e.target.value.length > 0);
-              }}
-            ></Form.Control>
-          </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="email">Email:</Form.Label>
+              <Form.Control
+                id="email"
+                type="email"
+                ref={emailRef}
+                required
+                defaultValue={user?.email}
+                onChange={(e) => setIsBlocking(e.target.value.length > 0)}
+              ></Form.Control>
+            </Form.Group>
 
-          <Form.Group>
-            <Form.Label htmlFor="email">Email:</Form.Label>
-            <Form.Control
-              id="email"
-              type="email"
-              ref={emailRef}
-              required
-              defaultValue={user?.email}
-              onChange={(e) => setIsBlocking(e.target.value.length > 0)}
-            ></Form.Control>
-          </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="password">New password:</Form.Label>
+              <Form.Control
+                id="password"
+                type="password"
+                ref={passwordRef}
+                placeholder="Leave it blank to keep your password"
+                onChange={(e) => setIsBlocking(e.target.value.length > 0)}
+              ></Form.Control>
+            </Form.Group>
 
-          <Form.Group>
-            <Form.Label htmlFor="password">New password:</Form.Label>
-            <Form.Control
-              id="password"
-              type="password"
-              ref={passwordRef}
-              placeholder="Leave it blank to keep your password"
-              onChange={(e) => setIsBlocking(e.target.value.length > 0)}
-            ></Form.Control>
-          </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="passwordConfirm">
+                Confirm New Password:
+              </Form.Label>
+              <Form.Control
+                id="passwordConfirm"
+                type="password"
+                ref={passwordConfirmRef}
+                placeholder="Leave it blank to keep your password"
+                onChange={(e) => setIsBlocking(e.target.value.length > 0)}
+              ></Form.Control>
+            </Form.Group>
 
-          <Form.Group>
-            <Form.Label htmlFor="passwordConfirm">
-              Confirm New Password:
-            </Form.Label>
-            <Form.Control
-              id="passwordConfirm"
-              type="password"
-              ref={passwordConfirmRef}
-              placeholder="Leave it blank to keep your password"
-              onChange={(e) => setIsBlocking(e.target.value.length > 0)}
-            ></Form.Control>
-          </Form.Group>
+            <Button disabled={isLoading} type="submit" className="w-100 my-3">
+              Update profile
+            </Button>
+          </Form>
 
-          <Button disabled={isLoading} type="submit" className="w-100 my-3">
-            Update profile
-          </Button>
-        </Form>
-        
-        <div className="text-center">
-          <Link to={`/${user.email}`}>Cancel</Link>
-        </div>
-      </Card.Body>
-    </Card>
+          <div className="text-center">
+            <Link to={`/${user.email}`}>Cancel</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 

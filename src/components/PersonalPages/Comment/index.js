@@ -1,10 +1,11 @@
 import React from "react";
-import { Col, Image, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Moment from "react-moment";
-import { Link } from "react-router-dom";
+
 import { some } from "lodash";
+import UserAvatar from "../UserAvatar";
 
 export default function Comment({
   comment,
@@ -22,37 +23,18 @@ export default function Comment({
   return (
     <Row className="p-3 pb-0 mb-3 bg-white">
       <Col xs={11} style={{ lineHeight: "0.5" }}>
-        <Link to={`/${comment.email}`} style={{ textDecoration: "none" }}>
-          {comment.photoURL ? (
-            <Image
-              src={comment.photoURL}
-              alt="Avatar"
-              style={{
-                float: " left",
-                borderRadius: "50%",
-                width: "40px",
-                height: "40px",
-                marginLeft: "-10px",
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                float: " left",
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                background: "pink",
-                marginLeft: "-10px",
-              }}
-              className="text-white d-flex justify-content-center align-items-center"
-            >
-              <span style={{ fontSize: "20px", fontWeight: "600" }}>
-                {comment.displayName?.charAt(0)}
-              </span>
-            </div>
-          )}
-        </Link>
+        <div style={{ marginLeft: "-10px" }}>
+          <UserAvatar
+            email={comment.email}
+            photoURL={comment.photoURL}
+            width="40px"
+            height="40px"
+            float="left"
+            textSize="25px"
+          >
+            {comment.displayName?.charAt(0)}
+          </UserAvatar>
+        </div>
 
         <h5
           style={{
@@ -99,6 +81,7 @@ export default function Comment({
           <span
             style={{
               fontSize: "14px",
+              lineHeight: "1.5",
             }}
           >
             {comment.likedPeople.length > 0 && (

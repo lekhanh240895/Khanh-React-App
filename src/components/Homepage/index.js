@@ -1,7 +1,6 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { useAppContext } from "../../contexts/AppContext";
-import ChatWindow from "../ChatWindow";
 import Statuses from "../PersonalPages/Statuses";
 import useFirestore from "../hooks/useFirestore";
 import { orderBy } from "lodash";
@@ -14,7 +13,7 @@ export default function Homepage({ imgUrls, setImgUrls }) {
   const orderedStatuses = orderBy(statuses, "createdAt", "desc");
   return (
     <Row>
-      <Col sm={10}>
+      <Col sm={12}>
         <StatusBar
           userProfile={userDoc}
           imgUrls={imgUrls}
@@ -22,10 +21,6 @@ export default function Homepage({ imgUrls, setImgUrls }) {
         />
 
         <Statuses statuses={orderedStatuses} userProfile={userDoc} />
-      </Col>
-
-      <Col sm className="d-none d-sm-block">
-        <ChatWindow />
       </Col>
     </Row>
   );

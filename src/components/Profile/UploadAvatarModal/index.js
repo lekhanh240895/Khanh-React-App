@@ -135,29 +135,13 @@ export default function UploadAvatarModal({ user, isUser }) {
     }
   };
 
-  /*  useEffect(() => {
-    return () => {
-      if (isBlocking & (fileUrl !== "")) {
-        handleRemoveUploadFile(fileUrl);
-      }
-    };
-  }, [isBlocking, fileUrl]); */
-
   return (
     <div className="mb-3  d-flex justify-content-center">
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Prompt
         when={isBlocking}
-        message={(location) => {
-          return location.pathname.startsWith("/profile")
-            ? true
-            : JSON.stringify({
-                header: "Leave this page?",
-                content:
-                  "You are not finishing your works. Are you sure want to leave?",
-              });
-        }}
+        message="You are not finishing your works. Are you sure want to leave?"
       />
 
       <AvatarWithUpload

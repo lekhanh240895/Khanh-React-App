@@ -1,10 +1,11 @@
-import { Card, Row, Col, Image } from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 import Moment from "react-moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+
 import Comment from "../Comment";
 import { some } from "lodash";
 import PostCommentForm from "../PostCommentForm";
+import UserAvatar from "../UserAvatar";
 
 const Status = ({
   userDoc,
@@ -29,35 +30,16 @@ const Status = ({
         <Row className="my-2">
           <Col xs={11} style={{ lineHeight: "1" }}>
             <div>
-              <Link to={`/${status.postStatusUserProfile?.email}`}>
-                {status.postStatusUserProfile?.photoURL ? (
-                  <Image
-                    src={status.postStatusUserProfile?.photoURL}
-                    alt="Avatar"
-                    style={{
-                      float: "left",
-                      borderRadius: "50%",
-                      width: "50px",
-                      height: "50px",
-                    }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      float: "left",
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      background: "pink",
-                    }}
-                    className="text-white d-flex justify-content-center align-items-center"
-                  >
-                    <span style={{ fontSize: "20px", fontWeight: "600" }}>
-                      {status.postStatusUserProfile?.displayName?.charAt(0)}
-                    </span>
-                  </div>
-                )}
-              </Link>
+              <UserAvatar
+                float="left"
+                email={status.postStatusUserProfile?.email}
+                photoURL={status.postStatusUserProfile?.photoURL}
+                width="50px"
+                height="50px"
+                textSize="30px"
+              >
+                {status.postStatusUserProfile?.displayName?.charAt(0)}
+              </UserAvatar>
 
               <h4 style={{ paddingLeft: "60px" }}>
                 {status.postStatusUserProfile?.displayName}
@@ -87,19 +69,16 @@ const Status = ({
                   <FontAwesomeIcon icon={["fas", "arrow-down"]} />
                 </div>
 
-                <Link to={`/${status.userProfile?.email}`}>
-                  <Image
-                    className="float-start"
-                    src={status.userProfile?.photoURL}
-                    alt="Avatar"
-                    style={{
-                      borderRadius: "50%",
-                      width: "50px",
-                      height: "50px",
-                      marginRight: "10px",
-                    }}
-                  />
-                </Link>
+                <UserAvatar
+                  float="left"
+                  email={status.userProfile?.email}
+                  photoURL={status.userProfile?.photoURL}
+                  width="50px"
+                  height="50px"
+                  textSize="30px"
+                >
+                  {status.userProfile?.displayName?.charAt(0)}
+                </UserAvatar>
 
                 <h4 style={{ paddingLeft: "60px" }}>
                   {status.userProfile?.displayName}
@@ -159,7 +138,7 @@ const Status = ({
           >
             <span>
               <FontAwesomeIcon
-                icon={["far", "comments"]}
+                icon={["far", "comment-alt"]}
                 className="me-2"
                 size="lg"
               />

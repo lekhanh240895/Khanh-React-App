@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import Avatar from "../Avatar";
+import UserAvatar from "../UserAvatar";
 import { useAppContext } from "../../../contexts/AppContext";
 
 export default function PostCommentForm({ onPostComment }) {
@@ -20,7 +20,15 @@ export default function PostCommentForm({ onPostComment }) {
         style={{ position: "relative" }}
       >
         <div className="me-2">
-          <Avatar userProfile={userDoc} />
+          <UserAvatar
+            email={userDoc?.email}
+            photoURL={userDoc?.photoURL}
+            width="40px"
+            height="40px"
+            textSize="25px"
+          >
+            {userDoc?.photoURL ? "" : userDoc?.displayName?.charAt(0)}
+          </UserAvatar>
         </div>
 
         <Form.Control

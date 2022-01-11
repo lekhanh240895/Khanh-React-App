@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Import Components
@@ -24,34 +24,19 @@ import "./App.css";
 import { Container } from "react-bootstrap";
 
 //Firebase tools
-import { AuthProvider, useAuth } from "../contexts/AuthContext";
-import { AppProvider, useAppContext } from "../contexts/AppContext";
-import { auth } from "../firebase/config";
-import ChatIcon from "./ChatIcon";
-import ChatWindow from "./ChatWindow";
+import { useAppContext } from "../contexts/AppContext";
+
 import Homepage from "./Homepage/index";
 import PersonalPage from "../components/PersonalPages/index";
+import ChatRoom from "./ChatRoom";
+import AddRoomModal from "./Modals/AddRoomModal";
+import InviteMemberModal from "./Modals/InviteMemberModal";
+import ChatIcon from "./ChatIcon";
+import { useAuth } from "../contexts/AuthContext";
 
 export const App = () => {
-  const { user, logout } = useAuth();
-  const [showNavbar, setShowNavbar] = useState(false);
   const { users } = useAppContext();
-
-  useEffect(() => {
-    if (user) {
-      return setShowNavbar(true);
-    }
-
-    setShowNavbar(false);
-  }, [user]);
-
-  const handleSignOut = async () => {
-    try {
-      await logout(auth);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  const { user } = useAuth();
 
   const [show, setShow] = useState(true);
 
@@ -61,59 +46,57 @@ export const App = () => {
         return CustomPrompt(message, callback, show, setShow);
       }}
     >
-      {showNavbar && <NavigationBar handleSignOut={handleSignOut} />}
+      <NavigationBar />
 
       <Container>
-        <AuthProvider>
-          <AppProvider>
-            <Switch>
-              {users?.map((user) => (
-                <PrivateRoute path={`/${user.email}`} key={user.email}>
-                  <PersonalPage userProfile={user} />
-                </PrivateRoute>
-              ))}
+        <Switch>
+          {users?.map((user) => (
+            <PrivateRoute path={`/${user.email}`} key={user.email}>
+              <PersonalPage userProfile={user} />
+            </PrivateRoute>
+          ))}
 
-              <PrivateRoute exact path="/">
-                <Homepage />
-              </PrivateRoute>
+          <PrivateRoute exact path="/">
+            <Homepage />
+          </PrivateRoute>
 
-              <PrivateRoute path="/todo-app">
-                <TodoApp />
-              </PrivateRoute>
+          <PrivateRoute path="/todo-app">
+            <TodoApp />
+          </PrivateRoute>
 
-              <PrivateRoute path="/stories-app">
-                <HackerNewStories />
-              </PrivateRoute>
+          <PrivateRoute path="/stories-app">
+            <HackerNewStories />
+          </PrivateRoute>
 
-              <Route path="/login">
-                <Login />
-              </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
 
-              <Route path="/signup">
-                <SignUp />
-              </Route>
+          <Route path="/signup">
+            <SignUp />
+          </Route>
 
-              <Route path="/forgot-password">
-                <ForgotPassWord />
-              </Route>
+          <Route path="/forgot-password">
+            <ForgotPassWord />
+          </Route>
 
-              <PrivateRoute path="/update-profile">
-                <UpdateProfile />
-              </PrivateRoute>
+          <PrivateRoute path="/update-profile">
+            <UpdateProfile />
+          </PrivateRoute>
 
-              <PrivateRoute path="/messages">
-                <ChatWindow />
-              </PrivateRoute>
+          <PrivateRoute path="/messages">
+            <ChatRoom />
+          </PrivateRoute>
 
-              <PrivateRoute path="*">
-                <NoMatch />
-              </PrivateRoute>
-            </Switch>
-          </AppProvider>
-        </AuthProvider>
+          <PrivateRoute path="*">
+            <NoMatch />
+          </PrivateRoute>
+        </Switch>
+        <AddRoomModal />
+        <InviteMemberModal />
 
+        {user && <ChatIcon />}
         <ScrollTopArrow />
-        <ChatIcon />
       </Container>
     </Router>
   );

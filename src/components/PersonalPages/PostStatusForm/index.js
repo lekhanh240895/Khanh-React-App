@@ -1,28 +1,23 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import Avatar from "../Avatar";
+import UserAvatar from "../UserAvatar";
 import { useAppContext } from "../../../contexts/AppContext";
 import { v1 as uuidv1 } from "uuid";
 
 export default function PostStatusForm({ userProfile }) {
   const [status, setStatus] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
   const { addDocument, userDoc } = useAppContext();
   const isUser = userDoc?.email === userProfile?.email;
 
   //Post Status
   const handleStatusChange = (e) => {
-    if (e.target.value) {
-      setIsLoading(true);
-      setStatus(e.target.value);
-    } else {
-      setIsLoading(false);
-    }
+    setStatus(e.target.value);
   };
 
   const handlePostStatus = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+
     await addDocument("statuses", {
       content: status,
       likedPeople: [],
@@ -34,14 +29,22 @@ export default function PostStatusForm({ userProfile }) {
       id: uuidv1(),
       isCommentTabOpened: true,
     });
-    setIsLoading(false);
+
     e.target.reset();
   };
   return (
     <Form onSubmit={handlePostStatus}>
       <div className="d-flex align-items-center justify-content-between px-3">
         <div>
-          <Avatar userProfile={userDoc} />
+          <UserAvatar
+            email={userDoc?.email}
+            photoURL={userDoc?.photoURL}
+            width="50px"
+            height="50px"
+            textSize="30px"
+          >
+            {userDoc?.displayName.charAt(0)}
+          </UserAvatar>
         </div>
 
         <Form.Control
@@ -53,15 +56,13 @@ export default function PostStatusForm({ userProfile }) {
           }
           style={{
             borderRadius: "10px",
-            height: "40px",
           }}
           onChange={(e) => handleStatusChange(e)}
           className="mx-2"
+          required
         />
 
-        <Button type="submit" disabled={!isLoading}>
-          Post
-        </Button>
+        <Button type="submit">Post</Button>
       </div>
     </Form>
   );

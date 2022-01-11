@@ -33,7 +33,7 @@ export const Login = () => {
           displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
-          uid: user.email,
+          uid: user.uid,
           providerID: user.providerData[0].providerId,
         });
       }
@@ -87,87 +87,98 @@ export const Login = () => {
   };
 
   return (
-    <Card className="d-flex flex-row justify-content-center align-items-center">
-      <Card.Body style={{ maxWidth: "400px" }}>
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "100vh" }}
+    >
+      <Card
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          boxShadow: "10px 10px 5px 5px grey",
+        }}
+      >
         <Card.Header as="h1" className="mb-4">
           My App
         </Card.Header>
 
-        {isSucced && (
-          <Alert
-            variant="success"
-            className="text-center"
-            style={{ fontWeight: "500", fontSize: "1.5rem" }}
+        <Card.Body>
+          {isSucced && (
+            <Alert
+              variant="success"
+              className="text-center"
+              style={{ fontWeight: "500", fontSize: "1.5rem" }}
+            >
+              Login Successfull. Redirecting....
+            </Alert>
+          )}
+
+          {error && (
+            <Alert
+              variant="danger"
+              className="text-center"
+              style={{ fontWeight: "500", fontSize: "1.5rem" }}
+            >
+              {error}
+            </Alert>
+          )}
+
+          <Form onSubmit={handleLoginByPassword}>
+            <Form.Group>
+              <Form.Label htmlFor="email">Email:</Form.Label>
+              <Form.Control
+                id="email"
+                type="email"
+                ref={emailRef}
+                required
+              ></Form.Control>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label htmlFor="password">Password:</Form.Label>
+              <Form.Control
+                id="password"
+                type="password"
+                ref={passwordRef}
+                required
+              ></Form.Control>
+            </Form.Group>
+
+            <div className="text-center my-3">
+              <Button disabled={isLoading} type="submit">
+                Log in
+              </Button>
+            </div>
+          </Form>
+
+          <Button
+            type="button"
+            className="w-100 mb-1"
+            disabled={isLoading}
+            onClick={handleLoginByFacebook}
           >
-            Login Successfull. Redirecting....
-          </Alert>
-        )}
+            Login with Facebook
+          </Button>
 
-        {error && (
-          <Alert
-            variant="danger"
-            className="text-center"
-            style={{ fontWeight: "500", fontSize: "1.5rem" }}
+          <Button
+            type="button"
+            className="w-100 mb-3"
+            disabled={isLoading}
+            onClick={handleLoginByGoogle}
           >
-            {error}
-          </Alert>
-        )}
+            Login with Google
+          </Button>
 
-        <Form onSubmit={handleLoginByPassword}>
-          <Form.Group>
-            <Form.Label htmlFor="email">Email:</Form.Label>
-            <Form.Control
-              id="email"
-              type="email"
-              ref={emailRef}
-              required
-            ></Form.Control>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label htmlFor="password">Password:</Form.Label>
-            <Form.Control
-              id="password"
-              type="password"
-              ref={passwordRef}
-              required
-            ></Form.Control>
-          </Form.Group>
-
-          <div className="text-center my-3">
-            <Button disabled={isLoading} type="submit">
-              Log in
-            </Button>
+          <div className="text-center mb-2">
+            <Link to="/forgot-password">Forgot your password?</Link>
           </div>
-        </Form>
 
-        <Button
-          type="button"
-          className="w-100 mb-1"
-          disabled={isLoading}
-          onClick={handleLoginByFacebook}
-        >
-          Login with Facebook
-        </Button>
-
-        <Button
-          type="button"
-          className="w-100 mb-3"
-          disabled={isLoading}
-          onClick={handleLoginByGoogle}
-        >
-          Login with Google
-        </Button>
-
-        <div className="text-center mb-2">
-          <Link to="/forgot-password">Forgot your password?</Link>
-        </div>
-
-        <div className="text-center">
-          Need an account? <Link to="/signup">Sign Up</Link>
-        </div>
-      </Card.Body>
-    </Card>
+          <div className="text-center">
+            Need an account? <Link to="/signup">Sign Up</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 

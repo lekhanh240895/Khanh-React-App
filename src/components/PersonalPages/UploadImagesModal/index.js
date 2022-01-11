@@ -21,14 +21,14 @@ import {
   deleteObject,
 } from "firebase/storage";
 
-const UploadImagesModal = ({ userProfile }) => {
+const UploadImagesModal = ({ userProfile, imgUrls, setImgUrls }) => {
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [isBlocking, setIsBlocking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(null);
   const [urls, setUrls] = useState([]);
-  const [imgUrls, setImgUrls] = useState([]);
+
   const handleShow = () => setShow(true);
 
   const handleClose = () => {
