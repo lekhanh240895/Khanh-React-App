@@ -41,7 +41,7 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             onClick={() => handleSort("TITLE")}
             style={{
               width: "20%",
-              fontSize: "14px",
+              fontSize: "2.5vw",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
@@ -61,7 +61,7 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             onClick={() => handleSort("AUTHOR")}
             style={{
               width: "20%",
-              fontSize: "14px",
+              fontSize: "2.5vw",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
@@ -80,8 +80,8 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             type="button"
             onClick={() => handleSort("NUM_COMMENTS")}
             style={{
-              width: "20%",
-              fontSize: "14px",
+              width: "25%",
+              fontSize: "2.5vw",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
@@ -101,7 +101,7 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
             onClick={() => handleSort("POINTS")}
             style={{
               width: "20%",
-              fontSize: "14px",
+              fontSize: "2.5vw",
               textTransform: "uppercase",
               fontWeight: "600",
             }}
@@ -118,8 +118,8 @@ export const List = React.memo(({ list, onRemoveItem, onFetchMore, page }) => {
 
           <SC.StyledButtonSmall
             style={{
-              width: "20%",
-              fontSize: "14px",
+              width: "15%",
+              fontSize: "2.5vw",
               textTransform: "uppercase",
               fontWeight: "600",
               cursor: "text",
@@ -156,10 +156,10 @@ const Item = React.memo(({ item, onRemoveItem }) => (
     <SC.StyledColumn style={{ textTransform: "capitalize", width: "20%" }}>
       {item.author}
     </SC.StyledColumn>
-    <SC.StyledColumn width="20%">{item.num_comments}</SC.StyledColumn>
+    <SC.StyledColumn width="25%">{item.num_comments}</SC.StyledColumn>
     <SC.StyledColumn width="20%">{item.points}</SC.StyledColumn>
 
-    <SC.StyledColumn width="20%">
+    <SC.StyledColumn width="15%">
       <SC.StyledButtonSmall type="button" onClick={() => onRemoveItem(item)}>
         <FontAwesomeIcon icon={["fas", "check"]} size="sm" />
       </SC.StyledButtonSmall>

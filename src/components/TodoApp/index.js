@@ -11,6 +11,8 @@ import { todoReducer } from "./reducer";
 import axios from "axios";
 import * as SC from "./style";
 import Pagination from "./Pagination";
+import CountUp from "react-countup";
+import { Button, Col, Form, Row } from "react-bootstrap";
 
 let PageSize = 20;
 const API_ENDPOINT = "https://jsonplaceholder.typicode.com/todos";
@@ -209,7 +211,9 @@ const TodoApp = () => {
 
   return (
     <div>
-      <h1>My Todo App with {sum_todos} works.</h1>
+      <h1>
+        My Todo App with <CountUp end={sum_todos} duration={1} /> works.
+      </h1>
 
       <SC.StyledMessage>{unCompletedTodo} Works uncompleted!</SC.StyledMessage>
 
@@ -220,40 +224,39 @@ const TodoApp = () => {
         >
           Search by UserId:
         </SC.StyledLabel>
-        <div className="row">
-          <div className="col-10" style={{ marginRight: "-0.75rem" }}>
-            <input
+        <Row className="row">
+          <Col xs={9} md={10}>
+            <Form.Control
               id="IdSearch"
-              className="form-group form-control"
               type="text"
               placeholder="Your ID number"
               autoFocus
               onChange={handleSearchIdInput}
               value={searchId}
             />
-          </div>
-          <div className="col-2">
-            <button className="btn btn-primary">Submit</button>
-          </div>
-        </div>
+          </Col>
+          <Col xs={3} md>
+            <Button>Submit</Button>
+          </Col>
+        </Row>
       </SC.StyledForm>
 
       <div>
         {lastSearches.map((searchId, index) => (
-          <button
+          <Button
             type="button"
             onClick={() => handleLastSearches(searchId)}
-            className="btn btn-dark"
             key={searchId + index}
+            variant="secondary"
           >
             {searchId}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <button className="btn btn-primary mt-3 mb-2" onClick={handleShowAll}>
+      <Button className="mt-3 mb-2" onClick={handleShowAll}>
         Show All User's Works
-      </button>
+      </Button>
 
       <List
         list={!isShowedAll ? todos.data : currentList}
@@ -270,9 +273,7 @@ const TodoApp = () => {
       {todos.isLoading ? (
         <SC.StyledMessage>Loading...</SC.StyledMessage>
       ) : !isShowedAll & !isOver ? (
-        <button className="btn btn-primary" onClick={handleMore}>
-          More
-        </button>
+        <Button onClick={handleMore}>More</Button>
       ) : isOver ? (
         <SC.StyledMessage>No works</SC.StyledMessage>
       ) : (

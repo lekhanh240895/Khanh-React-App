@@ -104,7 +104,7 @@ export const UpdateProfile = () => {
         <Card.Header as="h1" className="mb-4">
           Update Profile
         </Card.Header>
-        <Card.Body s>
+        <Card.Body>
           <Prompt
             when={isBlocking}
             message={JSON.stringify({

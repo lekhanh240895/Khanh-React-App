@@ -16,7 +16,7 @@ const StyledLabel = styled.label`
 `;
 
 const StyledForm = styled.form`
-  margin: 0.5rem 0;
+  padding-bottom: 1rem;
 `;
 
 const StyledNavbar = styled.nav`

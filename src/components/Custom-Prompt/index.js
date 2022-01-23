@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 
 export default function CustomPrompt(message, callback, show, setShow) {
   const container = document.createElement("div");
-  container.setAttribute("custom-promp", "");
 
   const handleConfirm = (callbackState) => {
     ReactDOM.unmountComponentAtNode(container);

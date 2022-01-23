@@ -1,5 +1,6 @@
 import React from "react";
 import { sortBy } from "lodash";
+import { Button } from "react-bootstrap";
 
 const SORTS = {
   NONE: (list) => list,
@@ -28,33 +29,34 @@ export const List = ({
     : sortFunction(list);
 
   return (
-    <div>
-      <div className="d-flex justify-content-start align-items-center mb-3">
-        <button
-          className="btn btn-success mr-5"
+    <div className="mb-3">
+      <div className="mb-3">
+        <Button
+          variant="success"
           type="button"
           onClick={() => handleSort("TITLE")}
           style={{
             width: "75%",
             textTransform: "uppercase",
-            fontSize: "24px",
-            fontWeight: "700",
+            fontSize: "3vw",
+            fontWeight: "600",
           }}
         >
           Title
-        </button>
-        <button
-          className="btn btn-success"
+        </Button>
+
+        <Button
+          variant="success"
           style={{
             width: "25%",
             textTransform: "uppercase",
-            fontSize: "24px",
-            fontWeight: "700",
+            fontSize: "3vw",
+            fontWeight: "600",
             pointerEvents: "none",
           }}
         >
           Action
-        </button>
+        </Button>
       </div>
 
       <div className="d-flex justify-content-between">

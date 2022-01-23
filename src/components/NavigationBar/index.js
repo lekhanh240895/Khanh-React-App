@@ -13,11 +13,7 @@ export default function NavigationBar() {
   const { setShowChatSidebar } = useAppContext();
 
   const handleSignOut = async () => {
-    try {
-      await logout(auth);
-    } catch (error) {
-      console.log(error.message);
-    }
+    logout(auth);
   };
 
   return (
@@ -47,8 +43,50 @@ export default function NavigationBar() {
               </NavLink>
             </Navbar.Brand>
 
+            <Navbar.Brand>
+              <NavLink
+                to="/work-calendar"
+                activeClassName="text-white"
+                onClick={() => setShowChatSidebar(true)}
+              >
+                <FontAwesomeIcon
+                  icon={["far", "calendar-alt"]}
+                  style={{ width: "40px", height: "40px" }}
+                />
+              </NavLink>
+            </Navbar.Brand>
+
+            <Navbar.Brand>
+              <NavLink
+                to="/covid-app"
+                activeClassName="text-white"
+                onClick={() => setShowChatSidebar(true)}
+              >
+                <FontAwesomeIcon
+                  icon={["fas", "virus-slash"]}
+                  style={{ width: "40px", height: "40px" }}
+                />
+              </NavLink>
+            </Navbar.Brand>
+
+            <Navbar.Brand>
+              <NavLink
+                to="/todo-app-redux"
+                activeClassName="text-white"
+                onClick={() => setShowChatSidebar(true)}
+              >
+                <FontAwesomeIcon
+                  icon={["far", "list-alt"]}
+                  style={{ width: "40px", height: "40px" }}
+                />
+              </NavLink>
+            </Navbar.Brand>
+
             <Navbar.Toggle aria-controls="basic-navbar-nav">
-              <FontAwesomeIcon icon={["fas", "bars"]} />
+              <FontAwesomeIcon
+                icon={["fas", "bars"]}
+                style={{ width: "30px", height: "30px" }}
+              />
             </Navbar.Toggle>
 
             <Navbar.Collapse id="basic-navbar-nav">

@@ -11,6 +11,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { find } from "lodash";
+import moment from "moment";
 
 export const AppContext = React.createContext();
 
@@ -20,8 +21,10 @@ export const AppProvider = ({ children }) => {
   const { user } = useAuth();
   const [isAddRoomShowed, setIsAddRoomShowed] = useState(false);
   const [isInviteMemberShowed, setIsInviteMemberShowed] = useState(false);
+  const [isWorkSheetModalShowed, setIsWorkSheetModalShowed] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const [showChatSidebar, setShowChatSidebar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(moment());
 
   const addDocument = async (FirestoreCollection, data) => {
     await addDoc(collection(db, FirestoreCollection), {
@@ -82,6 +85,22 @@ export const AppProvider = ({ children }) => {
 
   const messages = useFirestore("messages", messagesCondition);
 
+  const userWorkCondition = React.useMemo(() => {
+    return {
+      fieldName: "uid",
+      operator: "==",
+      compareValue: user?.uid,
+    };
+  }, [user]);
+
+  const userWork = useFirestore("worktime", userWorkCondition);
+
+  const userWorkMonth = userWork.find(
+    (work) =>
+      work.month === selectedDate?.month() + 1 &&
+      work.year === selectedDate?.year()
+  );
+
   const value = {
     users,
     userDoc,
@@ -100,6 +119,11 @@ export const AppProvider = ({ children }) => {
     showChatSidebar,
     setShowChatSidebar,
     messages,
+    isWorkSheetModalShowed,
+    setIsWorkSheetModalShowed,
+    selectedDate,
+    setSelectedDate,
+    userWorkMonth,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

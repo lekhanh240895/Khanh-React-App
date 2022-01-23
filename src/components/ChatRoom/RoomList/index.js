@@ -28,11 +28,13 @@ export default function RoomList() {
   const orderedRooms = orderBy(rooms, "createdAt");
 
   return (
-    <Accordion flush defaultActiveKey="0" style={{ color: "#000", backgroundColor: "inherit"}}>
+    <Accordion
+      flush
+      defaultActiveKey="0"
+      style={{ color: "#000", backgroundColor: "inherit" }}
+    >
       <Accordion.Item eventKey="0">
-        <Accordion.Header>
-          <h4>Chat Room List</h4>
-        </Accordion.Header>
+        <Accordion.Header>Chat Room List</Accordion.Header>
         <Accordion.Body>
           {orderedRooms?.map((room) => (
             <div

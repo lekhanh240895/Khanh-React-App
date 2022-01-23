@@ -7,7 +7,6 @@ import NoMatch from "./NoMatch";
 import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
 
 //Other Projects
-import TodoApp from "./TodoApp";
 import HackerNewStories from "./HackerNewStoriesApp";
 
 //A like Facebook App Project
@@ -20,7 +19,6 @@ import CustomPrompt from "../components/Custom-Prompt/index.js";
 
 //Styles
 import "./FontAwesome";
-import "./App.css";
 import { Container } from "react-bootstrap";
 
 //Firebase tools
@@ -33,6 +31,11 @@ import AddRoomModal from "./Modals/AddRoomModal";
 import InviteMemberModal from "./Modals/InviteMemberModal";
 import ChatIcon from "./ChatIcon";
 import { useAuth } from "../contexts/AuthContext";
+import { WorkCalendar } from "./WorkCalendar";
+import WorkTimesheetModal from "./Modals/WorkTimesheetModal";
+import TodoAppRedux from "./TodoAppRedux";
+import CovidApp from "./CovidApp";
+import TodoApp from "./TodoApp";
 
 export const App = () => {
   const { users } = useAppContext();
@@ -50,24 +53,6 @@ export const App = () => {
 
       <Container>
         <Switch>
-          {users?.map((user) => (
-            <PrivateRoute path={`/${user.email}`} key={user.email}>
-              <PersonalPage userProfile={user} />
-            </PrivateRoute>
-          ))}
-
-          <PrivateRoute exact path="/">
-            <Homepage />
-          </PrivateRoute>
-
-          <PrivateRoute path="/todo-app">
-            <TodoApp />
-          </PrivateRoute>
-
-          <PrivateRoute path="/stories-app">
-            <HackerNewStories />
-          </PrivateRoute>
-
           <Route path="/login">
             <Login />
           </Route>
@@ -80,6 +65,28 @@ export const App = () => {
             <ForgotPassWord />
           </Route>
 
+          {users?.map((user) => (
+            <PrivateRoute path={`/${user.email}`} key={user.email}>
+              <PersonalPage userProfile={user} />
+            </PrivateRoute>
+          ))}
+
+          <PrivateRoute exact path="/">
+            <Homepage />
+          </PrivateRoute>
+
+          <PrivateRoute path="/todo-app-redux">
+            <TodoAppRedux />
+          </PrivateRoute>
+
+          <PrivateRoute path="/todo-app">
+            <TodoApp />
+          </PrivateRoute>
+
+          <PrivateRoute path="/stories-app">
+            <HackerNewStories />
+          </PrivateRoute>
+
           <PrivateRoute path="/update-profile">
             <UpdateProfile />
           </PrivateRoute>
@@ -88,12 +95,21 @@ export const App = () => {
             <ChatRoom />
           </PrivateRoute>
 
+          <PrivateRoute path="/work-calendar">
+            <WorkCalendar />
+          </PrivateRoute>
+
+          <PrivateRoute path="/covid-app">
+            <CovidApp />
+          </PrivateRoute>
+
           <PrivateRoute path="*">
             <NoMatch />
           </PrivateRoute>
         </Switch>
         <AddRoomModal />
         <InviteMemberModal />
+        <WorkTimesheetModal />
 
         {user && <ChatIcon />}
         <ScrollTopArrow />
