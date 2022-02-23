@@ -25,14 +25,15 @@ export default function PersonalPage({ userProfile }) {
   //Get User Statuses
   const condition = useMemo(() => {
     return {
-      fieldName: "email",
+      fieldName: "uid",
       operator: "==",
-      compareValue: userProfile?.email,
+      compareValue: userProfile?.uid,
     };
   }, [userProfile]);
 
   const userStatuses = useFirestore("statuses", condition);
   const orderedStatuses = orderBy(userStatuses, "createdAt", "desc");
+
 
   useEffect(() => {
     if (userDoc?.email === userProfile?.email) {

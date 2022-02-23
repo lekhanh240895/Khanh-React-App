@@ -1,11 +1,12 @@
 import React from "react";
 import { ButtonGroup, Button, Form, Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Message from "../Message";
 import { useAppContext } from "../../../contexts/AppContext";
 import { Avatar, Tooltip } from "antd";
 import { useForm } from "react-hook-form";
 import { orderBy } from "lodash";
+import MyMessage from "../MyMessage";
+import TheirMessage from "../TheirMessage";
 
 export default function ChatWindow() {
   const {
@@ -20,6 +21,7 @@ export default function ChatWindow() {
   } = useAppContext();
 
   const { register, handleSubmit, reset } = useForm();
+  const divRef = React.useRef(null);
 
   const onSubmit = (data) => {
     addDocument("messages", {
@@ -28,10 +30,13 @@ export default function ChatWindow() {
       uid: userDoc.uid,
       photoURL: userDoc.photoURL,
       displayName: userDoc.displayName,
-      email: userDoc.email,
     });
 
     reset();
+
+    divRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   const handleDeleteMessage = (message) => {
@@ -89,19 +94,40 @@ export default function ChatWindow() {
 
           <div
             style={{ height: "60vh", overflowY: "auto" }}
-            className="d-flex flex-column"
+            className="messages d-flex flex-column"
           >
-            {orderedMessages.map((message) => (
-              <Message
-                onDeleteMessage={() => handleDeleteMessage(message)}
-                key={message.id}
-                content={message.content}
-                displayName={message.displayName}
-                createdAt={message.createdAt}
-                photoURL={message.photoURL}
-                email={message.email}
-              />
-            ))}
+            {orderedMessages.map((message, index) => {
+              const isMyMessage = message.uid === userDoc?.uid;
+              const keys = Object.keys(orderedMessages);
+              const lastMessageKey = index === 0 ? null : keys[index - 1];
+              const lastMessage = orderedMessages[lastMessageKey];
+
+              return isMyMessage ? (
+                <MyMessage
+                  onDeleteMessage={() => handleDeleteMessage(message)}
+                  key={message.id}
+                  content={message.content}
+                  displayName={message.displayName}
+                  createdAt={message.createdAt}
+                  photoURL={message.photoURL}
+                  uid={message.uid}
+                  lastMessage={lastMessage}
+                />
+              ) : (
+                <TheirMessage
+                  onDeleteMessage={() => handleDeleteMessage(message)}
+                  key={message.id}
+                  content={message.content}
+                  displayName={message.displayName}
+                  createdAt={message.createdAt}
+                  photoURL={message.photoURL}
+                  uid={message.uid}
+                  lastMessage={lastMessage}
+                />
+              );
+            })}
+
+            <div ref={divRef} />
           </div>
 
           <hr />

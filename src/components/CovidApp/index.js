@@ -9,7 +9,6 @@ import axios from "axios";
 import moment from "moment";
 import "moment/locale/vi";
 
-
 moment.locale("vi");
 
 function CovidApp() {
@@ -21,8 +20,7 @@ function CovidApp() {
 
   useEffect(() => {
     const getTime = () => setTime(moment().format("llll"));
-    const timeId = setInterval(() => getTime(), 1000);
-    return () => clearInterval(timeId);
+    setTimeout(() => getTime(), 1000);
   }, []);
 
   useEffect(() => {

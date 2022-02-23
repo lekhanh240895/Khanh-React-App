@@ -8,14 +8,23 @@ import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
 
 //Other Projects
 import HackerNewStories from "./HackerNewStoriesApp";
+import TodoAppRedux from "./TodoAppRedux";
+import CovidApp from "./CovidApp";
+import TodoApp from "./TodoApp";
+import WorkCalendar from "./WorkCalendar";
 
-//A like Facebook App Project
+//A Facebook-alike App Project
 import Login from "./Login";
 import SignUp from "./SignUp";
 import PrivateRoute from "../components/PrivateRoute/index";
 import ForgotPassWord from "./ForgotPassword";
 import UpdateProfile from "./UpdateProfile";
 import CustomPrompt from "../components/Custom-Prompt/index.js";
+import Homepage from "./Homepage/index";
+import PersonalPage from "../components/PersonalPages/index";
+import ChatRoom from "./ChatRoom";
+
+import ChatIcon from "./ChatIcon";
 
 //Styles
 import "./FontAwesome";
@@ -23,19 +32,12 @@ import { Container } from "react-bootstrap";
 
 //Firebase tools
 import { useAppContext } from "../contexts/AppContext";
+import { useAuth } from "../contexts/AuthContext";
 
-import Homepage from "./Homepage/index";
-import PersonalPage from "../components/PersonalPages/index";
-import ChatRoom from "./ChatRoom";
+//Modals
 import AddRoomModal from "./Modals/AddRoomModal";
 import InviteMemberModal from "./Modals/InviteMemberModal";
-import ChatIcon from "./ChatIcon";
-import { useAuth } from "../contexts/AuthContext";
-import { WorkCalendar } from "./WorkCalendar";
 import WorkTimesheetModal from "./Modals/WorkTimesheetModal";
-import TodoAppRedux from "./TodoAppRedux";
-import CovidApp from "./CovidApp";
-import TodoApp from "./TodoApp";
 
 export const App = () => {
   const { users } = useAppContext();

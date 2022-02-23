@@ -101,6 +101,28 @@ export const AppProvider = ({ children }) => {
       work.year === selectedDate?.year()
   );
 
+  const updateStatusesCondition = React.useMemo(() => {
+    return {
+      fieldName: "postPhotoURL",
+      operator: "==",
+      compareValue: userDoc?.photoURL,
+    };
+  }, [userDoc]);
+
+  const updateStatuses = useFirestore("statuses", updateStatusesCondition);
+
+  const updateMessagesCondition = React.useMemo(() => {
+    return {
+      fieldName: "photoURL",
+      operator: "==",
+      compareValue: userDoc?.photoURL,
+    };
+  }, [userDoc]);
+
+  const updateMessages = useFirestore("messages", updateMessagesCondition);
+
+  const statuses = useFirestore("statuses", "");
+
   const value = {
     users,
     userDoc,
@@ -124,6 +146,9 @@ export const AppProvider = ({ children }) => {
     selectedDate,
     setSelectedDate,
     userWorkMonth,
+    updateStatuses,
+    updateMessages,
+    statuses,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -35,7 +35,8 @@ export default function UploadAvatarModal({ user, isUser }) {
   const [fileUrl, setFileUrl] = useState("");
   const [progress, setProgress] = useState();
   const { updateUserProfile } = useAuth();
-  const { updateDocument, userDoc } = useAppContext();
+  const { updateDocument, userDoc, updateStatuses, updateMessages } =
+    useAppContext();
 
   const handleClose = () => {
     setShow(false);
@@ -124,6 +125,18 @@ export default function UploadAvatarModal({ user, isUser }) {
 
     try {
       await updateUserProfile(user.displayName, fileUrl);
+      updateStatuses.forEach((status) => {
+        updateDocument("statuses", status.id, {
+          postPhotoURL: fileUrl,
+        });
+      });
+
+      updateMessages.forEach((message) => {
+        updateDocument("messages", message.id, {
+          photoURL: fileUrl,
+        });
+      });
+
       setIsBlocking(false);
       handleUpdatePhotoURL(fileUrl);
       handleUploadFile("Avatar", fileUpload);

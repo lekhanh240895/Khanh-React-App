@@ -18,33 +18,31 @@ const formatDate = (seconds) => {
   return formattedDate;
 };
 
-export default function Message({
+export default function MyMessage({
   content,
   displayName,
   createdAt,
   photoURL,
   onDeleteMessage,
-  userUid,
-  uid,
   lastMessage,
+  uid,
 }) {
-  const isMyMessage = uid === userUid;
-  const isFirstMessageByUser = !lastMessage || lastMessage.uid !== uid;
-  console.log({ isFirstMessageByUser });
+  const isFirstMessageByUser = !lastMessage || lastMessage?.uid !== uid;
+
   return (
-    <div
-      className={
-        isMyMessage
-          ? "mb-1 d-flex flex-row-reverse align-items-center"
-          : "mb-1 d-flex align-items-center"
-      }
-    >
+    <div className="mb-1 d-flex align-items-center flex-row-reverse">
       {isFirstMessageByUser && (
-        <Tooltip placement="left" title={displayName}>
+        <Tooltip placement="right" title={displayName}>
           <Avatar
             size={45}
             src={photoURL}
-            style={{ backgroundColor: "pink", fontSize: "40px", float: "left" }}
+            style={{
+              backgroundColor: "pink",
+              fontSize: "30px",
+              float: "left",
+              marginLeft: "-45px",
+              fontWeight: "600"
+            }}
           >
             {displayName.charAt(0)}
           </Avatar>
@@ -62,32 +60,27 @@ export default function Message({
             {formatDate(createdAt?.seconds)}
           </span>
         }
-        placement="top"
+        placement="left"
       >
         <div
-          className={
-            isMyMessage
-              ? "message-content d-flex flex-row-reverse align-items-center"
-              : "message-content d-flex align-items-center"
-          }
+          className="message-content d-flex flex-row-reverse align-items-center"
+          style={{ marginRight: "45px" }}
         >
           <div
             style={{
               backgroundColor: "pink",
-              borderRadius: "10px ",
+              borderRadius: "5px",
               boxShadow: "5px 5px 5px 0 grey",
               padding: "10px",
-              ...(isMyMessage ? { margin: "0 10px" } : { margin: "0 10px" }),
+              margin: "0 10px",
             }}
           >
             <span>{content}</span>
           </div>
 
-          {isMyMessage && (
-            <span onClick={onDeleteMessage} className="message-edit">
-              <FontAwesomeIcon icon={["far", "trash-alt"]} />
-            </span>
-          )}
+          <span onClick={onDeleteMessage} className="message-edit">
+            <FontAwesomeIcon icon={["far", "trash-alt"]} />
+          </span>
         </div>
       </Tooltip>
     </div>

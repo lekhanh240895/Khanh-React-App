@@ -57,20 +57,20 @@ export const WorkCalendar = () => {
   return (
     <div>
       <h1>WORK CALENDAR</h1>
-      {/* <Alert
-        message={`Số công trong tháng ${
-          selectedDate?.month() + 1
-        } năm ${selectedDate.year()} của bạn là ${sumWork}`}
-        type="success"
-        style={{ textAlign: "center", fontSize: "30px", fontWeight: "600 " }}
-      /> */}
 
       <Alert
         variant="success"
         style={{ textAlign: "center", fontSize: "30px", fontWeight: "600 " }}
       >
         Số công trong tháng {selectedDate?.month() + 1} năm&nbsp;
-        {selectedDate.year()} của bạn là <CountUp end={sumWork} duration={1}/>
+        {selectedDate.year()} của bạn là:
+        <h1 style={{color: "inherit"}}>
+          {Number.isInteger(sumWork) ? (
+            <CountUp end={sumWork} duration={1} />
+          ) : (
+            <CountUp end={sumWork} duration={1} decimals={1} decimal="," />
+          )}
+        </h1>
       </Alert>
 
       <Calendar
@@ -81,3 +81,5 @@ export const WorkCalendar = () => {
     </div>
   );
 };
+
+export default WorkCalendar;

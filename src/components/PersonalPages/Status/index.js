@@ -18,7 +18,7 @@ const Status = ({
   handleDeleteComment,
   onPostComment,
 }) => {
-  const isStatusOfUser = status.postStatusUserProfile?.uid === userDoc?.uid;
+  const isStatusOfUser = status.postUid === userDoc?.uid;
   const isUserLikedStatus = some(status.likedPeople, { uid: userDoc?.uid });
   const likedStatusList = status.likedPeople.map(
     (person) => person.displayName
@@ -32,18 +32,16 @@ const Status = ({
             <div>
               <UserAvatar
                 float="left"
-                email={status.postStatusUserProfile?.email}
-                photoURL={status.postStatusUserProfile?.photoURL}
+                email={status.postEmail}
+                photoURL={status.postPhotoURL}
                 width="50px"
                 height="50px"
                 textSize="30px"
               >
-                {status.postStatusUserProfile?.displayName?.charAt(0)}
+                {status.postDisplayName?.charAt(0)}
               </UserAvatar>
 
-              <h4 style={{ paddingLeft: "60px" }}>
-                {status.postStatusUserProfile?.displayName}
-              </h4>
+              <h4 style={{ paddingLeft: "60px" }}>{status.postDisplayName}</h4>
 
               <p
                 style={{
@@ -58,7 +56,7 @@ const Status = ({
               </p>
             </div>
 
-            {status.postStatusUserProfile?.uid !== status.userProfile.uid && (
+            {status.postUid !== status.uid && (
               <div>
                 <div
                   style={{
@@ -71,18 +69,16 @@ const Status = ({
 
                 <UserAvatar
                   float="left"
-                  email={status.userProfile?.email}
-                  photoURL={status.userProfile?.photoURL}
+                  email={status.email}
+                  photoURL={status.photoURL}
                   width="50px"
                   height="50px"
                   textSize="30px"
                 >
-                  {status.userProfile?.displayName?.charAt(0)}
+                  {status.displayName?.charAt(0)}
                 </UserAvatar>
 
-                <h4 style={{ paddingLeft: "60px" }}>
-                  {status.userProfile?.displayName}
-                </h4>
+                <h4 style={{ paddingLeft: "60px" }}>{status.displayName}</h4>
               </div>
             )}
           </Col>
