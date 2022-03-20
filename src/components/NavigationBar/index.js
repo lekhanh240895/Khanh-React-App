@@ -44,11 +44,7 @@ export default function NavigationBar() {
             </Navbar.Brand>
 
             <Navbar.Brand>
-              <NavLink
-                to="/work-calendar"
-                activeClassName="text-white"
-                onClick={() => setShowChatSidebar(true)}
-              >
+              <NavLink to="/work-calendar" activeClassName="text-white">
                 <FontAwesomeIcon
                   icon={["far", "calendar-alt"]}
                   style={{ width: "40px", height: "40px" }}
@@ -57,11 +53,7 @@ export default function NavigationBar() {
             </Navbar.Brand>
 
             <Navbar.Brand>
-              <NavLink
-                to="/covid-app"
-                activeClassName="text-white"
-                onClick={() => setShowChatSidebar(true)}
-              >
+              <NavLink to="/covid-app" activeClassName="text-white">
                 <FontAwesomeIcon
                   icon={["fas", "virus-slash"]}
                   style={{ width: "40px", height: "40px" }}
@@ -70,11 +62,7 @@ export default function NavigationBar() {
             </Navbar.Brand>
 
             <Navbar.Brand>
-              <NavLink
-                to="/todo-app-redux"
-                activeClassName="text-white"
-                onClick={() => setShowChatSidebar(true)}
-              >
+              <NavLink to="/todo-app-redux" activeClassName="text-white">
                 <FontAwesomeIcon
                   icon={["far", "list-alt"]}
                   style={{ width: "40px", height: "40px" }}

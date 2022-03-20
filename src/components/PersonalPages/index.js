@@ -5,22 +5,21 @@ import { storage } from "../../firebase/config";
 import { ref, getDownloadURL, list } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
 import { useAppContext } from "../../contexts/AppContext";
-import { Route } from "react-router-dom";
 import Pictures from "./Pictures";
-import Profile from "../Profile";
 import Statuses from "./Statuses";
 import StatusBar from "./StatusBar";
-import { useRouteMatch } from "react-router-dom";
-import Photos from "../Photos";
 import useFirestore from "../../components/hooks/useFirestore";
 import { orderBy } from "lodash";
-import Friends from "../Friends";
+import Friends from "./Friends/index";
+import Profile from "./Profile/index";
 
 export default function PersonalPage({ userProfile }) {
-  const [isUser, setIsUser] = useState(false);
-  const { users, userDoc } = useAppContext();
+  const { isUser, users, userDoc, setIsUser } = useAppContext();
   const [imgUrls, setImgUrls] = useState([]);
-  const { path } = useRouteMatch();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
   //Get User Statuses
   const condition = useMemo(() => {
@@ -34,18 +33,19 @@ export default function PersonalPage({ userProfile }) {
   const userStatuses = useFirestore("statuses", condition);
   const orderedStatuses = orderBy(userStatuses, "createdAt", "desc");
 
-
   useEffect(() => {
     if (userDoc?.email === userProfile?.email) {
-      setIsUser(true);
+      return setIsUser(true);
     }
-  }, [userDoc, userProfile]);
+
+    setIsUser(false);
+  }, [userDoc, userProfile, setIsUser]);
 
   //Load Photos
   const deviceInfo = useDeviceInfo();
   useEffect(() => {
     const loadImg = async () => {
-      const listRef = ref(storage, `${userProfile?.email}/Images`);
+      const listRef = ref(storage, `${userProfile?.email}/Images/Statuses`);
       let firstPage;
 
       if (deviceInfo.isMobile) {
@@ -71,30 +71,17 @@ export default function PersonalPage({ userProfile }) {
         <Row className="pt-3">
           <Col md>
             <Profile isUser={isUser} user={userProfile} />
-            <Pictures
-              imgUrls={imgUrls}
-              setImgUrls={setImgUrls}
-              user={userProfile}
-            />
+            <Pictures imgUrls={imgUrls} user={userProfile} />
             <Friends users={users} userProfile={userProfile} />
           </Col>
 
           <Col md>
-            <StatusBar
-              isUser={isUser}
-              userProfile={userProfile}
-              imgUrls={imgUrls}
-              setImgUrls={setImgUrls}
-            />
+            <StatusBar userProfile={userProfile} />
 
-            <Statuses isUser={isUser} statuses={orderedStatuses} />
+            <Statuses statuses={orderedStatuses} />
           </Col>
         </Row>
       )}
-
-      <Route path={`${path}/photos`}>
-        <Photos user={userProfile} />
-      </Route>
     </Container>
   );
 }

@@ -1,11 +1,12 @@
-#status-like:hover,
+#status-react-wrapper:hover,
 #status-comment:hover {
   background: #fff;
 }
 
 .status-liked {
-  color: rgb(255, 42, 42);
+  color: #0d6efd;
   animation: status-liked alternate-reverse 1s ease-in;
+  font-size: 20px;
 }
 
 @keyframes status-liked {
@@ -26,3 +27,40 @@
   color: #0d6efd;
   animation: comment-liked alternate-reverse 1s ease-out;
 }
+
+.status-react {
+  background-image: linear-gradient(to bottom, #ffac8b, #ffc815);
+  font-size: 20px;
+  border-radius: 50%;
+  color: #000;
+  opacity: 0.7;
+  animation: status-react alternate-reverse 1s ease-out;
+}
+
+.status-react:hover {
+  opacity: 1;
+}
+
+@keyframes status-react {
+  50% {
+    font-size: 25px;
+    transform: rotate(-15deg);
+  }
+}
+
+.comment-section {
+  background-color: #f7f7f7;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+.comment-react {
+  position: absolute;
+  bottom: -15px;
+  right: -10px;
+}
+
+.modal-content {
+  position: relative;
+}
+

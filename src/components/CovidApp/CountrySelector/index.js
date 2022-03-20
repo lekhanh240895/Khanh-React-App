@@ -6,7 +6,6 @@ export default function CountrySelector({ countries, value, handleOnChange }) {
     <Form className="mb-4">
       <Form.Label htmlFor="country">Quốc gia</Form.Label>
       <Form.Select
-        aria-label="Default select example"
         id="country"
         value={value}
         onChange={handleOnChange}

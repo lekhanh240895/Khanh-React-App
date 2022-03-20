@@ -4,6 +4,7 @@ import { formatRelative } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, Tooltip } from "antd";
 import "./index.css";
+import { Image } from "react-bootstrap";
 
 const formatDate = (seconds) => {
   let formattedDate = "";
@@ -24,15 +25,18 @@ export default function MyMessage({
   createdAt,
   photoURL,
   onDeleteMessage,
+  onReactMessage,
   lastMessage,
   uid,
+  attachments,
+  emoReact,
 }) {
   const isFirstMessageByUser = !lastMessage || lastMessage?.uid !== uid;
 
   return (
-    <div className="mb-1 d-flex align-items-center flex-row-reverse">
+    <div className="mb-3 d-flex align-items-start flex-row-reverse">
       {isFirstMessageByUser && (
-        <Tooltip placement="right" title={displayName}>
+        <Tooltip placement="right" title={displayName} mouseLeaveDelay={0}>
           <Avatar
             size={45}
             src={photoURL}
@@ -41,7 +45,7 @@ export default function MyMessage({
               fontSize: "30px",
               float: "left",
               marginLeft: "-45px",
-              fontWeight: "600"
+              fontWeight: "600",
             }}
           >
             {displayName.charAt(0)}
@@ -49,40 +53,169 @@ export default function MyMessage({
         </Tooltip>
       )}
 
-      <Tooltip
-        title={
-          <span
-            style={{
-              fontWeight: "500",
-              fontStyle: "italic",
-            }}
-          >
-            {formatDate(createdAt?.seconds)}
-          </span>
-        }
-        placement="left"
+      <div
+        className="message-content d-flex flex-row-reverse align-items-center flex-wrap"
+        style={{ marginRight: "45px" }}
       >
-        <div
-          className="message-content d-flex flex-row-reverse align-items-center"
-          style={{ marginRight: "45px" }}
-        >
-          <div
-            style={{
-              backgroundColor: "pink",
-              borderRadius: "5px",
-              boxShadow: "5px 5px 5px 0 grey",
-              padding: "10px",
-              margin: "0 10px",
-            }}
-          >
-            <span>{content}</span>
-          </div>
+        {attachments?.length > 0 ? (
+          attachments.map((img) => (
+            <div
+              style={{
+                padding: "0 10px 5px 5px",
+                position: "relative",
+                fontSize: "18px",
+                maxWidth: "400px",
+              }}
+              key={img}
+            >
+              <Image
+                fluid
+                alt="pictureMessage"
+                src={img}
+                style={{
+                  height: "200px",
+                  width: "200px",
+                  borderRadius: "20px",
+                }}
+              />
 
-          <span onClick={onDeleteMessage} className="message-edit">
-            <FontAwesomeIcon icon={["far", "trash-alt"]} />
+              {emoReact && (
+                <span
+                  style={{
+                    position: "absolute",
+                    color: "#FF8804",
+                    bottom: -10,
+                    right: -5,
+                    zIndex: 2,
+                    backgroundColor: "#fff",
+                    border: "1px solid gray",
+                    borderRadius: "50%",
+                    width: "30px",
+                    height: "30px",
+                  }}
+                  className="d-flex justify-content-center align-items-center"
+                >
+                  <FontAwesomeIcon
+                    icon={["far", emoReact]}
+                    style={{
+                      fontSize: "20px",
+                    }}
+                    className="emoji-react"
+                  />
+                </span>
+              )}
+            </div>
+          ))
+        ) : (
+          <Tooltip
+            title={
+              <span
+                style={{
+                  fontWeight: "500",
+                  fontStyle: "italic",
+                }}
+              >
+                {formatDate(createdAt?.seconds)}
+              </span>
+            }
+            placement="left"
+            mouseLeaveDelay={0}
+          >
+            <div
+              className="message"
+              style={{
+                backgroundColor: "#0D6EFD",
+                color: "white",
+                borderRadius: "10px",
+                boxShadow: "5px 5px 5px 0 grey",
+                padding: "10px 15px",
+                margin: "0 10px",
+                fontSize: "18px",
+                position: "relative",
+                maxWidth: "400px",
+              }}
+            >
+              <div>
+                {content === "like" ? (
+                  <FontAwesomeIcon icon={["fas", "thumbs-up"]} />
+                ) : (
+                  content
+                )}
+              </div>
+
+              {emoReact && (
+                <div
+                  style={{
+                    position: "absolute",
+                    color: "#FF8804",
+                    bottom: -15,
+                    right: -10,
+                    zIndex: 2,
+                    backgroundColor: "#fff",
+                    border: "1px solid gray",
+                    borderRadius: "50%",
+                    width: "30px",
+                    height: "30px",
+                  }}
+                  className="d-flex justify-content-center align-items-center"
+                >
+                  <FontAwesomeIcon
+                    icon={["far", emoReact]}
+                    style={{
+                      fontSize: "20px",
+                    }}
+                    className="emoji-react"
+                  />
+                </div>
+              )}
+            </div>
+          </Tooltip>
+        )}
+
+        <span onClick={onDeleteMessage} className="message-edit">
+          <FontAwesomeIcon icon={["far", "trash-alt"]} />
+        </span>
+
+        <Tooltip
+          title={
+            <div>
+              <FontAwesomeIcon
+                icon={["far", "grin-hearts"]}
+                className="me-1 emoji-react"
+                onClick={() => onReactMessage("grin-hearts")}
+              />
+              <FontAwesomeIcon
+                icon={["far", "flushed"]}
+                className="me-1 emoji-react"
+                onClick={() => onReactMessage("flushed")}
+              />
+              <FontAwesomeIcon
+                icon={["far", "angry"]}
+                className="me-1 emoji-react"
+                onClick={() => onReactMessage("angry")}
+              />
+              <FontAwesomeIcon
+                icon={["far", "grin-beam-sweat"]}
+                className="me-1 emoji-react"
+                onClick={() => onReactMessage("grin-beam-sweat")}
+              />
+              <FontAwesomeIcon
+                icon={["far", "grin-squint-tears"]}
+                className="emoji-react"
+                onClick={() => onReactMessage("grin-squint-tears")}
+              />
+            </div>
+          }
+          placement="top"
+          mouseLeaveDelay={0.2}
+          trigger="click"
+          color="#fff"
+        >
+          <span className="message-edit emoji">
+            <FontAwesomeIcon icon={["far", "grin"]} size="lg" />
           </span>
-        </div>
-      </Tooltip>
+        </Tooltip>
+      </div>
     </div>
   );
 }

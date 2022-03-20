@@ -1,0 +1,10 @@
+/* #commentInput:focus {
+  padding: 30px 20px;
+} */
+
+#commentInput {
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  padding-right: 100px;
+  white-space: nowrap;
+}

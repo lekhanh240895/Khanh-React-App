@@ -25,7 +25,7 @@ export const ScrollTopArrow = ({ showBelow = 200 }) => {
   
   return (
     <FontAwesomeIcon
-      icon={["fas", "arrow-up"]}
+      icon={["fas", "arrow-circle-up"]}
       id="scrollArrow"
       className="bg-primary text-white"
       onClick={scrollTop}

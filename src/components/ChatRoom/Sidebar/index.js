@@ -8,14 +8,14 @@ import { useAppContext } from "../../../contexts/AppContext";
 export default function Sidebar() {
   const { showChatSidebar, setShowChatSidebar } = useAppContext();
   return (
-    <div className="room-sidebar" style={{ height: "85vh" }}>
+    <div className="room-sidebar" style={{ height: "85vh", padding: 10 }}>
       <Offcanvas
         show={showChatSidebar}
         onHide={() => setShowChatSidebar(false)}
         scroll={true}
         className="room-sidebar"
       >
-        <Offcanvas.Header closeButton closeVariant="white">
+        <Offcanvas.Header closeButton>
           <Offcanvas.Title>
             <UserInfo />
           </Offcanvas.Title>
@@ -28,12 +28,10 @@ export default function Sidebar() {
         </Offcanvas.Body>
       </Offcanvas>
 
-      <Row className="mx-2">
-        <Col xs={24} className="mb-4 mt-3">
+      <Row>
+        <Col xs={24} className="mt-2 mb-4" style={{}}>
           <UserInfo />
         </Col>
-
-        <hr />
 
         <Col xs={24} className="mb-4">
           <RoomList />

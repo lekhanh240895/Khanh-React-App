@@ -5,10 +5,7 @@ import moment from "moment";
 import { ButtonGroup, Button } from "react-bootstrap";
 
 const generateOptions = (data) => {
-  const categories1 = data.map((item) =>
-    moment(item.Date).format("DD/MM/YYYY")
-  );
-  const categories2 = data.map((item) => moment(item.Date).format("MM/YY"));
+  const categories = data.map((item) => moment(item.Date).format("DD/MM/YY"));
 
   return {
     chart: {
@@ -21,7 +18,7 @@ const generateOptions = (data) => {
       text: "Source: api.covid19api.com",
     },
     xAxis: {
-      categories: categories2,
+      categories: categories,
       crosshair: true,
     },
     yAxis: {
@@ -72,21 +69,6 @@ const generateOptions = (data) => {
         color: "gray",
       },
     ],
-    responsive: {
-      rules: [
-        {
-          condition: {
-            minWidth: 500,
-          },
-          chartOptions: {
-            xAxis: {
-              categories: categories1,
-              crosshair: true,
-            },
-          },
-        },
-      ],
-    },
   };
 };
 

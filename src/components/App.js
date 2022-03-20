@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-//Import Components
-import NavigationBar from "./NavigationBar";
-import NoMatch from "./NoMatch";
-import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
 
 //Other Projects
 import HackerNewStories from "./HackerNewStoriesApp";
@@ -13,18 +9,24 @@ import CovidApp from "./CovidApp";
 import TodoApp from "./TodoApp";
 import WorkCalendar from "./WorkCalendar";
 
-//A Facebook-alike App Project
-import Login from "./Login";
-import SignUp from "./SignUp";
-import PrivateRoute from "../components/PrivateRoute/index";
-import ForgotPassWord from "./ForgotPassword";
-import UpdateProfile from "./UpdateProfile";
+//Other Components
 import CustomPrompt from "../components/Custom-Prompt/index.js";
-import Homepage from "./Homepage/index";
+import PrivateRoute from "../components/PrivateRoute/index";
+import ChatIcon from "./ChatIcon";
+import NavigationBar from "./NavigationBar";
+import NoMatch from "./NoMatch";
+import ScrollTopArrow from "./ScrollTopArrow/ScrollTopArrow";
+
+//A Facebook-alike App Project
+import Login from "../components/Account/Login/index";
+import SignUp from "../components/Account/SignUp/index.js";
+import ForgotPassWord from "../components/Account/ForgotPassword/index";
+import UpdateProfile from "./PersonalPages/UpdateProfile";
+import Homepage from "../components/PersonalPages/Homepage/index.js";
 import PersonalPage from "../components/PersonalPages/index";
 import ChatRoom from "./ChatRoom";
-
-import ChatIcon from "./ChatIcon";
+import UserPhotos from "./PersonalPages/UserPhotos/index";
+import Photos from "./PersonalPages/Photo";
 
 //Styles
 import "./FontAwesome";
@@ -38,6 +40,11 @@ import { useAuth } from "../contexts/AuthContext";
 import AddRoomModal from "./Modals/AddRoomModal";
 import InviteMemberModal from "./Modals/InviteMemberModal";
 import WorkTimesheetModal from "./Modals/WorkTimesheetModal";
+import UploadImageChatModal from "./Modals/UploadImageChatModal";
+import UploadImageStatusModal from "./Modals/UploadImageStatusModal";
+import UploadImageCommentModal from "./Modals/UploadImageCommentModal";
+import UploadAvatarModal from "./Modals/UploadAvatarModal";
+import PhotoModal from "./Modals/PhotoModal.js";
 
 export const App = () => {
   const { users } = useAppContext();
@@ -67,14 +74,32 @@ export const App = () => {
             <ForgotPassWord />
           </Route>
 
+          <PrivateRoute exact path="/">
+            <Homepage />
+          </PrivateRoute>
+
+          <PrivateRoute path="/photo">
+            <Photos />
+          </PrivateRoute>
+
+          <PrivateRoute path="/update-profile">
+            <UpdateProfile />
+          </PrivateRoute>
+
           {users?.map((user) => (
             <PrivateRoute path={`/${user.email}`} key={user.email}>
               <PersonalPage userProfile={user} />
             </PrivateRoute>
           ))}
 
-          <PrivateRoute exact path="/">
-            <Homepage />
+          {users?.map((user) => (
+            <PrivateRoute path={`/${user.email}-photos`} key={user.email}>
+              <UserPhotos userProfile={user} />
+            </PrivateRoute>
+          ))}
+
+          <PrivateRoute path="/work-calendar">
+            <WorkCalendar />
           </PrivateRoute>
 
           <PrivateRoute path="/todo-app-redux">
@@ -89,16 +114,8 @@ export const App = () => {
             <HackerNewStories />
           </PrivateRoute>
 
-          <PrivateRoute path="/update-profile">
-            <UpdateProfile />
-          </PrivateRoute>
-
           <PrivateRoute path="/messages">
             <ChatRoom />
-          </PrivateRoute>
-
-          <PrivateRoute path="/work-calendar">
-            <WorkCalendar />
           </PrivateRoute>
 
           <PrivateRoute path="/covid-app">
@@ -112,6 +129,11 @@ export const App = () => {
         <AddRoomModal />
         <InviteMemberModal />
         <WorkTimesheetModal />
+        <UploadImageChatModal />
+        <UploadImageStatusModal />
+        <UploadImageCommentModal />
+        <UploadAvatarModal />
+        <PhotoModal />
 
         {user && <ChatIcon />}
         <ScrollTopArrow />

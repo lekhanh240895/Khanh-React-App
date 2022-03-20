@@ -1,20 +1,29 @@
 import React from "react";
-import { Calendar } from "antd";
+import { Calendar, Tooltip } from "antd";
 import { useAppContext } from "../../contexts/AppContext";
 import { sumBy } from "lodash";
-import { Badge } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import "./index.css";
 import { Alert } from "react-bootstrap";
 import CountUp from "react-countup";
 import { useMemo } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const WorkCalendar = () => {
   const {
     setIsWorkSheetModalShowed,
     selectedDate,
     setSelectedDate,
-    userWorkMonth,
+    userWorkInMonth,
   } = useAppContext();
+
+  const onSelect = (value) => {
+    setSelectedDate(value);
+
+    setIsWorkSheetModalShowed(true);
+  };
+
+  const [showTime, setShowTime] = React.useState(false);
 
   const bgStyle = (workTime) => {
     switch (workTime) {
@@ -30,28 +39,77 @@ export const WorkCalendar = () => {
     }
   };
 
-  const dateCellRender = (value) => {
-    return userWorkMonth?.work.map((workDay) => {
-      if (value.date() === workDay.date) {
-        return (
-          <div key={workDay.date}>
-            <Badge bg={bgStyle(workDay.workTime)}>{workDay.workTime}</Badge>
-          </div>
-        );
-      }
-      return null;
-    });
-  };
-  const monthCellRender = () => {};
+  function getData(value) {
+    let data = userWorkInMonth?.work?.find(
+      (workDay) =>
+        workDay.date === value.date() &&
+        userWorkInMonth.month === value.month() + 1
+    );
 
-  const onSelect = (value) => {
-    setSelectedDate(value);
-    setIsWorkSheetModalShowed(true);
+    return data || {};
+  }
+
+  const dateCellRender = (value) => {
+    const data = getData(value);
+
+    return (
+      <div style={{ postion: "relative" }}>
+        <div key={data.date} style={{ padding: "10px 0" }}>
+          <Badge bg={bgStyle(data.workTime)}>{data.workTime}</Badge>
+        </div>
+
+        {(data.timeStart || data.timeFinish) && (
+          <div
+            className="poppup-timework"
+            style={{ display: !showTime && "none" }}
+          >
+            <span>{data.timeStart}</span>
+            <span className="mx-1">-</span>
+            <span>{data.timeFinish}</span>
+          </div>
+        )}
+
+        <div className="d-none d-sm-block">
+          {(data.timeStart || data.timeFinish) && (
+            <Tooltip
+              title={
+                <div
+                  style={{
+                    color: "#000",
+                  }}
+                >
+                  <span>{data.timeStart}</span>
+                  <span className="mx-1">-</span>
+                  <span>{data.timeFinish}</span>
+                </div>
+              }
+              placement="top"
+              color="white"
+            >
+              <div className="timework-icon">
+                <FontAwesomeIcon icon={["far", "clock"]} />
+              </div>
+            </Tooltip>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  function getMonthData(value) {
+    if (value.month() + 1 === userWorkInMonth?.month) {
+      return sumWork;
+    }
+  }
+
+  const monthCellRender = (value) => {
+    const num = getMonthData(value);
+    return num ? <h1>{num}</h1> : null;
   };
 
   const sumWork = useMemo(
-    () => sumBy(userWorkMonth?.work, "workTime"),
-    [userWorkMonth]
+    () => sumBy(userWorkInMonth?.work, "workTime"),
+    [userWorkInMonth]
   );
 
   return (
@@ -64,7 +122,7 @@ export const WorkCalendar = () => {
       >
         Số công trong tháng {selectedDate?.month() + 1} năm&nbsp;
         {selectedDate.year()} của bạn là:
-        <h1 style={{color: "inherit"}}>
+        <h1 style={{ color: "inherit" }}>
           {Number.isInteger(sumWork) ? (
             <CountUp end={sumWork} duration={1} />
           ) : (
@@ -72,6 +130,14 @@ export const WorkCalendar = () => {
           )}
         </h1>
       </Alert>
+
+      <Button
+        variant="outline-success"
+        className="mb-2"
+        onClick={() => setShowTime(!showTime)}
+      >
+        Show working time in {selectedDate.format("MMMM")}
+      </Button>
 
       <Calendar
         dateCellRender={dateCellRender}

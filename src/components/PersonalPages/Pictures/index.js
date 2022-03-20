@@ -1,20 +1,16 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card, Row, Image, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import UploadImagesModal from "../UploadImagesModal";
 
-export default function Pictures({ imgUrls, user, setImgUrls }) {
+export default function Pictures({ imgUrls, user }) {
   return (
     <Card className="mb-4">
       <Card.Header>
         <div className="d-flex justify-content-between">
           <Card.Title>
-            <span className="me-2">
-              <UploadImagesModal
-                userProfile={user}
-                imgUrls={imgUrls}
-                setImgUrls={setImgUrls}
-              />
+            <span className="text-primary me-2">
+              <FontAwesomeIcon icon={["fas", "images"]} size="lg" />
             </span>
 
             <span>Pictures</span>
@@ -23,7 +19,7 @@ export default function Pictures({ imgUrls, user, setImgUrls }) {
           <Card.Title style={{ cursor: "pointer" }}>
             <Link
               style={{ textDecoration: "none" }}
-              to={`/${user.email}/photos`}
+              to={`/${user.email}-photos`}
             >
               Show all pictures
             </Link>
@@ -41,7 +37,6 @@ export default function Pictures({ imgUrls, user, setImgUrls }) {
                 style={{
                   height: "25vh",
                   width: "100%",
-                  cursor: "pointer",
                   borderRadius: "5px",
                 }}
               />

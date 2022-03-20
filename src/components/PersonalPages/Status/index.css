@@ -1,0 +1,24 @@
+.status-action:hover {
+  background-color: #f2f2f2;
+}
+
+.status-photo-wrapper {
+  opacity: 1;
+  transition: all 0.5s;
+}
+
+.status-photo-wrapper:hover {
+  opacity: 0.8;
+}
+
+.status-option-icon {
+  opacity: 0.8;
+  border-radius: 50%;
+  color: #747272;
+  padding: 10px;
+}
+
+.status-option-icon:hover {
+  opacity: 1;
+  background-color: #e6e6e6;
+}

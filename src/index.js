@@ -8,8 +8,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { AppProvider } from "./contexts/AppContext.js";
 import store from "../src/redux/store";
 import { Provider } from "react-redux";
-/* import "@fontsource/roboto";
- */
+import 'emoji-mart/css/emoji-mart.css'
+
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>

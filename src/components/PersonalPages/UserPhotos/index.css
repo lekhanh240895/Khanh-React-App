@@ -1,0 +1,100 @@
+.avatar-photo {
+  height: 30vh;
+  width: 100%;
+}
+
+.carousel-photo {
+  width: 100%;
+  height: 100vh;
+}
+
+.carousel-upload-avatar {
+  width: 100%;
+  height: 75vh;
+}
+
+.carousel-control-next:hover,
+.carousel-control-prev:hover {
+  background-color: rgba(0, 0, 0, 0.164);
+  width: 14%;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+  transition: all 0.5s;
+}
+
+@media screen and (min-width: 568px) {
+  .avatar-photo {
+    height: 60vh;
+    width: 100%;
+  }
+
+  .carousel-upload-avatar {
+    width: 100%;
+    height: 90vh;
+  }
+}
+
+.closed-modal-icon {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 40px;
+  height: 40px;
+  color: #747272;
+  font-size: 30px;
+  opacity: 0.5;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  border-radius: 50%;
+  background-color: #e6e6e6;
+}
+
+.closed-modal-icon:hover {
+  opacity: 1;
+}
+
+.photo-wrapper {
+  opacity: 1;
+  transition: all 0.5s;
+}
+
+.photo-wrapper:hover {
+  opacity: 0.8;
+}
+
+.nav-tabs .nav-item {
+  flex-grow: 1;
+}
+
+.nav-tabs .nav-item button {
+  width: 100%;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.option-modal-icon {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  width: 40px;
+  height: 40px;
+  color: #747272;
+  font-size: 30px;
+  opacity: 0.5;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  border-radius: 50%;
+  background-color: #e6e6e6;
+}
+
+.option-modal-icon:hover {
+  opacity: 1;
+}

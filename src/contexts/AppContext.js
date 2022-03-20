@@ -10,7 +10,7 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import { find } from "lodash";
+import { find, orderBy, reject, some } from "lodash";
 import moment from "moment";
 
 export const AppContext = React.createContext();
@@ -25,6 +25,24 @@ export const AppProvider = ({ children }) => {
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const [showChatSidebar, setShowChatSidebar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(moment());
+  const [showUploadMessageImagesModal, setShowUploadMessageImagesModal] =
+    useState(false);
+  const [showUploadStatusImagesModal, setShowUploadStatusImagesModal] =
+    useState(false);
+  const [showUploadCommentImagesModal, setShowUploadCommentImagesModal] =
+    useState(false);
+  const [uploadMessageImgages, setUploadMessageImgages] = useState([]);
+  const [uploadStatusImages, setUploadStatusImages] = useState([]);
+  const [commentImages, setCommentImages] = useState([]);
+  const [selectedStatusId, setSelectedStatusId] = useState("");
+  const [showUploadAvatarModal, setShowUploadAvatarModal] = useState(false);
+  const [showUploadImagesModal, setShowUploadImagesModal] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [isStatusPhotoModalShowed, setIsStatusPhotosModalShowed] =
+    useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [photoModalShow, setPhotoModalShow] = useState(true);
+  const [homepageScrollPosition, setHomepageScrollPosition] = useState(0);
 
   const addDocument = async (FirestoreCollection, data) => {
     await addDoc(collection(db, FirestoreCollection), {
@@ -84,44 +102,127 @@ export const AppProvider = ({ children }) => {
   }, [selectedRoomId]);
 
   const messages = useFirestore("messages", messagesCondition);
+  const allMessages = useFirestore("messages", "");
 
   const userWorkCondition = React.useMemo(() => {
     return {
       fieldName: "uid",
       operator: "==",
-      compareValue: user?.uid,
+      compareValue: userDoc?.uid,
     };
-  }, [user]);
+  }, [userDoc]);
 
-  const userWork = useFirestore("worktime", userWorkCondition);
+  const userWork = orderBy(
+    useFirestore("worktime", userWorkCondition),
+    ["year", "month"],
+    ["asc", "asc"]
+  );
 
-  const userWorkMonth = userWork.find(
+  const userWorkInMonth = userWork.find(
     (work) =>
       work.month === selectedDate?.month() + 1 &&
       work.year === selectedDate?.year()
   );
 
-  const updateStatusesCondition = React.useMemo(() => {
-    return {
-      fieldName: "postPhotoURL",
-      operator: "==",
-      compareValue: userDoc?.photoURL,
-    };
-  }, [userDoc]);
-
-  const updateStatuses = useFirestore("statuses", updateStatusesCondition);
-
-  const updateMessagesCondition = React.useMemo(() => {
-    return {
-      fieldName: "photoURL",
-      operator: "==",
-      compareValue: userDoc?.photoURL,
-    };
-  }, [userDoc]);
-
-  const updateMessages = useFirestore("messages", updateMessagesCondition);
-
   const statuses = useFirestore("statuses", "");
+
+  const handleDeleteStatus = (status) => {
+    const selectedStatus = find(statuses, { id: status.id });
+
+    delDocument("statuses", selectedStatus.id);
+  };
+
+  const handleReactStatus = async (status, emoReact) => {
+    const { displayName, email, photoURL, uid } = userDoc;
+
+    const isUserReactStatus = some(status.people, { uid: uid });
+
+    if (!isUserReactStatus) {
+      return updateDocument("statuses", status.id, {
+        people: status.people.concat({
+          displayName,
+          email,
+          photoURL,
+          uid,
+          react: emoReact,
+        }),
+      });
+    }
+
+    if (emoReact === "thumbs-up") {
+      const updatePeopleReact = status.people.filter((person) => {
+        return person.uid !== uid;
+      });
+
+      updateDocument("statuses", status.id, {
+        people: updatePeopleReact,
+      });
+    } else {
+      const updatePeopleReact = status.people.map((person) => {
+        return person.uid === uid ? { ...person, react: emoReact } : person;
+      });
+
+      updateDocument("statuses", status.id, {
+        people: updatePeopleReact,
+      });
+    }
+  };
+
+  //Comment
+  const handleToggleCommentTab = (status) => {
+    updateDocument("statuses", status.id, {
+      isCommentTabOpened: !status.isCommentTabOpened,
+    });
+  };
+
+  const handleDeleteComment = (status, comment) => {
+    updateDocument("statuses", status.id, {
+      comments: reject(status.comments, comment),
+    });
+  };
+
+  const handleReactComment = (status, comment, emoReact) => {
+    const { displayName, photoURL, email, uid } = userDoc;
+
+    const isUserLikedComment = some(comment.people, {
+      uid: uid,
+    });
+
+    const newComments = status.comments.map((dbComment) => {
+      if (dbComment.id === comment.id) {
+        if (!isUserLikedComment) {
+          return {
+            ...dbComment,
+            people: dbComment.people.concat({
+              displayName,
+              email,
+              photoURL,
+              uid,
+              react: emoReact,
+            }),
+          };
+        }
+
+        if (emoReact === "thumbs-up") {
+          const updatedPeopleReactComment = dbComment.people.filter(
+            (person) => person.uid !== uid
+          );
+          return { ...dbComment, people: updatedPeopleReactComment };
+        } else {
+          const updatedPeopleReactComment = dbComment.people.map((person) => {
+            return person.uid === uid ? { ...person, react: emoReact } : person;
+          });
+          return { ...dbComment, people: updatedPeopleReactComment };
+        }
+      } else {
+        return dbComment;
+      }
+    });
+
+    updateDocument("statuses", status.id, {
+      comments: newComments,
+    });
+  };
 
   const value = {
     users,
@@ -145,10 +246,43 @@ export const AppProvider = ({ children }) => {
     setIsWorkSheetModalShowed,
     selectedDate,
     setSelectedDate,
-    userWorkMonth,
-    updateStatuses,
-    updateMessages,
+    userWorkInMonth,
     statuses,
+    showUploadMessageImagesModal,
+    setShowUploadMessageImagesModal,
+    showUploadStatusImagesModal,
+    setShowUploadStatusImagesModal,
+    uploadMessageImgages,
+    setUploadMessageImgages,
+    userWork,
+    uploadStatusImages,
+    setUploadStatusImages,
+    showUploadCommentImagesModal,
+    setShowUploadCommentImagesModal,
+    commentImages,
+    setCommentImages,
+    selectedStatusId,
+    setSelectedStatusId,
+    showUploadAvatarModal,
+    setShowUploadAvatarModal,
+    showUploadImagesModal,
+    setShowUploadImagesModal,
+    allMessages,
+    handleDeleteStatus,
+    handleReactStatus,
+    handleToggleCommentTab,
+    handleDeleteComment,
+    handleReactComment,
+    isUser,
+    setIsUser,
+    isStatusPhotoModalShowed,
+    setIsStatusPhotosModalShowed,
+    photoIndex,
+    setPhotoIndex,
+    photoModalShow,
+    setPhotoModalShow,
+    homepageScrollPosition,
+    setHomepageScrollPosition,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

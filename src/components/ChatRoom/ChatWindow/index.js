@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { ButtonGroup, Button, Form, Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppContext } from "../../../contexts/AppContext";
@@ -7,8 +7,11 @@ import { useForm } from "react-hook-form";
 import { orderBy } from "lodash";
 import MyMessage from "../MyMessage";
 import TheirMessage from "../TheirMessage";
+import "./index.css";
+import data from "emoji-mart/data/facebook.json";
+import { NimblePicker } from "emoji-mart";
 
-export default function ChatWindow() {
+function ChatWindow() {
   const {
     members,
     selectedRoom,
@@ -18,13 +21,46 @@ export default function ChatWindow() {
     userDoc,
     messages,
     delDocument,
+    setShowUploadMessageImagesModal,
+    updateDocument,
+    setShowChatSidebar,
   } = useAppContext();
 
-  const { register, handleSubmit, reset } = useForm();
-  const divRef = React.useRef(null);
+  const { register, handleSubmit, reset, watch, setValue, setFocus } =
+    useForm();
+  const divRef = useRef(null);
+  const [showEmoBar, setShowEmoBar] = useState(false);
 
-  const onSubmit = (data) => {
-    addDocument("messages", {
+  const watchMessage = watch("message");
+
+  const onEmojiClick = (emoji, event) => {
+    setValue("message", watchMessage.concat(emoji.native));
+
+    setFocus("message");
+  };
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {});
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
+  const handleLike = async () => {
+    await addDocument("messages", {
+      content: "like",
+      roomId: selectedRoomId,
+      uid: userDoc.uid,
+      photoURL: userDoc.photoURL,
+      displayName: userDoc.displayName,
+    });
+
+    const H = divRef.current.scrollHeight;
+    divRef.current?.scrollTo({ top: H, behavior: "smooth" });
+
+    setShowEmoBar(false);
+  };
+
+  const onSubmit = async (data) => {
+    await addDocument("messages", {
       content: data.message,
       roomId: selectedRoomId,
       uid: userDoc.uid,
@@ -32,24 +68,44 @@ export default function ChatWindow() {
       displayName: userDoc.displayName,
     });
 
-    reset();
+    const H = divRef.current.scrollHeight;
+    divRef.current?.scrollTo({ top: H, behavior: "smooth" });
 
-    divRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
+    reset();
+    setShowEmoBar(false);
   };
 
   const handleDeleteMessage = (message) => {
     delDocument("messages", message.id);
   };
 
-  const orderedMessages = orderBy(messages, "createdAt");
+  const orderedMessages = React.useMemo(
+    () => orderBy(messages, "createdAt"),
+    [messages]
+  );
+
+  const handleReactMessage = (message, emoReact) => {
+    updateDocument("messages", message.id, {
+      react: emoReact,
+    });
+  };
 
   return (
-    <div className="bg-white" style={{ height: "85vh", padding: "10px" }}>
+    <div
+      className="bg-white"
+      style={{
+        height: "85vh",
+        padding: "10px",
+        position: "relative",
+        margin: 0,
+      }}
+    >
       {selectedRoomId ? (
         <>
-          <div className="header_info d-flex justify-content-between align-items-center">
+          <div
+            className="header_info d-flex justify-content-between align-items-center"
+            style={{ positon: "relative", height: "10vh" }}
+          >
             <div>
               <h4 className="header-title">{selectedRoom.name}</h4>
               <span className="header-description">
@@ -93,8 +149,9 @@ export default function ChatWindow() {
           <hr />
 
           <div
-            style={{ height: "60vh", overflowY: "auto" }}
             className="messages d-flex flex-column"
+            ref={divRef}
+            style={{ zIndex: 1 }}
           >
             {orderedMessages.map((message, index) => {
               const isMyMessage = message.uid === userDoc?.uid;
@@ -105,6 +162,9 @@ export default function ChatWindow() {
               return isMyMessage ? (
                 <MyMessage
                   onDeleteMessage={() => handleDeleteMessage(message)}
+                  onReactMessage={(emoReact) =>
+                    handleReactMessage(message, emoReact)
+                  }
                   key={message.id}
                   content={message.content}
                   displayName={message.displayName}
@@ -112,10 +172,15 @@ export default function ChatWindow() {
                   photoURL={message.photoURL}
                   uid={message.uid}
                   lastMessage={lastMessage}
+                  attachments={message.attachments}
+                  emoReact={message.react}
                 />
               ) : (
                 <TheirMessage
                   onDeleteMessage={() => handleDeleteMessage(message)}
+                  onReactMessage={(emoReact) =>
+                    handleReactMessage(message, emoReact)
+                  }
                   key={message.id}
                   content={message.content}
                   displayName={message.displayName}
@@ -123,31 +188,107 @@ export default function ChatWindow() {
                   photoURL={message.photoURL}
                   uid={message.uid}
                   lastMessage={lastMessage}
+                  attachments={message.attachments}
+                  emoReact={message.react}
                 />
               );
             })}
-
-            <div ref={divRef} />
           </div>
 
           <hr />
 
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <div className="d-flex justify-content-between align-items-center">
-              <Form.Control
-                placeholder="Type something here"
-                className="me-2"
-                {...register("message", { required: true })}
-              />
-              <Button type="submit">Send</Button>
-            </div>
-          </Form>
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              width: "calc(100% - 20px)",
+              zIndex: 9,
+            }}
+            className="p-1 mb-1"
+          >
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <div className="d-flex justify-content-between align-items-center">
+                <FontAwesomeIcon
+                  icon={["far", "grin"]}
+                  className="emoji-react mx-2"
+                  style={{ fontSize: 24, zIndex: 0, cursor: "pointer" }}
+                  onClick={() => setShowEmoBar(!showEmoBar)}
+                />
+
+                <span
+                  className="text-success"
+                  style={{ fontSize: 24, cursor: "pointer" }}
+                >
+                  <FontAwesomeIcon
+                    icon={["fas", "images"]}
+                    className="me-2"
+                    onClick={() => setShowUploadMessageImagesModal(true)}
+                  />
+                </span>
+
+                <Form.Control
+                  placeholder="Type something here"
+                  {...register("message", { required: true })}
+                />
+
+                {watchMessage ? (
+                  <Button
+                    type="submit"
+                    variant="outline-primary"
+                    className="border-0 px-2"
+                  >
+                    <FontAwesomeIcon
+                      icon={["fas", "paper-plane"]}
+                      style={{ fontSize: 24 }}
+                    />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleLike}
+                    variant="outline-primary"
+                    className="border-0 px-2"
+                  >
+                    <FontAwesomeIcon
+                      icon={["fas", "thumbs-up"]}
+                      style={{ fontSize: 24 }}
+                    />
+                  </Button>
+                )}
+              </div>
+            </Form>
+          </div>
+
+          {showEmoBar && (
+            <NimblePicker
+              set="facebook"
+              onClick={onEmojiClick}
+              style={{
+                width: "100%",
+                position: "absolute",
+                bottom: "50px",
+                left: "1px",
+                right: "10px",
+                zIndex: 99,
+              }}
+              data={data}
+              showPreview={false}
+              showSkinTones={false}
+            />
+          )}
         </>
       ) : (
         <div className="text-center">
-          <Alert variant="info">Please select a room</Alert>
+          <Alert
+            variant="info"
+            onClick={() => setShowChatSidebar(true)}
+            style={{ cursor: "pointer" }}
+          >
+            Please select a room
+          </Alert>
         </div>
       )}
     </div>
   );
 }
+
+export default React.memo(ChatWindow);

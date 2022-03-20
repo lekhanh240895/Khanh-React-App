@@ -20,7 +20,7 @@ function CovidApp() {
 
   useEffect(() => {
     const getTime = () => setTime(moment().format("llll"));
-    setTimeout(() => getTime(), 1000);
+    setInterval(() => getTime(), 1000);
   }, []);
 
   useEffect(() => {

@@ -1,16 +1,28 @@
 #scrollArrow {
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  padding: 5px;
-  transition: opacity 0.5 ease-in;
+  padding: 10px;
+  transition: opacity 0.5s;
   opacity: 0.4;
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  z-index: 9999;
+  z-index: 999;
+  animation-name: pop-up;
+  animation-duration: 1s;
+  animation-direction: alternate;
 }
 
 #scrollArrow:hover {
   opacity: 1;
+}
+
+@keyframes pop-up {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.4;
+  }
 }
