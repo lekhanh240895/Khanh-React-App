@@ -19,7 +19,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "antd";
 import { deleteObject } from "firebase/storage";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { orderBy } from "lodash";
 
 export default function UserPhotos({ userProfile }) {
@@ -28,6 +28,7 @@ export default function UserPhotos({ userProfile }) {
   const [avatarsUrls, setAvatarsUrls] = useState([]);
 
   const history = useHistory();
+  const location = useLocation();
 
   const {
     statuses,
@@ -39,7 +40,7 @@ export default function UserPhotos({ userProfile }) {
     allMessages,
     isUser,
     setPhotoModalShow,
-    setHomepageScrollPosition,
+    setScrollPosition,
   } = useAppContext();
   const { updateUserProfile } = useAuth();
 
@@ -74,7 +75,7 @@ export default function UserPhotos({ userProfile }) {
     setSelectedStatusId(status.id);
     setPhotoIndex(index);
     setPhotoModalShow(true);
-    setHomepageScrollPosition(window.scrollY);
+    setScrollPosition(window.scrollY);
   };
 
   const [key, setKey] = useState("timeline-photo");
@@ -186,7 +187,13 @@ export default function UserPhotos({ userProfile }) {
           >
             <Tab eventKey="timeline-photo" title="Timeline photos">
               {orderUserPhotoStatuses.map((status) => (
-                <Link to={`/photo/${status.id}`} key={status.id}>
+                <Link
+                  to={{
+                    pathname: `/photo/${status.id}`,
+                    state: { from: location.pathname },
+                  }}
+                  key={status.id}
+                >
                   <Row className="photo-wrapper">
                     {status.attachments.length > 1 &&
                       status.attachments?.map((url, index) => (

@@ -1,4 +1,4 @@
-.closed-photo-modal-icon {
+.closed-post-modal-icon {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
@@ -16,7 +16,7 @@
   background-color: #e6e6e6;
 }
 
-.closed-photo-modal-icon:hover {
+.closed-post-modal-icon:hover {
   opacity: 1;
 }
 

@@ -1,12 +1,7 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { useAppContext } from "../../../contexts/AppContext";
-import {
-  useParams,
-  useHistory,
-  useRouteMatch,
-  useLocation,
-} from "react-router-dom";
+import { useParams, useHistory, useRouteMatch } from "react-router-dom";
 import "./index.css";
 import Status from "../Status";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,7 +21,7 @@ const Post = () => {
   const { postId } = useParams();
   const match = useRouteMatch();
   const history = useHistory();
-  
+
   const status = statuses.find((status) => status.id === postId);
 
   if (!status) {
@@ -47,7 +42,7 @@ const Post = () => {
     >
       <div style={{ maxWidth: 1000 }}>
         <span
-          className="closed-photo-modal-icon"
+          className="closed-post-modal-icon"
           onClick={handleCloseStatusPhotoModal}
         >
           <FontAwesomeIcon icon={["fas", "times"]} />
