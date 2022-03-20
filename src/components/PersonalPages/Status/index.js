@@ -23,12 +23,12 @@ const Status = ({
   onReactStatus,
 }) => {
   const {
-    // setIsStatusPhotosModalShowed,
     setSelectedStatusId,
     setPhotoIndex,
     userDoc,
     setPhotoModalShow,
-    setHomepageScrollPosition,
+    setScrollPosition,
+    setPostModalShow,
   } = useAppContext();
 
   const isStatusOfUser =
@@ -54,12 +54,10 @@ const Status = ({
   const handleShow = () => setShow(true);
 
   const handleShowPhoto = (index) => {
-    // setIsStatusPhotosModalShowed(true);
     setSelectedStatusId(status.id);
     setPhotoIndex(index);
     setPhotoModalShow(true);
-
-    setHomepageScrollPosition(window.scrollY);
+    setScrollPosition(window.scrollY);
   };
 
   const getReactName = (react) => {
@@ -84,7 +82,6 @@ const Status = ({
   const handleEditStatus = () => {};
 
   const location = useLocation();
-
   return (
     <Card className="mb-3">
       {/* StatusReactModal */}
@@ -217,9 +214,18 @@ const Status = ({
                   paddingLeft: "60px",
                 }}
               >
-                <Moment fromNow unix>
-                  {status.createdAt?.seconds}
-                </Moment>
+                <Link
+                  to={{
+                    pathname: `${status.postEmail}/posts/${status.id}`,
+                    state: { from: location.pathname },
+                  }}
+                  onClick={() => setPostModalShow(true)}
+                  style={{ color: "#000" }}
+                >
+                  <Moment fromNow unix>
+                    {status.createdAt?.seconds}
+                  </Moment>
+                </Link>
               </div>
             </div>
 
@@ -328,7 +334,6 @@ const Status = ({
         <div style={{ fontSize: "18px" }}>{status.content}</div>
 
         {status.attachments?.length >= 2 && (
-          // <Link to={`/photo/${status.id}`}>
           <Link
             to={{
               pathname: `/photo/${status.id}`,
