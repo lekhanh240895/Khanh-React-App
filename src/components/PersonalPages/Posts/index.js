@@ -9,15 +9,15 @@ import StatusBar from "../StatusBar/index";
 import Statuses from "../Statuses/index";
 
 export default function Posts() {
-  const { userDoc, ScrollPosition } = useAppContext();
+  const { userDoc, scrollPosition } = useAppContext();
   const statuses = useFirestore("statuses", "");
 
   const orderedStatuses = orderBy(statuses, "createdAt", "desc");
 
   const handleScrollPosition = () => {
-    if (ScrollPosition) {
+    if (scrollPosition) {
       window.scrollTo({
-        top: parseInt(ScrollPosition),
+        top: parseInt(scrollPosition),
         behavior: "smooth",
       });
     }

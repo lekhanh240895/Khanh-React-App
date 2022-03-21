@@ -41,7 +41,7 @@ export const AppProvider = ({ children }) => {
 
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  const [ScrollPosition, setScrollPosition] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   const addDocument = async (FirestoreCollection, data) => {
     await addDoc(collection(db, FirestoreCollection), {
@@ -223,6 +223,8 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  console.log({ scrollPosition });
+
   const value = {
     users,
     userDoc,
@@ -276,8 +278,8 @@ export const AppProvider = ({ children }) => {
     setIsUser,
     photoIndex,
     setPhotoIndex,
-    ScrollPosition,
-    setScrollPosition
+    scrollPosition,
+    setScrollPosition,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

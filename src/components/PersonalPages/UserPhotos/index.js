@@ -38,9 +38,8 @@ export default function UserPhotos({ userProfile }) {
     updateDocument,
     allMessages,
     isUser,
-
-    setScrollPosition,
   } = useAppContext();
+
   const { updateUserProfile } = useAuth();
 
   useEffect(() => {
@@ -71,7 +70,6 @@ export default function UserPhotos({ userProfile }) {
   const handleShowStatusPhotos = (status, index) => {
     setSelectedStatusId(status.id);
     setPhotoIndex(index);
-    setScrollPosition(window.scrollY);
   };
 
   const [key, setKey] = useState("timeline-photo");
