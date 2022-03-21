@@ -15,7 +15,6 @@ const Post = () => {
     handleDeleteComment,
     handleReactComment,
     statuses,
-    setPostModalShow,
   } = useAppContext();
 
   const { postId } = useParams();
@@ -30,7 +29,6 @@ const Post = () => {
 
   const handleCloseStatusPhotoModal = () => {
     history.goBack();
-    setPostModalShow(false);
   };
 
   return (
@@ -40,7 +38,7 @@ const Post = () => {
       fullscreen
       className="post-photo-modal"
     >
-      <div style={{ maxWidth: 1000 }}>
+      <div style={{ maxWidth: 600, width: "100%" }}>
         <span
           className="closed-post-modal-icon"
           onClick={handleCloseStatusPhotoModal}

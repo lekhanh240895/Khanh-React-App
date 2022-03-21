@@ -33,13 +33,12 @@ export default function UserPhotos({ userProfile }) {
   const {
     statuses,
     setSelectedStatusId,
-    // setIsStatusPhotosModalShowed,
     setPhotoIndex,
     userDoc,
     updateDocument,
     allMessages,
     isUser,
-    setPhotoModalShow,
+
     setScrollPosition,
   } = useAppContext();
   const { updateUserProfile } = useAuth();
@@ -70,11 +69,8 @@ export default function UserPhotos({ userProfile }) {
   };
 
   const handleShowStatusPhotos = (status, index) => {
-    // setIsStatusPhotosModalShowed(true);
-
     setSelectedStatusId(status.id);
     setPhotoIndex(index);
-    setPhotoModalShow(true);
     setScrollPosition(window.scrollY);
   };
 

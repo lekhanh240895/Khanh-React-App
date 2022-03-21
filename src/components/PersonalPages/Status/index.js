@@ -22,14 +22,8 @@ const Status = ({
   onDeleteComment,
   onReactStatus,
 }) => {
-  const {
-    setSelectedStatusId,
-    setPhotoIndex,
-    userDoc,
-    setPhotoModalShow,
-    setScrollPosition,
-    setPostModalShow,
-  } = useAppContext();
+  const { setSelectedStatusId, setPhotoIndex, userDoc, setScrollPosition } =
+    useAppContext();
 
   const isStatusOfUser =
     status.postUid === userDoc?.uid || status.uid === userDoc?.uid;
@@ -56,7 +50,6 @@ const Status = ({
   const handleShowPhoto = (index) => {
     setSelectedStatusId(status.id);
     setPhotoIndex(index);
-    setPhotoModalShow(true);
     setScrollPosition(window.scrollY);
   };
 
@@ -219,7 +212,6 @@ const Status = ({
                     pathname: `${status.postEmail}/posts/${status.id}`,
                     state: { from: location.pathname },
                   }}
-                  onClick={() => setPostModalShow(true)}
                   style={{ color: "#000" }}
                 >
                   <Moment fromNow unix>

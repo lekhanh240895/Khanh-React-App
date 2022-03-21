@@ -40,8 +40,7 @@ export const AppProvider = ({ children }) => {
   const [isUser, setIsUser] = useState(false);
 
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [photoModalShow, setPhotoModalShow] = useState(false);
-  const [postModalShow, setPostModalShow] = useState(false);
+
   const [ScrollPosition, setScrollPosition] = useState(0);
 
   const addDocument = async (FirestoreCollection, data) => {
@@ -277,12 +276,8 @@ export const AppProvider = ({ children }) => {
     setIsUser,
     photoIndex,
     setPhotoIndex,
-    photoModalShow,
-    setPhotoModalShow,
     ScrollPosition,
-    setScrollPosition,
-    postModalShow,
-    setPostModalShow,
+    setScrollPosition
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

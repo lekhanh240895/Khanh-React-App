@@ -13,6 +13,7 @@ import { Tooltip } from "antd";
 import { Row, Col, Carousel } from "react-bootstrap";
 import { storage } from "../../../firebase/config";
 import StatusWithPhoto from "../StatusWithPhoto";
+import "./index.css";
 
 export default function Photo() {
   const { photoId } = useParams();
@@ -150,7 +151,7 @@ const PhotoModal = ({ status }) => {
           )}
         </Col>
 
-        <Col xs={12} md={4} style={{ height: "100vh", overflowY: "scroll" }}>
+        <Col xs={12} md={4} className="photo-status-modal-wrapper">
           <StatusWithPhoto
             status={status}
             userDoc={userDoc}

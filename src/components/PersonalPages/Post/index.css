@@ -28,8 +28,9 @@
   display: flex;
   justify-content: center !important;
   align-items: center !important;
-  height: fit-content;
+  height: max-content;
   background-color: #9b9999 !important;
+  min-height: 100vh;
 }
 
 .post-photo-modal-wrapper {
