@@ -26,7 +26,7 @@ import Homepage from "../components/PersonalPages/Homepage/index.js";
 import PersonalPage from "../components/PersonalPages/index";
 import ChatRoom from "./ChatRoom";
 import UserPhotos from "./PersonalPages/UserPhotos/index";
-import Photos from "./PersonalPages/Photo";
+import Photo from "../components/PersonalPages/Photo/index";
 
 //Styles
 import "./FontAwesome";
@@ -44,7 +44,9 @@ import UploadImageChatModal from "./Modals/UploadImageChatModal";
 import UploadImageStatusModal from "./Modals/UploadImageStatusModal";
 import UploadImageCommentModal from "./Modals/UploadImageCommentModal";
 import UploadAvatarModal from "./Modals/UploadAvatarModal";
-import PhotoModal from "./Modals/PhotoModal.js";
+
+//Test
+import Post from "./PersonalPages/Post";
 
 export const App = () => {
   const { users } = useAppContext();
@@ -74,12 +76,16 @@ export const App = () => {
             <ForgotPassWord />
           </Route>
 
-          <PrivateRoute exact path="/">
-            <Homepage />
+          <PrivateRoute path={`/${user.email}/posts/:postId`}>
+            <Post />
           </PrivateRoute>
 
-          <PrivateRoute path="/photo">
-            <Photos />
+          <PrivateRoute path={`/photo/:photoId`}>
+            <Photo />
+          </PrivateRoute>
+
+          <PrivateRoute exact path="/">
+            <Homepage />
           </PrivateRoute>
 
           <PrivateRoute path="/update-profile">
@@ -133,7 +139,6 @@ export const App = () => {
         <UploadImageStatusModal />
         <UploadImageCommentModal />
         <UploadAvatarModal />
-        <PhotoModal />
 
         {user && <ChatIcon />}
         <ScrollTopArrow />
