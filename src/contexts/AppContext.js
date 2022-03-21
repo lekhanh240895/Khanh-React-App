@@ -38,11 +38,10 @@ export const AppProvider = ({ children }) => {
   const [showUploadAvatarModal, setShowUploadAvatarModal] = useState(false);
   const [showUploadImagesModal, setShowUploadImagesModal] = useState(false);
   const [isUser, setIsUser] = useState(false);
-  const [isStatusPhotoModalShowed, setIsStatusPhotosModalShowed] =
-    useState(false);
+
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [photoModalShow, setPhotoModalShow] = useState(true);
-  const [homepageScrollPosition, setHomepageScrollPosition] = useState(0);
+
+  const [ScrollPosition, setScrollPosition] = useState(0);
 
   const addDocument = async (FirestoreCollection, data) => {
     await addDoc(collection(db, FirestoreCollection), {
@@ -275,14 +274,10 @@ export const AppProvider = ({ children }) => {
     handleReactComment,
     isUser,
     setIsUser,
-    isStatusPhotoModalShowed,
-    setIsStatusPhotosModalShowed,
     photoIndex,
     setPhotoIndex,
-    photoModalShow,
-    setPhotoModalShow,
-    homepageScrollPosition,
-    setHomepageScrollPosition,
+    ScrollPosition,
+    setScrollPosition
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

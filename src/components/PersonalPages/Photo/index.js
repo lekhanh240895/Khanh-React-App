@@ -1,11 +1,10 @@
 import React from "react";
 import { Image, Modal } from "react-bootstrap";
 import {
-  Route,
-  useRouteMatch,
   useParams,
   useHistory,
   useLocation,
+  useRouteMatch,
 } from "react-router-dom";
 import { useAppContext } from "../../../contexts/AppContext";
 import { ref, deleteObject } from "firebase/storage";
@@ -14,22 +13,13 @@ import { Tooltip } from "antd";
 import { Row, Col, Carousel } from "react-bootstrap";
 import { storage } from "../../../firebase/config";
 import StatusWithPhoto from "../StatusWithPhoto";
+import "./index.css";
 
-export const Photos = () => {
-  const { path } = useRouteMatch();
-  return (
-    <Route path={`${path}/:statusId`}>
-      <Photo />
-    </Route>
-  );
-};
-export default Photos;
-
-function Photo() {
-  const { statusId } = useParams();
+export default function Photo() {
+  const { photoId } = useParams();
   const { statuses } = useAppContext();
 
-  const status = statuses.find(({ id }) => id === statusId);
+  const status = statuses.find(({ id }) => id === photoId);
 
   return <PhotoModal status={status || {}} />;
 }
@@ -45,15 +35,17 @@ const PhotoModal = ({ status }) => {
     photoIndex,
     setPhotoIndex,
     updateDocument,
-    photoModalShow,
   } = useAppContext();
 
   const history = useHistory();
   const location = useLocation();
-
-  console.log({ location });
+  const match = useRouteMatch();
 
   const handleCloseStatusPhotoModal = () => {
+    if (location.state.from.includes("/posts")) {
+      history.push("/");
+    }
+
     history.push(location.state.from);
   };
 
@@ -83,7 +75,7 @@ const PhotoModal = ({ status }) => {
 
   return (
     <Modal
-      show={photoModalShow}
+      show={match}
       onHide={handleCloseStatusPhotoModal}
       fullscreen
       className="photo-modal"
@@ -159,7 +151,7 @@ const PhotoModal = ({ status }) => {
           )}
         </Col>
 
-        <Col xs={12} md={4} style={{ height: "100vh", overflowY: "scroll" }}>
+        <Col xs={12} md={4} className="photo-status-modal-wrapper">
           <StatusWithPhoto
             status={status}
             userDoc={userDoc}

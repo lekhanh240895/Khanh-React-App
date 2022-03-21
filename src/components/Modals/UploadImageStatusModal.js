@@ -18,6 +18,7 @@ import {
 } from "firebase/storage";
 import { useAppContext } from "../../contexts/AppContext";
 import { v1 as uuidv1 } from "uuid";
+import "./index.css"
 
 const UploadImageStatusModal = () => {
   const [isLoading, setIsLoading] = useState(false);

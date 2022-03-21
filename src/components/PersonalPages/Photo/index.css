@@ -66,6 +66,11 @@
   .option-photo-modal-icon {
     right: 36%;
   }
+
+  .photo-status-modal-wrapper {
+    height: 100vh;
+    overflow-y: scroll;
+  }
 }
 
 .closed-photo-modal-icon {
