@@ -21,10 +21,6 @@ export default function Photo() {
 
   const status = statuses.find(({ id }) => id === photoId);
 
-  return <PhotoModal status={status || {}} />;
-}
-
-const PhotoModal = ({ status }) => {
   const {
     userDoc,
     handleDeleteStatus,
@@ -40,6 +36,8 @@ const PhotoModal = ({ status }) => {
   const history = useHistory();
   const location = useLocation();
   const match = useRouteMatch();
+
+  if (!status) return null;
 
   const handleCloseStatusPhotoModal = () => {
     if (location.state.from.includes("/posts")) {
@@ -82,7 +80,7 @@ const PhotoModal = ({ status }) => {
     >
       <Row style={{ postion: "relative" }}>
         <span
-          className="closed-photo-modal-icon"
+          className="photo-modal-icon photo-modal-icon--close-icon"
           onClick={handleCloseStatusPhotoModal}
         >
           <FontAwesomeIcon icon={["fas", "times"]} />
@@ -144,7 +142,7 @@ const PhotoModal = ({ status }) => {
               trigger="click"
               color="#fff"
             >
-              <span className="option-photo-modal-icon">
+              <span className="photo-modal-icon photo-modal-icon--option-icon">
                 <FontAwesomeIcon icon={["fas", "ellipsis-h"]} />
               </span>
             </Tooltip>
@@ -165,4 +163,4 @@ const PhotoModal = ({ status }) => {
       </Row>
     </Modal>
   );
-};
+}

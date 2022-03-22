@@ -223,8 +223,6 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  console.log({ scrollPosition });
-
   const value = {
     users,
     userDoc,

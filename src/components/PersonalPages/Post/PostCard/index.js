@@ -2,18 +2,18 @@ import { Card, Row, Col } from "react-bootstrap";
 import Moment from "react-moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { groupBy } from "lodash";
 import { Tooltip } from "antd";
 import { useState } from "react";
-import { Modal, Tabs, Tab } from "react-bootstrap";
-import { groupBy } from "lodash";
+import { Modal, Tabs, Tab, Image } from "react-bootstrap";
 
-import PostCommentForm from "../PostCommentForm";
-import UserAvatar from "../UserAvatar";
-import Comment from "../Comment";
-import { Link } from "react-router-dom";
+import Comment from "../../Comment";
+import PostCommentForm from "../../PostCommentForm";
+import UserAvatar from "../../UserAvatar";
+import { useAppContext } from "../../../../contexts/AppContext";
+import { Link, useLocation } from "react-router-dom";
 
-const StatusWithPhoto = ({
-  userDoc,
+const PostCard = ({
   status,
   onDeleteStatus,
   onToggleCommentTab,
@@ -21,6 +21,9 @@ const StatusWithPhoto = ({
   onDeleteComment,
   onReactStatus,
 }) => {
+  const { setSelectedStatusId, setPhotoIndex, userDoc, setScrollPosition } =
+    useAppContext();
+
   const isStatusOfUser =
     status.postUid === userDoc?.uid || status.uid === userDoc?.uid;
 
@@ -30,9 +33,7 @@ const StatusWithPhoto = ({
       : person.displayName;
   });
 
-  const userReact = status.people?.find(
-    (person) => person.uid === userDoc?.uid
-  );
+  const userReact = status.people.find((person) => person.uid === userDoc?.uid);
 
   const statusReacts = React.useMemo(
     () => groupBy(status.people, "react"),
@@ -44,6 +45,12 @@ const StatusWithPhoto = ({
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleShowPhoto = (index) => {
+    setSelectedStatusId(status.id);
+    setPhotoIndex(index);
+    setScrollPosition(window.scrollY);
+  };
 
   const getReactName = (react) => {
     switch (react) {
@@ -66,15 +73,15 @@ const StatusWithPhoto = ({
   /* Not Yet */
   const handleEditStatus = () => {};
 
+  const location = useLocation();
   return (
-    <Card>
+    <Card className="mb-3">
       {/* StatusReactModal */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
           <span className="closed-react-modal-button">
             <FontAwesomeIcon icon={["fas", "times"]} onClick={handleClose} />
           </span>
-
           <Tabs activeKey={tabKey} onSelect={(k) => setTabKey(k)}>
             {reactKeys.map((key) => {
               const reacts = statusReacts[key];
@@ -170,8 +177,9 @@ const StatusWithPhoto = ({
         <Row className="my-2">
           <Col
             xs={10}
+            md={11}
             style={{ lineHeight: 0.5 }}
-            className="d-flex flex-column"
+            className="d-flex flex-column flex-md-row align-items-md-center"
           >
             <div>
               <UserAvatar
@@ -198,28 +206,29 @@ const StatusWithPhoto = ({
                   paddingLeft: "60px",
                 }}
               >
-                <Link
-                  to={{
-                    pathname: `/${status.postEmail}/posts/${status.id}`,
-                    // state: { from: location.pathname },
-                  }}
-                  style={{ color: "#000" }}
-                >
-                  <Moment fromNow unix>
-                    {status.createdAt?.seconds}
-                  </Moment>
-                </Link>
+                <Moment fromNow unix>
+                  {status.createdAt?.seconds}
+                </Moment>
               </div>
             </div>
 
             {status.postUid !== status.uid && (
-              <div>
+              <>
                 <div>
                   <FontAwesomeIcon
                     icon={["fas", "arrow-down"]}
+                    className="d-md-none"
                     style={{
                       fontSize: "20px",
                       margin: "10px 15px",
+                    }}
+                  />
+                  <FontAwesomeIcon
+                    icon={["fas", "arrow-right"]}
+                    className="d-none d-md-block"
+                    style={{
+                      fontSize: "20px",
+                      margin: "0 10px",
                     }}
                   />
                 </div>
@@ -246,11 +255,11 @@ const StatusWithPhoto = ({
                     {status.displayName}
                   </h4>
                 </div>
-              </div>
+              </>
             )}
           </Col>
 
-          <Col xs={2}>
+          <Col xs={2} md={1}>
             {isStatusOfUser && (
               <Tooltip
                 placement="bottomRight"
@@ -306,6 +315,52 @@ const StatusWithPhoto = ({
       {/* StatusBody */}
       <Card.Body>
         <div style={{ fontSize: "18px" }}>{status.content}</div>
+
+        {status.attachments?.length >= 2 && (
+          <Link
+            to={{
+              pathname: `/photo/${status.id}`,
+              state: { from: location.pathname },
+            }}
+          >
+            <Row className="m-1 d-flex">
+              {status.attachments.map((img, index) => (
+                <Col
+                  key={img}
+                  xs={6}
+                  md={4}
+                  className="p-2 text-center flex-grow-1 status-photo-wrapper"
+                  onClick={() => handleShowPhoto(index)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Image fluid src={img} alt={"status-upload"} rounded />
+                </Col>
+              ))}
+            </Row>
+          </Link>
+        )}
+
+        {status.attachments?.length === 1 && (
+          <Link
+            to={{
+              pathname: `/photo/${status.id}`,
+              state: { from: location.pathname },
+            }}
+          >
+            <div
+              className="m-1 p-2 text-center status-photo-wrapper"
+              onClick={() => handleShowPhoto(null)}
+              style={{ cursor: "pointer" }}
+            >
+              <Image
+                fluid
+                src={status.attachments[0]}
+                alt={"status-upload"}
+                rounded
+              />
+            </div>
+          </Link>
+        )}
       </Card.Body>
 
       {/* StatusFooter */}
@@ -368,6 +423,7 @@ const StatusWithPhoto = ({
               style={{ cursor: "pointer", height: "5vh" }}
               className="d-flex align-items-center justify-content-center"
               onClick={() => onReactStatus("thumbs-up")}
+              id="status-react-wrapper"
             >
               <div style={{ fontSize: "18px" }}>
                 {userReact ? (
@@ -509,4 +565,4 @@ const StatusWithPhoto = ({
     </Card>
   );
 };
-export default StatusWithPhoto;
+export default PostCard;

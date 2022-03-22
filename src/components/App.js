@@ -25,7 +25,6 @@ import UpdateProfile from "./PersonalPages/UpdateProfile";
 import Homepage from "../components/PersonalPages/Homepage/index.js";
 import PersonalPage from "../components/PersonalPages/index";
 import ChatRoom from "./ChatRoom";
-import UserPhotos from "./PersonalPages/UserPhotos/index";
 import Photo from "../components/PersonalPages/Photo/index";
 
 //Styles
@@ -44,9 +43,6 @@ import UploadImageChatModal from "./Modals/UploadImageChatModal";
 import UploadImageStatusModal from "./Modals/UploadImageStatusModal";
 import UploadImageCommentModal from "./Modals/UploadImageCommentModal";
 import UploadAvatarModal from "./Modals/UploadAvatarModal";
-
-//Test
-import Post from "./PersonalPages/Post";
 
 export const App = () => {
   const { users } = useAppContext();
@@ -76,9 +72,11 @@ export const App = () => {
             <ForgotPassWord />
           </Route>
 
-          <PrivateRoute path={`/${user.email}/posts/:postId`}>
-            <Post />
-          </PrivateRoute>
+          {users?.map((user) => (
+            <PrivateRoute path={`/${user.email}`} key={user.email}>
+              <PersonalPage userProfile={user} />
+            </PrivateRoute>
+          ))}
 
           <PrivateRoute path={`/photo/:photoId`}>
             <Photo />
@@ -91,18 +89,6 @@ export const App = () => {
           <PrivateRoute path="/update-profile">
             <UpdateProfile />
           </PrivateRoute>
-
-          {users?.map((user) => (
-            <PrivateRoute path={`/${user.email}`} key={user.email}>
-              <PersonalPage userProfile={user} />
-            </PrivateRoute>
-          ))}
-
-          {users?.map((user) => (
-            <PrivateRoute path={`/${user.email}-photos`} key={user.email}>
-              <UserPhotos userProfile={user} />
-            </PrivateRoute>
-          ))}
 
           <PrivateRoute path="/work-calendar">
             <WorkCalendar />

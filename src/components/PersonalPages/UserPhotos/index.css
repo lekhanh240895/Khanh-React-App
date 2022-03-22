@@ -47,17 +47,17 @@
   opacity: 0.8;
 }
 
-.nav-tabs .nav-item {
+.album-tabs .nav-item {
   flex-grow: 1;
 }
 
-.nav-tabs .nav-item button {
+.album-tabs .nav-item button {
   width: 100%;
   font-size: 20px;
   font-weight: 500;
 }
 
-.option-modal-icon {
+/* .option-avatar-modal-icon {
   position: absolute;
   top: 25px;
   right: 25px;
@@ -73,8 +73,55 @@
   z-index: 99;
   border-radius: 50%;
   background-color: #e6e6e6;
+} */
+
+.avatar-modal_icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #747272;
+  font-size: 25px;
+  opacity: 0.5;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  border-radius: 50%;
+  background-color: #e6e6e6;
 }
 
-.option-modal-icon:hover {
+.avatar-modal_icon:hover {
   opacity: 1;
+}
+
+.avatar-modal_icon-option {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.25rem;
+}
+
+.avatar-modal_icon-close {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.25rem;
+}
+
+@media screen and (min-width: 568px) {
+  .avatar-modal_icon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 30px;
+  }
+
+  .avatar-modal_icon-close {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+
+  .avatar-modal_icon-option {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+  }
 }

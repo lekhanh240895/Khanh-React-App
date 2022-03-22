@@ -19,7 +19,7 @@ export default function Pictures({ imgUrls, user }) {
           <Card.Title style={{ cursor: "pointer" }}>
             <Link
               style={{ textDecoration: "none" }}
-              to={`/${user.email}-photos`}
+              to={`/${user.email}/photos`}
             >
               Show all pictures
             </Link>

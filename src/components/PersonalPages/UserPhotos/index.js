@@ -19,16 +19,16 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "antd";
 import { deleteObject } from "firebase/storage";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, useParams } from "react-router-dom";
 import { orderBy } from "lodash";
 
-export default function UserPhotos({ userProfile }) {
+export default function UserPhotos() {
   const [error, setError] = useState("");
-
   const [avatarsUrls, setAvatarsUrls] = useState([]);
 
   const history = useHistory();
   const location = useLocation();
+  const { email } = useParams();
 
   const {
     statuses,
@@ -38,9 +38,15 @@ export default function UserPhotos({ userProfile }) {
     updateDocument,
     allMessages,
     isUser,
+    users,
   } = useAppContext();
-
   const { updateUserProfile } = useAuth();
+
+  const userProfile = users.find((user) => user.email === email);
+  const [index, setIndex] = useState(0);
+  const [key, setKey] = useState("timeline-photo");
+  const [isUploadAvatarModalShowed, setIsUploadAvatarModalShowed] =
+    useState(false);
 
   useEffect(() => {
     const loadAllImages = () => {
@@ -61,7 +67,7 @@ export default function UserPhotos({ userProfile }) {
     //eslint-disable-next-line
   }, []);
 
-  const [index, setIndex] = useState(0);
+  if (!userProfile) return null;
 
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
@@ -71,8 +77,6 @@ export default function UserPhotos({ userProfile }) {
     setSelectedStatusId(status.id);
     setPhotoIndex(index);
   };
-
-  const [key, setKey] = useState("timeline-photo");
 
   const userPhotoStatuses = statuses.filter(
     (status) =>
@@ -84,9 +88,6 @@ export default function UserPhotos({ userProfile }) {
     "createdAt",
     "desc"
   );
-
-  const [isUploadAvatarModalShowed, setIsUploadAvatarModalShowed] =
-    useState(false);
 
   const handleShowUploadAvatar = (index) => {
     setIsUploadAvatarModalShowed(true);
@@ -177,7 +178,7 @@ export default function UserPhotos({ userProfile }) {
             id="controlled-tab-example"
             activeKey={key}
             onSelect={(k) => setKey(k)}
-            className="mb-3"
+            className="album-tabs mb-3"
           >
             <Tab eventKey="timeline-photo" title="Timeline photos">
               {orderUserPhotoStatuses.map((status) => (
@@ -239,7 +240,7 @@ export default function UserPhotos({ userProfile }) {
               >
                 <Modal.Body>
                   <span
-                    className="closed-photo-modal-icon"
+                    className="avatar-modal_icon avatar-modal_icon-close"
                     onClick={handleCloseUploadAvatarModal}
                   >
                     <FontAwesomeIcon icon={["fas", "times"]} />
@@ -284,7 +285,7 @@ export default function UserPhotos({ userProfile }) {
                       trigger="click"
                       color="#fff"
                     >
-                      <span className="option-modal-icon">
+                      <span className="avatar-modal_icon avatar-modal_icon-option">
                         <FontAwesomeIcon icon={["fas", "ellipsis-h"]} />
                       </span>
                     </Tooltip>

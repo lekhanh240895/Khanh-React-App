@@ -3,8 +3,8 @@ import { Modal } from "react-bootstrap";
 import { useAppContext } from "../../../contexts/AppContext";
 import { useParams, useHistory, useRouteMatch } from "react-router-dom";
 import "./index.css";
-import Status from "../Status";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PostCard from "./PostCard";
 
 const Post = () => {
   const {
@@ -18,6 +18,7 @@ const Post = () => {
   } = useAppContext();
 
   const { postId } = useParams();
+
   const match = useRouteMatch();
   const history = useHistory();
 
@@ -28,6 +29,11 @@ const Post = () => {
   }
 
   const handleCloseStatusPhotoModal = () => {
+    history.goBack();
+  };
+
+  const handleDeletePostCard = (status) => {
+    handleDeleteStatus(status);
     history.goBack();
   };
 
@@ -47,10 +53,10 @@ const Post = () => {
         </span>
 
         <div className="post-photo-modal-wrapper">
-          <Status
+          <PostCard
             status={status}
             userDoc={userDoc}
-            onDeleteStatus={handleDeleteStatus}
+            onDeleteStatus={handleDeletePostCard}
             onReactStatus={(emoReact) => handleReactStatus(status, emoReact)}
             onToggleCommentTab={handleToggleCommentTab}
             onReactComment={handleReactComment}

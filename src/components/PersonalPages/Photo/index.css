@@ -21,10 +21,10 @@
 
 .remove-image-icon {
   position: absolute;
-  top: 25px;
+  top: 1rem;
+  left: 0.5rem;
   width: 30px;
   height: 30px;
-  right: 15px;
   color: #747272;
   font-size: 15px;
   opacity: 0.5;
@@ -40,14 +40,11 @@
   opacity: 1;
 }
 
-.option-photo-modal-icon {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  width: 40px;
-  height: 40px;
+.photo-modal-icon {
+  width: 2.5rem;
+  height: 2.5rem;
   color: #747272;
-  font-size: 30px;
+  font-size: 25px;
   opacity: 0.5;
   cursor: pointer;
   display: flex;
@@ -58,41 +55,45 @@
   background-color: #e6e6e6;
 }
 
-.option-photo-modal-icon:hover {
+.photo-modal-icon:hover {
   opacity: 1;
 }
 
+.photo-modal-icon--close-icon {
+  position: absolute;
+  top: 1rem;
+  left: 0.5rem;
+}
+
+.photo-modal-icon--option-icon {
+  position: absolute;
+  top: 1rem;
+  right: 0.5rem;
+}
+
 @media screen and (min-width: 568px) {
-  .option-photo-modal-icon {
-    right: 36%;
+  .photo-modal-icon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 30px;
+  }
+
+  .photo-modal-icon--close-icon {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+
+  .photo-modal-icon--option-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 36.5%;
   }
 
   .photo-status-modal-wrapper {
     height: 100vh;
     overflow-y: scroll;
   }
-}
-
-.closed-photo-modal-icon {
-  position: absolute;
-  top: 25px;
-  left: 25px;
-  width: 40px;
-  height: 40px;
-  color: #747272;
-  font-size: 30px;
-  opacity: 0.5;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-  border-radius: 50%;
-  background-color: #e6e6e6;
-}
-
-.closed-photo-modal-icon:hover {
-  opacity: 1;
 }
 
 .upload-photo-wrapper {
