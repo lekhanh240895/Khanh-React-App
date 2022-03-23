@@ -181,56 +181,55 @@ export default function UserPhotos() {
             className="album-tabs mb-3"
           >
             <Tab eventKey="timeline-photo" title="Timeline photos">
-              {orderUserPhotoStatuses.map((status) => (
-                <Link
-                  to={{
-                    pathname: `/photo/${status.id}`,
-                    state: { from: location.pathname },
-                  }}
-                  key={status.id}
-                >
-                  <Row className="photo-wrapper">
+              <Row>
+                {orderUserPhotoStatuses.map((status) => (
+                  <Col
+                    xs={6}
+                    md={4}
+                    className="user-photo-modal-wrapper p-1"
+                    key={status.id}
+                  >
                     {status.attachments.length > 1 &&
-                      status.attachments?.map((url, index) => (
-                        <Col
-                          xs={6}
-                          md={4}
-                          className="p-1"
-                          key={`${url}-${index}`}
+                      status.attachments.map((url, index) => (
+                        <Link
+                          to={{
+                            pathname: `/photo/${status.id}`,
+                            state: { from: location.pathname },
+                          }}
+                          key={url}
                         >
                           <Image
                             fluid
                             src={url}
                             alt={`${userProfile.displayName}-photo`}
-                            className="timeline-photo"
-                            style={{ cursor: "pointer", borderRadius: "10px" }}
+                            className="pt-1"
+                            rounded
                             onClick={() =>
                               handleShowStatusPhotos(status, index)
                             }
                           />
-                        </Col>
+                        </Link>
                       ))}
-                    {status.attachments.length === 1 &&
-                      status.attachments?.map((url, index) => (
-                        <Col xs={12} className="p-1" key={`${url}-${index}`}>
-                          <Image
-                            fluid
-                            src={url}
-                            alt={`${userProfile.displayName}-photo`}
-                            className="timeline-photo"
-                            style={{
-                              cursor: "pointer",
-                              borderRadius: "10px",
-                            }}
-                            onClick={() =>
-                              handleShowStatusPhotos(status, index)
-                            }
-                          />
-                        </Col>
-                      ))}
-                  </Row>
-                </Link>
-              ))}
+
+                    {status.attachments.length === 1 && (
+                      <Link
+                        to={{
+                          pathname: `/photo/${status.id}`,
+                          state: { from: location.pathname },
+                        }}
+                      >
+                        <Image
+                          fluid
+                          src={status.attachments[0]}
+                          alt={`${userProfile.displayName}-photo`}
+                          className="pt-1"
+                          rounded
+                        />
+                      </Link>
+                    )}
+                  </Col>
+                ))}
+              </Row>
             </Tab>
 
             <Tab eventKey="uploaded-avatar" title="Uploaded avatars">

@@ -1,11 +1,6 @@
 import React from "react";
 import { Image, Modal } from "react-bootstrap";
-import {
-  useParams,
-  useHistory,
-  useLocation,
-  useRouteMatch,
-} from "react-router-dom";
+import { useParams, useHistory, useRouteMatch } from "react-router-dom";
 import { useAppContext } from "../../../contexts/AppContext";
 import { ref, deleteObject } from "firebase/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,17 +29,12 @@ export default function Photo() {
   } = useAppContext();
 
   const history = useHistory();
-  const location = useLocation();
   const match = useRouteMatch();
 
   if (!status) return null;
 
   const handleCloseStatusPhotoModal = () => {
-    if (location.state.from.includes("/posts")) {
-      history.push("/");
-    }
-
-    history.push(location.state.from);
+    history.goBack();
   };
 
   const isStatusOfUser =
@@ -55,19 +45,31 @@ export default function Photo() {
   };
 
   const handleDeletePhoto = async () => {
-    const photoUrl = status.attachments[photoIndex];
-    const httpRef = ref(storage, photoUrl);
-    await deleteObject(httpRef);
-    const newAttachments = status.attachments.filter(
-      (url) => url !== status.attachments[photoIndex]
-    );
+    if (status.attachments.length === 1) {
+      const photoUrl = status.attachments[0];
+      const httpRef = ref(storage, photoUrl);
+      await deleteObject(httpRef);
+      updateDocument("statuses", status.id, {
+        attachments: [],
+      });
+      history.goBack();
+    }
 
-    updateDocument("statuses", status.id, {
-      attachments: newAttachments,
-    });
+    if (status.attachments.length > 1) {
+      const photoUrl = status.attachments[photoIndex];
+      const httpRef = ref(storage, photoUrl);
+      await deleteObject(httpRef);
+      const newAttachments = status.attachments.filter(
+        (url) => url !== status.attachments[photoIndex]
+      );
 
-    if (photoIndex === status.attachments.length - 1) {
-      setPhotoIndex(0);
+      updateDocument("statuses", status.id, {
+        attachments: newAttachments,
+      });
+
+      if (photoIndex === status.attachments.length - 1) {
+        setPhotoIndex(0);
+      }
     }
   };
 
@@ -90,12 +92,11 @@ export default function Photo() {
           {status.attachments?.length > 1 && (
             <Carousel activeIndex={photoIndex} onSelect={handleSelect}>
               {status.attachments.map((url) => (
-                <Carousel.Item key={url}>
+                <Carousel.Item key={url} className="photo-modal-wrapper">
                   <Image
                     fluid
                     src={url}
                     alt="Photos"
-                    className="carousel-photo"
                     key={`photo-${url}`}
                     rounded
                   />
@@ -105,14 +106,15 @@ export default function Photo() {
           )}
 
           {status.attachments?.length === 1 && (
-            <Image
-              fluid
-              src={status.attachments[0]}
-              alt="Photos"
-              className="carousel-photo"
-              key={`photo-${status.attachments[0]}`}
-              rounded
-            />
+            <div className="photo-modal-wrapper">
+              <Image
+                fluid
+                src={status.attachments[0]}
+                alt="Photos"
+                key={`photo-${status.attachments[0]}`}
+                rounded
+              />
+            </div>
           )}
 
           {isStatusOfUser && (

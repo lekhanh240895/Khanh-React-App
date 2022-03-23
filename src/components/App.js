@@ -22,10 +22,10 @@ import Login from "../components/Account/Login/index";
 import SignUp from "../components/Account/SignUp/index.js";
 import ForgotPassWord from "../components/Account/ForgotPassword/index";
 import UpdateProfile from "./PersonalPages/UpdateProfile";
-import Homepage from "../components/PersonalPages/Homepage/index.js";
 import PersonalPage from "../components/PersonalPages/index";
 import ChatRoom from "./ChatRoom";
 import Photo from "../components/PersonalPages/Photo/index";
+import Homepage from "../components/Homepage";
 
 //Styles
 import "./FontAwesome";

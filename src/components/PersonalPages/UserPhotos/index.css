@@ -38,12 +38,12 @@
   }
 }
 
-.photo-wrapper {
+.user-photo-modal-wrapper {
   opacity: 1;
   transition: all 0.5s;
 }
 
-.photo-wrapper:hover {
+.user-photo-modal-wrapper:hover {
   opacity: 0.8;
 }
 
@@ -56,24 +56,6 @@
   font-size: 20px;
   font-weight: 500;
 }
-
-/* .option-avatar-modal-icon {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  width: 40px;
-  height: 40px;
-  color: #747272;
-  font-size: 30px;
-  opacity: 0.5;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-  border-radius: 50%;
-  background-color: #e6e6e6;
-} */
 
 .avatar-modal_icon {
   width: 2.5rem;

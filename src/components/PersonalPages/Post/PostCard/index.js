@@ -317,49 +317,50 @@ const PostCard = ({
         <div style={{ fontSize: "18px" }}>{status.content}</div>
 
         {status.attachments?.length >= 2 && (
-          <Link
-            to={{
-              pathname: `/photo/${status.id}`,
-              state: { from: location.pathname },
-            }}
-          >
-            <Row className="m-1 d-flex">
-              {status.attachments.map((img, index) => (
-                <Col
-                  key={img}
-                  xs={6}
-                  md={4}
-                  className="p-2 text-center flex-grow-1 status-photo-wrapper"
-                  onClick={() => handleShowPhoto(index)}
-                  style={{ cursor: "pointer" }}
+          <Row className="m-1 d-flex">
+            {status.attachments.map((img, index) => (
+              <Col
+                key={img}
+                xs={6}
+                md={4}
+                className="p-2 text-center flex-grow-1 status-photo-wrapper"
+              >
+                <Link
+                  to={{
+                    pathname: `/photo/${status.id}`,
+                    state: { from: location.pathname },
+                  }}
                 >
-                  <Image fluid src={img} alt={"status-upload"} rounded />
-                </Col>
-              ))}
-            </Row>
-          </Link>
+                  <Image
+                    fluid
+                    src={img}
+                    alt={"status-upload"}
+                    rounded
+                    onClick={() => handleShowPhoto(index)}
+                  />
+                </Link>
+              </Col>
+            ))}
+          </Row>
         )}
 
         {status.attachments?.length === 1 && (
-          <Link
-            to={{
-              pathname: `/photo/${status.id}`,
-              state: { from: location.pathname },
-            }}
-          >
-            <div
-              className="m-1 p-2 text-center status-photo-wrapper"
-              onClick={() => handleShowPhoto(null)}
-              style={{ cursor: "pointer" }}
+          <div className="m-1 p-2 text-center status-photo-wrapper">
+            <Link
+              to={{
+                pathname: `/photo/${status.id}`,
+                state: { from: location.pathname },
+              }}
             >
               <Image
                 fluid
                 src={status.attachments[0]}
                 alt={"status-upload"}
                 rounded
+                onClick={() => handleShowPhoto(null)}
               />
-            </div>
-          </Link>
+            </Link>
+          </div>
         )}
       </Card.Body>
 
