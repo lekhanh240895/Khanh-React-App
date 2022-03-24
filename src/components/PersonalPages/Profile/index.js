@@ -3,7 +3,7 @@ import { Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./index.css";
-import AvatarModal from "./AvatarModal/index";
+import Avatar from "./Avatar/index";
 
 export const Profile = ({ isUser, user }) => {
   return (
@@ -13,7 +13,7 @@ export const Profile = ({ isUser, user }) => {
       </Card.Header>
 
       <Card.Body className="d-flex flex-column justify-content-center align-items-center">
-        <AvatarModal user={user} isUser={isUser} />
+        <Avatar user={user} isUser={isUser} />
 
         <Card.Text className="text-center">
           <span style={{ fontSize: "24px" }}>

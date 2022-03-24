@@ -1,0 +1,25 @@
+.picture-wrapper {
+  width: 100%;
+  height: 20vh;
+  position: relative;
+  box-shadow: 2px 2px 2px 2px grey;
+}
+
+.picture-wrapper img {
+  max-height: 20vh;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  border-radius: 0.25rem;
+}
+
+@media screen and (width >= 578px) {
+  .picture-wrapper {
+    height: 25vh;
+  }
+  
+  .picture-wrapper img {
+    max-height: 25vh;
+  }
+}

@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card, Row, Image, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import "./index.css";
 
 export default function Pictures({ imgUrls, user }) {
   return (
@@ -31,15 +32,13 @@ export default function Pictures({ imgUrls, user }) {
         <Row>
           {imgUrls.map((url) => (
             <Col key={url} xs={6} md={4} className="p-1">
-              <Image
-                src={url}
-                alt={`${user.displayName}-photoUpload`}
-                style={{
-                  height: "25vh",
-                  width: "100%",
-                  borderRadius: "5px",
-                }}
-              />
+              <div className="picture-wrapper">
+                <Image
+                  fluid
+                  src={url}
+                  alt={`${user.displayName}-photoUpload`}
+                />
+              </div>
             </Col>
           ))}
         </Row>

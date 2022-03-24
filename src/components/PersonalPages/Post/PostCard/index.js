@@ -319,33 +319,30 @@ const PostCard = ({
         {status.attachments?.length >= 2 && (
           <Row className="m-1 d-flex">
             {status.attachments.map((img, index) => (
-              <Col
-                key={img}
-                xs={6}
-                md={4}
-                className="p-2 text-center flex-grow-1 status-photo-wrapper"
-              >
-                <Link
-                  to={{
-                    pathname: `/photo/${status.id}`,
-                    state: { from: location.pathname },
-                  }}
-                >
-                  <Image
-                    fluid
-                    src={img}
-                    alt={"status-upload"}
-                    rounded
-                    onClick={() => handleShowPhoto(index)}
-                  />
-                </Link>
+              <Col key={img} xs={6} md={4} className="p-2 flex-grow-1">
+                <div className="status-photo-wrapper">
+                  <Link
+                    to={{
+                      pathname: `/photo/${status.id}`,
+                      state: { from: location.pathname },
+                    }}
+                  >
+                    <Image
+                      fluid
+                      src={img}
+                      alt={"status-upload"}
+                      rounded
+                      onClick={() => handleShowPhoto(index)}
+                    />
+                  </Link>
+                </div>
               </Col>
             ))}
           </Row>
         )}
 
         {status.attachments?.length === 1 && (
-          <div className="m-1 p-2 text-center status-photo-wrapper">
+          <div className="m-1 p-2 status-photo-wrapper">
             <Link
               to={{
                 pathname: `/photo/${status.id}`,

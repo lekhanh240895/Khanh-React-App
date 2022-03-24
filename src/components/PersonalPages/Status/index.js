@@ -326,35 +326,32 @@ const Status = ({
         <div style={{ fontSize: "18px" }}>{status.content}</div>
 
         {status.attachments?.length >= 2 && (
-          <Row className="m-1 d-flex">
+          <Row className="m-1">
             {status.attachments.map((img, index) => (
-              <Col
-                key={img}
-                xs={6}
-                md={4}
-                className="p-2 text-center status-photo-wrapper flex-grow-1"
-              >
-                <Link
-                  to={{
-                    pathname: `/photo/${status.id}`,
-                    state: { from: location.pathname },
-                  }}
-                >
-                  <Image
-                    fluid
-                    src={img}
-                    alt={"status-upload"}
-                    rounded
-                    onClick={() => handleShowPhoto(index)}
-                  />
-                </Link>
+              <Col key={img} xs={6} md={4} className="p-2 flex-grow-1">
+                <div className="status-photo-wrapper">
+                  <Link
+                    to={{
+                      pathname: `/photo/${status.id}`,
+                      state: { from: location.pathname },
+                    }}
+                  >
+                    <Image
+                      fluid
+                      src={img}
+                      alt={"status-upload"}
+                      rounded
+                      onClick={() => handleShowPhoto(index)}
+                    />
+                  </Link>
+                </div>
               </Col>
             ))}
           </Row>
         )}
 
         {status.attachments?.length === 1 && (
-          <div className="m-1 p-2 text-center">
+          <div className="m-1 p-2 status-photo-wrapper">
             <Link
               to={{
                 pathname: `/photo/${status.id}`,
