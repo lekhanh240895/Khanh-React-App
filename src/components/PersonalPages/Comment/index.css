@@ -1,0 +1,9 @@
+.comment-image-wrapper .ant-image-mask-info {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.comment-image-wrapper img {
+  border-radius: 0.25rem;
+}

@@ -93,13 +93,7 @@ export default function Photo() {
             <Carousel activeIndex={photoIndex} onSelect={handleSelect}>
               {status.attachments.map((url) => (
                 <Carousel.Item key={url} className="photo-modal-wrapper">
-                  <Image
-                    fluid
-                    src={url}
-                    alt="Photos"
-                    key={`photo-${url}`}
-                    rounded
-                  />
+                  <Image fluid src={url} alt="Photos" rounded />
                 </Carousel.Item>
               ))}
             </Carousel>
@@ -107,13 +101,7 @@ export default function Photo() {
 
           {status.attachments?.length === 1 && (
             <div className="photo-modal-wrapper">
-              <Image
-                fluid
-                src={status.attachments[0]}
-                alt="Photos"
-                key={`photo-${status.attachments[0]}`}
-                rounded
-              />
+              <Image fluid src={status.attachments[0]} alt="Photos" rounded />
             </div>
           )}
 

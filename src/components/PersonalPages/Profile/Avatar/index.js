@@ -38,17 +38,7 @@ export default function Avatar({ user, isUser }) {
           <Image src={user.photoURL} alt="Avatar" />
         </div>
       ) : (
-        <div
-          // style={{
-          //   position: "relative",
-          //   width: "200px",
-          //   height: "200px",
-          //   border: "1px solid #0B3D6B",
-          //   borderRadius: "50%",
-          //   background: "pink",
-          // }}
-          className="avatar-wrapper avatar-wrapper-text"
-        >
+        <div className="avatar-wrapper avatar-wrapper-text">
           <span style={{ fontSize: "100px", fontWeight: "600" }}>
             {user.displayName?.charAt(0)}
           </span>

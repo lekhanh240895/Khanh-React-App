@@ -18,7 +18,6 @@ const Post = () => {
   } = useAppContext();
 
   const { postId } = useParams();
-
   const match = useRouteMatch();
   const history = useHistory();
 

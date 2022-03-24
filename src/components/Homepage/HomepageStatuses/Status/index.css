@@ -1,0 +1,48 @@
+.status-action:hover {
+  background-color: #f2f2f2;
+}
+
+.status-photo-wrapper {
+  opacity: 1;
+  transition: opacity 0.5s;
+  width: 100%;
+  height: 25vh;
+  position: relative;
+  box-shadow: 2px 2px 2px 2px grey;
+
+}
+
+.status-photo-wrapper img {
+  max-height: 25vh;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+}
+
+@media screen and (width >= 578px) {
+  .status-photo-wrapper {
+    height: 35vh;
+  }
+  
+  .status-photo-wrapper img {
+    max-height: 35vh;
+  }
+}
+
+
+.status-photo-wrapper img:hover {
+  opacity: 0.8;
+}
+
+.status-option-icon {
+  opacity: 0.8;
+  border-radius: 50%;
+  color: #747272;
+  padding: 10px;
+}
+
+.status-option-icon:hover {
+  opacity: 1;
+  background-color: #e6e6e6;
+}

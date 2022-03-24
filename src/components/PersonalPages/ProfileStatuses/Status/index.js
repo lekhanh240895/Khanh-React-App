@@ -2,17 +2,17 @@ import { Card, Row, Col } from "react-bootstrap";
 import Moment from "react-moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-
-import Comment from "../Comment";
 import { groupBy } from "lodash";
-import PostCommentForm from "../PostCommentForm";
-import UserAvatar from "../UserAvatar";
 import { Tooltip } from "antd";
 import { useState } from "react";
-import { Modal, Tabs, Tab, Image } from "react-bootstrap";
-import { useAppContext } from "../../../contexts/AppContext";
-import "./index.css";
 import { Link, useLocation } from "react-router-dom";
+
+import Comment from "../../Comment";
+import PostCommentForm from "../../PostCommentForm";
+import UserAvatar from "../../UserAvatar";
+import { Modal, Tabs, Tab, Image } from "react-bootstrap";
+import { useAppContext } from "../../../../contexts/AppContext";
+import "./index.css";
 
 const Status = ({
   status,
@@ -328,7 +328,7 @@ const Status = ({
         {status.attachments?.length >= 2 && (
           <Row className="m-1">
             {status.attachments.map((img, index) => (
-              <Col key={img} xs={6} className="p-2 flex-grow-1">
+              <Col key={img} xs={6} md={4} className="p-2 flex-grow-1">
                 <div className="status-photo-wrapper">
                   <Link
                     to={{

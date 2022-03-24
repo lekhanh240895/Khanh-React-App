@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Col, Row, Tab, Tabs, Modal, Image } from "react-bootstrap";
+import { Col, Row, Tab, Tabs, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip } from "antd";
 import Moment from "react-moment";
 import { find, groupBy } from "lodash";
 import UserAvatar from "../UserAvatar";
+import { Image } from "antd";
+import "./index.css";
 
 export default function Comment({
   comment,
@@ -175,27 +177,25 @@ export default function Comment({
             <div>
               {comment.attachments?.length >= 2 && (
                 <Row className="m-1 d-flex">
-                  {comment.attachments.map((img) => (
-                    <Col
-                      key={img}
-                      xs={6}
-                      md={4}
-                      className="p-2 text-center flex-grow-1"
-                    >
-                      <Image fluid src={img} alt={"comment-upload"} rounded />
-                    </Col>
-                  ))}
+                  <Image.PreviewGroup>
+                    {comment.attachments.map((img) => (
+                      <Col
+                        key={img}
+                        xs={6}
+                        md={4}
+                        className="p-2 flex-grow-1 comment-image-wrapper"
+                      >
+                        <Image src={img} alt="comment-upload" />
+                      </Col>
+                    ))}
+                  </Image.PreviewGroup>
                 </Row>
               )}
 
               {comment.attachments?.length === 1 && (
-                <Row className="m-1">
-                  {comment.attachments.map((img) => (
-                    <Col key={img} xs={12} className="p-2 text-center">
-                      <Image fluid src={img} alt={"comment-upload"} rounded />
-                    </Col>
-                  ))}
-                </Row>
+                <div className="m-1 p-2">
+                  <Image src={comment.attachments[0]} alt="comment-upload" />
+                </div>
               )}
             </div>
 

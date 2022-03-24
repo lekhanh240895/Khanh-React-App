@@ -2,7 +2,7 @@ import React from "react";
 import { useAppContext } from "../../../contexts/AppContext";
 import Status from "./Status";
 
-const Statuses = ({ statuses }) => {
+const ProfileStatuses = ({ statuses }) => {
   const {
     handleDeleteStatus,
     handleReactStatus,
@@ -27,4 +27,4 @@ const Statuses = ({ statuses }) => {
     </div>
   );
 };
-export default React.memo(Statuses);
+export default React.memo(ProfileStatuses);
