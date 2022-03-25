@@ -6,14 +6,13 @@
   opacity: 1;
   transition: opacity 0.5s;
   width: 100%;
-  height: 25vh;
+  height: 30vh;
   position: relative;
   box-shadow: 2px 2px 2px 2px grey;
-
 }
 
 .status-photo-wrapper img {
-  max-height: 25vh;
+  max-height: 30vh;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -22,14 +21,13 @@
 
 @media screen and (width >= 578px) {
   .status-photo-wrapper {
-    height: 35vh;
+    height: 40vh;
   }
-  
+
   .status-photo-wrapper img {
-    max-height: 35vh;
+    max-height: 40vh;
   }
 }
-
 
 .status-photo-wrapper img:hover {
   opacity: 0.8;

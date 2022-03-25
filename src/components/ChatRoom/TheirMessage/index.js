@@ -3,7 +3,7 @@ import React from "react";
 import { formatRelative } from "date-fns";
 import { Avatar, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Image } from "react-bootstrap";
+import { Image } from "antd";
 
 const formatDate = (seconds) => {
   let formattedDate = "";
@@ -54,122 +54,123 @@ export default function TheirMessage({
         className="message-content d-flex align-items-center flex-wrap"
         style={{ marginLeft: "45px" }}
       >
-        {attachments?.length > 0 ? (
-          attachments.map((img) => (
-            <div
-              style={{
-                padding: "0 10px 5px 5px",
-                position: "relative",
-                fontSize: "18px",
-                maxWidth: "400px",
-                zIndex: 1,
-              }}
-              key={img}
-            >
-              <Image
-                fluid
-                alt="pictureMessage"
-                src={img}
+        <Image.PreviewGroup>
+          {attachments?.length > 0 ? (
+            attachments.map((img) => (
+              <div
                 style={{
-                  height: "200px",
-                  width: "200px",
-                  borderRadius: "20px",
+                  padding: "0 10px 5px 5px",
+                  position: "relative",
+                  fontSize: "18px",
+                  maxWidth: "400px",
+                  zIndex: 1,
                 }}
-              />
-
-              {emoReact && (
-                <span
-                  style={{
-                    position: "absolute",
-                    color: "#FF8804",
-                    bottom: -10,
-                    right: -5,
-                    zIndex: 2,
-                    backgroundColor: "#fff",
-                    border: "1px solid gray",
-                    borderRadius: "50%",
-                    width: "30px",
-                    height: "30px",
-                  }}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <FontAwesomeIcon
-                    icon={["far", emoReact]}
-                    style={{
-                      fontSize: "20px",
-                    }}
-                    className="emoji-react"
-                  />
-                </span>
-              )}
-            </div>
-          ))
-        ) : (
-          <Tooltip
-            title={
-              <span
-                style={{
-                  fontWeight: "500",
-                  fontStyle: "italic",
-                }}
+                key={img}
               >
-                {formatDate(createdAt?.seconds)}
-              </span>
-            }
-            placement="right"
-            mouseLeaveDelay={0}
-          >
-            <div
-              style={{
-                backgroundColor: "#0D6EFD",
-                color: "white",
-                borderRadius: "10px",
-                boxShadow: "5px 5px 5px 0 grey",
-                padding: "10px 15px",
-                margin: "0 10px",
-                fontSize: "18px",
-                position: "relative",
-                maxWidth: "400px",
-                zIndex: 1,
-              }}
-            >
-              <div>
-                {content === "like" ? (
-                  <FontAwesomeIcon icon={["fas", "thumbs-up"]} />
-                ) : (
-                  content
+                <Image
+                  alt="pictureMessage"
+                  src={img}
+                  style={{
+                    height: "200px",
+                    width: "200px",
+                    borderRadius: "20px",
+                  }}
+                />
+
+                {emoReact && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      color: "#FF8804",
+                      bottom: -10,
+                      right: -5,
+                      zIndex: 2,
+                      backgroundColor: "#fff",
+                      border: "1px solid gray",
+                      borderRadius: "50%",
+                      width: "30px",
+                      height: "30px",
+                    }}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <FontAwesomeIcon
+                      icon={["far", emoReact]}
+                      style={{
+                        fontSize: "20px",
+                      }}
+                      className="emoji-react"
+                    />
+                  </span>
                 )}
               </div>
-
-              {emoReact && (
+            ))
+          ) : (
+            <Tooltip
+              title={
                 <span
                   style={{
-                    position: "absolute",
-                    color: "#FF8804",
-                    bottom: -15,
-                    right: -10,
-
-                    backgroundColor: "#fff",
-                    border: "1px solid gray",
-                    borderRadius: "50%",
-                    width: "30px",
-                    height: "30px",
+                    fontWeight: "500",
+                    fontStyle: "italic",
                   }}
-                  className="d-flex justify-content-center align-items-center"
                 >
-                  <FontAwesomeIcon
-                    icon={["far", emoReact]}
-                    style={{
-                      fontSize: "20px",
-                      zIndex: 9,
-                    }}
-                    className="emoji-react"
-                  />
+                  {formatDate(createdAt?.seconds)}
                 </span>
-              )}
-            </div>
-          </Tooltip>
-        )}
+              }
+              placement="right"
+              mouseLeaveDelay={0}
+            >
+              <div
+                style={{
+                  backgroundColor: "#0D6EFD",
+                  color: "white",
+                  borderRadius: "10px",
+                  boxShadow: "5px 5px 5px 0 grey",
+                  padding: "10px 15px",
+                  margin: "0 10px",
+                  fontSize: "18px",
+                  position: "relative",
+                  maxWidth: "400px",
+                  zIndex: 1,
+                }}
+              >
+                <div>
+                  {content === "like" ? (
+                    <FontAwesomeIcon icon={["fas", "thumbs-up"]} />
+                  ) : (
+                    content
+                  )}
+                </div>
+
+                {emoReact && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      color: "#FF8804",
+                      bottom: -15,
+                      right: -10,
+
+                      backgroundColor: "#fff",
+                      border: "1px solid gray",
+                      borderRadius: "50%",
+                      width: "30px",
+                      height: "30px",
+                    }}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <FontAwesomeIcon
+                      icon={["far", emoReact]}
+                      style={{
+                        fontSize: "20px",
+                        zIndex: 9,
+                      }}
+                      className="emoji-react"
+                    />
+                  </span>
+                )}
+              </div>
+            </Tooltip>
+          )}
+        </Image.PreviewGroup>
 
         <Tooltip
           title={

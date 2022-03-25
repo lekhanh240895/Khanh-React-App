@@ -236,7 +236,7 @@ const TodoApp = () => {
             />
           </Col>
           <Col xs={3} md>
-            <Button>Submit</Button>
+            <Button type="submit">Submit</Button>
           </Col>
         </Row>
       </SC.StyledForm>

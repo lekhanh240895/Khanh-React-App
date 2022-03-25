@@ -18,8 +18,7 @@ function PostCommentForm({ status }) {
     setCommentImages,
     setSelectedStatusId,
   } = useAppContext();
-  const { register, handleSubmit, reset, watch, setValue, setFocus } =
-    useForm();
+  const { register, handleSubmit, reset, setFocus } = useForm();
 
   const [hasFocus, setHasFocus] = useState(false);
 
@@ -33,17 +32,13 @@ function PostCommentForm({ status }) {
 
   const [showEmoBar, setShowEmoBar] = useState(false);
 
-  const watchComment = watch("comment", "");
-
   const onEmojiClick = (emoji, event) => {
-    setValue("comment", watchComment.concat(emoji.native));
-
-    setFocus("comment");
+    commentRef.current.value = commentRef.current.value.concat(emoji.native);
+    commentRef.current.focus();
   };
 
-  const onPostComment = async (data) => {
+  const handlePostComment = async (data) => {
     const { displayName, photoURL, email, uid } = userDoc;
-
     await updateDocument("statuses", status.id, {
       comments: status.comments.concat({
         attachments: status.uploadCommentImages || [],
@@ -61,6 +56,7 @@ function PostCommentForm({ status }) {
 
     setCommentImages([]);
     setShowEmoBar(false);
+    reset();
   };
 
   const handleUploadImgComment = () => {
@@ -71,12 +67,7 @@ function PostCommentForm({ status }) {
   };
 
   return (
-    <Form
-      onSubmit={handleSubmit((data) => {
-        onPostComment(data);
-        reset();
-      })}
-    >
+    <Form onSubmit={handleSubmit(handlePostComment)}>
       <div className="d-flex justify-content-between align-items-center mb-2">
         <div className="me-2">
           <UserAvatar
@@ -92,7 +83,6 @@ function PostCommentForm({ status }) {
 
         <div style={{ position: "relative" }} className="me-2 flex-grow-1">
           <Form.Control
-            // {...register("comment", { required: true })}
             className="me-2"
             placeholder="Your comment..."
             id="commentInput"
@@ -154,8 +144,6 @@ function PostCommentForm({ status }) {
                 bottom: hasFocus ? "100px" : "50px",
                 zIndex: 99,
               }}
-              showPreview={false}
-              showSkinTones={false}
               data={data}
             />
           )}

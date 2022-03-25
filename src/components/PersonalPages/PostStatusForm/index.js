@@ -8,9 +8,9 @@ import { Tooltip } from "antd";
 import data from "emoji-mart/data/facebook.json";
 import { NimblePicker } from "emoji-mart";
 import "./index.css";
+import { useForm } from "react-hook-form";
 
 function PostStatusForm({ userProfile }) {
-  const inputRef = React.useRef(null);
   const [showEmoBar, setShowEmoBar] = useState(false);
 
   const {
@@ -22,22 +22,28 @@ function PostStatusForm({ userProfile }) {
   } = useAppContext();
   const isUser = userDoc?.email === userProfile?.email;
 
+  const { register, handleSubmit, reset, setFocus } = useForm();
+
+  const { ref, ...rest } = register("status", {
+    required: "What are you thinking?",
+  });
+
+  const statusRef = React.useRef(null);
+
   const onEmojiClick = (emoji, event) => {
-    inputRef.current.value = inputRef.current.value.concat(emoji.native);
-    inputRef.current.focus();
+    statusRef.current.value = statusRef.current.value.concat(emoji.native);
+    statusRef.current.focus();
   };
 
   const handleUploadStatusImages = () => {
     setShowUploadStatusImagesModal(true);
-    inputRef.current.focus();
+    setFocus("status");
   };
 
-  const handlePostStatus = async (e) => {
-    e.preventDefault();
-
+  const handlePostStatus = async (data) => {
     await addDocument("statuses", {
       attachments: uploadStatusImages || [],
-      content: inputRef.current.value,
+      content: data.status,
       people: [],
       comments: [],
       uid: userProfile?.uid,
@@ -53,13 +59,12 @@ function PostStatusForm({ userProfile }) {
     });
 
     setUploadStatusImages([]);
-
-    e.target.reset();
     setShowEmoBar(false);
+    reset();
   };
 
   return (
-    <Form onSubmit={handlePostStatus}>
+    <Form onSubmit={handleSubmit(handlePostStatus)}>
       <div className="d-flex align-items-center justify-content-between px-3">
         <div>
           <UserAvatar
@@ -75,14 +80,17 @@ function PostStatusForm({ userProfile }) {
 
         <div style={{ position: "relative" }} className="mx-2 flex-grow-1">
           <Form.Control
-            ref={inputRef}
+            ref={(e) => {
+              ref(e);
+              statusRef.current = e; // you can still assign to ref
+            }}
+            {...rest}
             type="text"
             placeholder={
               isUser
                 ? "What are you thinking?"
                 : `What do you want to say to ${userProfile.displayName}`
             }
-            required
           />
         </div>
 
@@ -139,8 +147,6 @@ function PostStatusForm({ userProfile }) {
               bottom: "-375px",
               zIndex: 99,
             }}
-            showPreview={false}
-            showSkinTones={false}
             data={data}
           />
         )}
