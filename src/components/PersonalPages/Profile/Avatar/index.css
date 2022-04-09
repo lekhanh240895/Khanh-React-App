@@ -2,11 +2,14 @@
   border-radius: 50%;
 }
 
+.avatar-wrapper {
+  position: relative;
+}
+
 .avatar-wrapper img {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  position: relative;
 }
 
 .avatar-wrapper .ant-image-mask-info {

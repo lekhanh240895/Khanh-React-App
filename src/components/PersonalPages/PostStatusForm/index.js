@@ -25,7 +25,7 @@ function PostStatusForm({ userProfile }) {
   const { register, handleSubmit, reset, setFocus } = useForm();
 
   const { ref, ...rest } = register("status", {
-    required: "What are you thinking?",
+    required: uploadStatusImages.length > 0 ? false : true,
   });
 
   const statusRef = React.useRef(null);
@@ -78,7 +78,7 @@ function PostStatusForm({ userProfile }) {
           </UserAvatar>
         </div>
 
-        <div style={{ position: "relative" }} className="mx-2 flex-grow-1">
+        <div className="mx-2 flex-grow-1">
           <Form.Control
             ref={(e) => {
               ref(e);
@@ -110,7 +110,7 @@ function PostStatusForm({ userProfile }) {
           >
             <FontAwesomeIcon
               icon={["far", "grin"]}
-              className="me-2 emoji-react"
+              className="me-2 icon-react"
               style={{ fontSize: 20 }}
             />
             <span
@@ -144,7 +144,7 @@ function PostStatusForm({ userProfile }) {
             style={{
               width: "100%",
               position: "absolute",
-              bottom: "-375px",
+              top: "50px",
               zIndex: 99,
             }}
             data={data}

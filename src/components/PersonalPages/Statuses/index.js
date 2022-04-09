@@ -14,7 +14,7 @@ const Statuses = ({ statuses }) => {
   } = useAppContext();
 
   const [loadData, setLoadData] = useState([]);
-  const [loadCount, setLoadCount] = useState(2);
+  const [loadCount, setLoadCount] = useState(5);
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
@@ -33,14 +33,22 @@ const Statuses = ({ statuses }) => {
     if (loadCount < statuses.length) {
       setHasMore(true);
     }
+
+    return () => {
+      setLoadData([]);
+    };
   }, [statuses, loadCount]);
 
   const fetchData = () => {
     setTimeout(() => {
-      setLoadCount(loadCount + 1);
-      setLoadData(loadData.concat(statuses.slice(loadCount, loadCount + 1)));
+      setLoadCount(loadCount + 2);
+      setLoadData(loadData.concat(statuses.slice(loadCount, loadCount + 2)));
     }, 500);
   };
+
+  if (statuses.length === 0) {
+    return null;
+  }
 
   return (
     <div className="d-flex flex-column">

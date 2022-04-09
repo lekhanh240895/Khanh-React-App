@@ -38,9 +38,7 @@ export const AppProvider = ({ children }) => {
   const [showUploadAvatarModal, setShowUploadAvatarModal] = useState(false);
   const [showUploadImagesModal, setShowUploadImagesModal] = useState(false);
   const [isUser, setIsUser] = useState(false);
-
   const [photoIndex, setPhotoIndex] = useState(0);
-
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const addDocument = async (FirestoreCollection, data) => {

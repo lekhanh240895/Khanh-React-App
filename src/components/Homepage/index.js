@@ -5,9 +5,12 @@ import { useAppContext } from "../../contexts/AppContext";
 
 import StatusBar from "../PersonalPages/StatusBar";
 import Statuses from "../PersonalPages/Statuses";
+import RightPanel from "../PersonalPages/RightPanel/index";
+import "./index.css";
 
 export default function Homepage() {
   const { userDoc, statuses } = useAppContext();
+
   const orderedStatuses = orderBy(statuses, "createdAt", "desc");
 
   useEffect(() => {
@@ -24,13 +27,27 @@ export default function Homepage() {
   }, [statuses]);
 
   return (
-    <div>
-      <Row>
-        <Col sm={12}>
-          <StatusBar userProfile={userDoc} />
-          <Statuses statuses={orderedStatuses} />
-        </Col>
-      </Row>
-    </div>
+    <Row className="homepage">
+      <Col xs={12} md={8} lg={9}>
+        <StatusBar userProfile={userDoc} />
+        <Statuses statuses={orderedStatuses} />
+      </Col>
+
+      <Col
+        className="d-none d-md-block"
+        md={4}
+        lg={3}
+        style={{
+          maxHeight: "calc(100vh - 100px)",
+          height: "fit-content",
+          position: "sticky",
+          top: "0",
+          overflowY: "auto",
+          minWidth: "200px",
+        }}
+      >
+        <RightPanel />
+      </Col>
+    </Row>
   );
 }

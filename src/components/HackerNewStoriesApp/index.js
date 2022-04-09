@@ -18,6 +18,7 @@ let pageSize = 15;
 
 const getUrl = (searchTerm, page) =>
   `${API_BASE}${API_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_PAGESIZE}${pageSize}`;
+
 const extractSearchTerm = (url) =>
   url
     .substring(url.lastIndexOf("?") + 1, url.indexOf("&"))
@@ -125,9 +126,7 @@ const HackerNewStories = () => {
 
   return (
     <div>
-      <h1>
-        My Hacker Stories with {sumComments} comments
-      </h1>
+      <h1>My Hacker Stories with {sumComments} comments</h1>
       <SearchForm
         searchTerm={searchTerm}
         onSearchSubmit={handleSearchSubmit}

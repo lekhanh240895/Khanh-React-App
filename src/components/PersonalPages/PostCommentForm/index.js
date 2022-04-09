@@ -27,7 +27,7 @@ function PostCommentForm({ status }) {
   const { ref, ...rest } = register("comment", {
     onChange: (e) => setHasFocus(true),
     onBlur: (e) => setHasFocus(false),
-    required: true,
+    required: status.uploadCommentImages?.length > 0 ? false : true,
   });
 
   const [showEmoBar, setShowEmoBar] = useState(false);
@@ -108,7 +108,7 @@ function PostCommentForm({ status }) {
             >
               <FontAwesomeIcon
                 icon={["far", "grin"]}
-                className="me-2 emoji-react"
+                className="me-2 icon-react"
                 style={{ fontSize: 20 }}
               />
             </span>

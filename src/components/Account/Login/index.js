@@ -3,6 +3,7 @@ import { Form, Card, Button, Alert } from "react-bootstrap";
 import { Link, useHistory /* useLocation */ } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAppContext } from "../../../contexts/AppContext";
+import { serverTimestamp } from "firebase/firestore";
 
 export const Login = () => {
   const emailRef = useRef();
@@ -14,8 +15,7 @@ export const Login = () => {
   // const location = useLocation();
   // const { from } = location.state || { from: { pathname: "/" } };
   const [isSucced, setIsSucced] = useState(false);
-
-  const { users, addDocument } = useAppContext();
+  const { users, addDocument, updateDocument } = useAppContext();
 
   const handleLoginByPassword = async (e) => {
     e.preventDefault();
@@ -23,6 +23,7 @@ export const Login = () => {
     try {
       setError("");
       setIsLoading(true);
+
       const { user } = await login(
         emailRef.current.value,
         passwordRef.current.value
@@ -35,13 +36,15 @@ export const Login = () => {
           photoURL: user.photoURL,
           uid: user.uid,
           providerID: user.providerData[0].providerId,
+          isOnline: true,
+          lastOnline: serverTimestamp(),
+        });
+      } else {
+        const userDoc = users.find((dbUser) => dbUser.uid === user.uid);
+        updateDocument("users", userDoc.id, {
+          isOnline: true,
         });
       }
-
-      //function IsDiffer = (element, index, array) => {
-      //   return element.email !== user.email
-      // }
-      // if (users.every(isDiffer)) {}
 
       setIsSucced(true);
       setTimeout(() => {

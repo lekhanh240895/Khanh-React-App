@@ -1,0 +1,15 @@
+.searchBar {
+  position: absolute;
+  top: -0.25rem;
+  min-width: 300px;
+  right: -50px;
+  z-index: 99;
+  box-shadow: 0 0 5px 0 grey;
+}
+
+@media screen and (min-width: 986px) {
+  .searchBar {
+    right: -10px;
+    top: 0.25rem;
+  }
+}

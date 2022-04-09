@@ -43,3 +43,20 @@
   transform: scale(0.9);
   transition: opacity 300ms, transform 300ms;
 }
+
+.ant-avatar-group .ant-avatar:not(:first-child) {
+  margin-left: 0;
+}
+
+.ant-popover-inner-content {
+  display: flex;
+}
+
+.ant-image-preview-operations {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.ant-image-preview-operations-operation-disabled {
+  color: rgba(255, 255, 255, 0.5);
+}

@@ -47,7 +47,6 @@ import UploadAvatarModal from "./Modals/UploadAvatarModal";
 export const App = () => {
   const { users } = useAppContext();
   const { user } = useAuth();
-
   const [show, setShow] = useState(true);
 
   return (

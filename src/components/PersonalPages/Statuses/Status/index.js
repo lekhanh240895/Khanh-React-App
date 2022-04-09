@@ -13,6 +13,7 @@ import UserAvatar from "../../UserAvatar";
 import { Modal, Tabs, Tab, Image } from "react-bootstrap";
 import { useAppContext } from "../../../../contexts/AppContext";
 import "./index.css";
+import { formatRelative } from "date-fns";
 
 const Status = ({
   status,
@@ -75,6 +76,19 @@ const Status = ({
   const handleEditStatus = () => {};
 
   const location = useLocation();
+
+  const formatDate = (seconds) => {
+    let formattedDate = "";
+
+    if (seconds) {
+      formattedDate = formatRelative(new Date(seconds * 1000), new Date());
+
+      formattedDate =
+        formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    return formattedDate;
+  };
   return (
     <Card className="mb-3">
       {/* StatusReactModal */}
@@ -112,7 +126,7 @@ const Status = ({
                         ) : (
                           <FontAwesomeIcon
                             icon={["far", key]}
-                            className="emoji-react"
+                            className="icon-react"
                             style={{ opacity: 1 }}
                           />
                         )}
@@ -155,7 +169,7 @@ const Status = ({
                         ) : (
                           <FontAwesomeIcon
                             icon={["far", key]}
-                            className="emoji-react"
+                            className="icon-react"
                             style={{ opacity: 1, fontSize: 20 }}
                           />
                         )}
@@ -207,17 +221,38 @@ const Status = ({
                   paddingLeft: "60px",
                 }}
               >
-                <Link
-                  to={{
-                    pathname: `${status.postEmail}/posts/${status.id}`,
-                    state: { from: location.pathname },
-                  }}
-                  style={{ color: "#000" }}
+                <span
+                  onClick={() =>
+                    sessionStorage.setItem("scrollPosition", window.scrollY)
+                  }
                 >
-                  <Moment fromNow unix>
-                    {status.createdAt?.seconds}
-                  </Moment>
-                </Link>
+                  <Link
+                    to={{
+                      pathname: `${status.postEmail}/posts/${status.id}`,
+                      state: { from: location.pathname },
+                    }}
+                    style={{ color: "#000" }}
+                  >
+                    <Tooltip
+                      title={
+                        <span
+                          style={{
+                            fontWeight: "500",
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {formatDate(status.createdAt?.seconds)}
+                        </span>
+                      }
+                      placement="bottom"
+                      mouseLeaveDelay={0}
+                    >
+                      <Moment fromNow unix>
+                        {status.createdAt?.seconds}
+                      </Moment>
+                    </Tooltip>
+                  </Link>
+                </span>
               </div>
             </div>
 
@@ -377,7 +412,7 @@ const Status = ({
               <div>
                 <FontAwesomeIcon
                   icon={["far", "grin-hearts"]}
-                  className="me-1 emoji-react"
+                  className="me-1 icon-react"
                   onClick={() => {
                     onReactStatus("grin-hearts");
                     setTabKey("grin-hearts");
@@ -385,7 +420,7 @@ const Status = ({
                 />
                 <FontAwesomeIcon
                   icon={["far", "flushed"]}
-                  className="me-1 emoji-react"
+                  className="me-1 icon-react"
                   onClick={() => {
                     onReactStatus("flushed");
                     setTabKey("flushed");
@@ -393,7 +428,7 @@ const Status = ({
                 />
                 <FontAwesomeIcon
                   icon={["far", "angry"]}
-                  className="me-1 emoji-react"
+                  className="me-1 icon-react"
                   onClick={() => {
                     onReactStatus("angry");
                     setTabKey("angry");
@@ -402,7 +437,7 @@ const Status = ({
 
                 <FontAwesomeIcon
                   icon={["far", "grin-beam-sweat"]}
-                  className="me-1 emoji-react"
+                  className="me-1 icon-react"
                   onClick={() => {
                     onReactStatus("grin-beam-sweat");
                     setTabKey("grin-beam-sweat");
@@ -411,7 +446,7 @@ const Status = ({
 
                 <FontAwesomeIcon
                   icon={["far", "grin-squint-tears"]}
-                  className="me-1 emoji-react"
+                  className="me-1 icon-react"
                   onClick={() => {
                     onReactStatus("grin-squint-tears");
                     setTabKey("grin-squint-tears");

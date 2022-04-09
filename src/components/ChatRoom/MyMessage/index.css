@@ -23,11 +23,11 @@
   opacity: 1;
 }
 
-.message-content:hover .message-edit {
+.message_content:hover .message-edit {
   visibility: visible;
 }
 
-.emoji-react {
+.icon-react {
   background-image: linear-gradient(to bottom, #ffac8b, #ffc815);
   font-size: 40px;
   border-radius: 50%;
@@ -35,6 +35,62 @@
   opacity: 0.7;
 }
 
-.emoji-react:hover {
+.icon-react:hover {
   opacity: 1;
+}
+
+.message-react-wrapper {
+  position: absolute;
+  color: #ff8804;
+  z-index: 2;
+  background-color: #fff;
+  border: 1px solid gray;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  transition: all 0.5s;
+}
+
+.message-react-wrapper-image {
+  bottom: 0;
+  right: 0;
+}
+
+.message-react-wrapper-text {
+  bottom: -15px;
+  right: -10px;
+}
+
+.message_content_image {
+  padding: 0 10px 5px 5px;
+  position: relative;
+  max-width: 30vw;
+}
+
+.message_content_image img {
+  border-radius: 0.5rem;
+}
+
+.message_content_text {
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px 0 grey;
+  padding: 10px 15px;
+  margin: 0 10px;
+  font-size: 18px;
+  position: relative;
+  max-width: 400px;
+}
+
+.message_content_text-myMessage {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.message_content_text-theirMessage {
+  background-color: #e4e6eb;
+  color: #000;
+}
+
+.message_content .ant-image-mask {
+  border-radius: 0.5rem;
 }

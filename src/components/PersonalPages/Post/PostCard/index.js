@@ -12,6 +12,7 @@ import PostCommentForm from "../../PostCommentForm";
 import UserAvatar from "../../UserAvatar";
 import { useAppContext } from "../../../../contexts/AppContext";
 import { Link, useLocation } from "react-router-dom";
+import { formatRelative } from "date-fns";
 
 const PostCard = ({
   status,
@@ -74,6 +75,20 @@ const PostCard = ({
   const handleEditStatus = () => {};
 
   const location = useLocation();
+
+  const formatDate = (seconds) => {
+    let formattedDate = "";
+
+    if (seconds) {
+      formattedDate = formatRelative(new Date(seconds * 1000), new Date());
+
+      formattedDate =
+        formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
+
+    return formattedDate;
+  };
+
   return (
     <Card className="mb-3">
       {/* StatusReactModal */}
@@ -204,11 +219,27 @@ const PostCard = ({
                   fontSize: "14px",
                   fontStyle: "italic",
                   paddingLeft: "60px",
+                  cursor: "pointer",
                 }}
               >
-                <Moment fromNow unix>
-                  {status.createdAt?.seconds}
-                </Moment>
+                <Tooltip
+                  title={
+                    <span
+                      style={{
+                        fontWeight: "500",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {formatDate(status.createdAt?.seconds)}
+                    </span>
+                  }
+                  placement="bottom"
+                  mouseLeaveDelay={0}
+                >
+                  <Moment fromNow unix>
+                    {status.createdAt?.seconds}
+                  </Moment>
+                </Tooltip>
               </div>
             </div>
 

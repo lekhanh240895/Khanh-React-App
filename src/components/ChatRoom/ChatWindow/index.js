@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import { ButtonGroup, Button, Form, Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppContext } from "../../../contexts/AppContext";
@@ -26,23 +26,21 @@ function ChatWindow() {
     setShowChatSidebar,
   } = useAppContext();
 
-  const { register, handleSubmit, reset, watch, setValue, setFocus } =
-    useForm();
+  const { register, handleSubmit, reset } = useForm();
+
   const divRef = useRef(null);
+  const messageRef = useRef(null);
+
   const [showEmoBar, setShowEmoBar] = useState(false);
 
-  const watchMessage = watch("message");
+  const { ref, ...rest } = register("message", {
+    required: true,
+  });
 
   const onEmojiClick = (emoji, event) => {
-    setValue("message", watchMessage.concat(emoji.native));
-
-    setFocus("message");
+    messageRef.current.value = messageRef.current.value.concat(emoji.native);
+    messageRef.current.focus();
   };
-
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {});
-    return () => subscription.unsubscribe();
-  }, [watch]);
 
   const handleLike = async () => {
     await addDocument("messages", {
@@ -128,18 +126,32 @@ function ChatWindow() {
                   maxStyle={{ fontSize: "18px" }}
                 >
                   {members.map((member) => (
-                    <Tooltip
-                      title={member.displayName}
-                      placement="top"
-                      key={member.uid}
-                    >
-                      <Avatar
-                        src={member.photoURL}
-                        style={{ backgroundColor: "pink", fontSize: "20px" }}
-                      >
-                        {member.displayName.charAt(0)}
-                      </Avatar>
-                    </Tooltip>
+                    <div style={{ position: "relative" }} key={member.uid}>
+                      <Tooltip title={member.displayName} placement="top">
+                        <Avatar
+                          src={member.photoURL}
+                          style={{ backgroundColor: "pink", fontSize: "20px" }}
+                        >
+                          {member.displayName.charAt(0)}
+                        </Avatar>
+                      </Tooltip>
+
+                      {member.isOnline && (
+                        <span
+                          style={{
+                            position: "absolute",
+                            bottom: "-5px",
+                            right: "-3px",
+                            zIndex: 99,
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            icon={["fas", "circle"]}
+                            style={{ width: 15, height: 15, color: "#00c900" }}
+                          />
+                        </span>
+                      )}
+                    </div>
                   ))}
                 </Avatar.Group>
               </div>
@@ -210,7 +222,7 @@ function ChatWindow() {
               <div className="d-flex justify-content-between align-items-center">
                 <FontAwesomeIcon
                   icon={["far", "grin"]}
-                  className="emoji-react mx-2"
+                  className="icon-react mx-2"
                   style={{ fontSize: 24, zIndex: 0, cursor: "pointer" }}
                   onClick={() => setShowEmoBar(!showEmoBar)}
                 />
@@ -228,10 +240,14 @@ function ChatWindow() {
 
                 <Form.Control
                   placeholder="Type something here"
-                  {...register("message", { required: true })}
+                  ref={(e) => {
+                    ref(e);
+                    messageRef.current = e; // you can still assign to ref
+                  }}
+                  {...rest}
                 />
 
-                {watchMessage ? (
+                {messageRef.current?.value ? (
                   <Button
                     type="submit"
                     variant="outline-primary"

@@ -41,7 +41,14 @@
   margin: 10px 5px 0 5px;
 }
 
-@media screen and (width >= 576px) {
+@media screen and (width >= 768px) {
+  .poppup-timework {
+    padding: 0 20px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (width >= 994px) {
   .timework-icon {
     position: absolute;
     top: 5px;
@@ -53,7 +60,6 @@
     bottom: 5px;
     left: 10;
     right: 10;
-    text-align: center;
     padding: 0 5px;
     margin-top: 10px;
   }

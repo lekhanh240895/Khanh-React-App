@@ -1,0 +1,16 @@
+.right-panel-wrapper {
+  background-color: #fff;
+  padding: 0.75rem;
+}
+
+.right-panel-wrapper_header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  align-items: center;
+}
+
+.right-panel-wrapper_header span {
+  font-weight: 600;
+  font-size: 1.25rem;
+}

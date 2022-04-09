@@ -7,22 +7,28 @@ import { useAppContext } from "../../contexts/AppContext";
 import { auth } from "../../firebase/config";
 import "./index.css";
 import { faFacebookMessenger } from "@fortawesome/free-brands-svg-icons";
+import { serverTimestamp } from "firebase/firestore";
+import SearchUserForm from "../SearchUserForm";
 
 export default function NavigationBar() {
   const { user, logout } = useAuth();
-  const { setShowChatSidebar } = useAppContext();
+  const { setShowChatSidebar, userDoc, updateDocument } = useAppContext();
 
   const handleSignOut = async () => {
-    logout(auth);
+    await logout(auth);
+    updateDocument("users", userDoc.id, {
+      isOnline: false,
+      lastOnline: serverTimestamp(),
+    });
   };
 
   return (
     <>
       {user && (
-        <Navbar expand="md" bg="dark" variant="dark" className="mb-4">
+        <Navbar expand="lg" className="navbar mb-4" sticky="top">
           <Container fluid>
             <Navbar.Brand>
-              <NavLink exact to={"/"} activeClassName="text-white">
+              <NavLink exact to={"/"} activeClassName="active-link-icon">
                 <FontAwesomeIcon
                   icon={["fab", "korvue"]}
                   style={{ width: "40px", height: "40px" }}
@@ -33,7 +39,7 @@ export default function NavigationBar() {
             <Navbar.Brand>
               <NavLink
                 to="/messages"
-                activeClassName="text-white"
+                activeClassName="active-link-icon"
                 onClick={() => setShowChatSidebar(true)}
               >
                 <FontAwesomeIcon
@@ -44,7 +50,7 @@ export default function NavigationBar() {
             </Navbar.Brand>
 
             <Navbar.Brand>
-              <NavLink to="/work-calendar" activeClassName="text-white">
+              <NavLink to="/work-calendar" activeClassName="active-link-icon">
                 <FontAwesomeIcon
                   icon={["far", "calendar-alt"]}
                   style={{ width: "40px", height: "40px" }}
@@ -53,7 +59,7 @@ export default function NavigationBar() {
             </Navbar.Brand>
 
             <Navbar.Brand>
-              <NavLink to="/covid-app" activeClassName="text-white">
+              <NavLink to="/covid-app" activeClassName="active-link-icon">
                 <FontAwesomeIcon
                   icon={["fas", "virus-slash"]}
                   style={{ width: "40px", height: "40px" }}
@@ -62,7 +68,7 @@ export default function NavigationBar() {
             </Navbar.Brand>
 
             <Navbar.Brand>
-              <NavLink to="/todo-app-redux" activeClassName="text-white">
+              <NavLink to="/todo-app-redux" activeClassName="active-link-icon">
                 <FontAwesomeIcon
                   icon={["far", "list-alt"]}
                   style={{ width: "40px", height: "40px" }}
@@ -73,15 +79,15 @@ export default function NavigationBar() {
             <Navbar.Toggle aria-controls="basic-navbar-nav">
               <FontAwesomeIcon
                 icon={["fas", "bars"]}
-                style={{ width: "30px", height: "30px" }}
+                style={{ width: "40px", height: "40px" }}
               />
             </Navbar.Toggle>
 
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="mx-auto d-flex align-items-md-center">
+              <Nav className="ms-lg-auto d-flex align-items-lg-center my-2 my-lg-0">
                 <NavLink
                   to={`/${user?.email}`}
-                  activeClassName="text-white"
+                  activeClassName="active-link-icon-text"
                   className="mx-2 py-1"
                 >
                   <div className="d-flex align-items-center">
@@ -102,40 +108,47 @@ export default function NavigationBar() {
                           borderRadius: "50%",
                           background: "pink",
                         }}
-                        className="text-white d-flex justify-content-center align-items-center"
+                        className="d-flex justify-content-center align-items-center"
                       >
-                        <span style={{ fontSize: "20px", fontWeight: "600" }}>
+                        <div
+                          style={{
+                            fontSize: "20px",
+                            fontWeight: "600",
+                            color: "#fff",
+                          }}
+                        >
                           {user?.displayName?.charAt(0)}
-                        </span>
+                        </div>
                       </div>
                     )}
 
-                    <span className="ms-2">{user?.displayName}</span>
+                    <span className="ms-2 active-link-icon-text-displayName">
+                      {user?.displayName}
+                    </span>
                   </div>
                 </NavLink>
 
                 <NavLink
                   to="/todo-app"
-                  activeClassName="text-white"
+                  activeClassName="active-link-icon-text"
                   className="mx-2 py-1"
                 >
-                  Todo App
+                  <span>Todo App</span>
                 </NavLink>
 
                 <NavLink
                   to="/stories-app"
-                  activeClassName="text-white"
+                  activeClassName="active-link-icon-text"
                   className="mx-2 py-1"
                 >
-                  Hacker News Stories App
+                  <span> Hacker News Stories App</span>
                 </NavLink>
 
-                <NavDropdown id="basic-nav-dropdown" className="ms-2">
-                  <NavDropdown.Item>
-                    <span
-                      style={{ border: "none", color: "#000" }}
-                      onClick={handleSignOut}
-                    >
+                <SearchUserForm />
+
+                <NavDropdown id="basic-nav-dropdown" className="mx-2">
+                  <NavDropdown.Item onClick={handleSignOut}>
+                    <span style={{ border: "none", color: "#000" }}>
                       Sign out
                     </span>
                   </NavDropdown.Item>

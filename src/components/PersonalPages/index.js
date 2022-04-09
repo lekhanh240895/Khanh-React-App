@@ -31,11 +31,15 @@ export default function PersonalPage({ userProfile }) {
     }
 
     setIsUser(false);
+
+    return () => setIsUser(false);
   }, [userDoc, userProfile, setIsUser]);
 
   //Load Photos
   const deviceInfo = useDeviceInfo();
   useEffect(() => {
+    setImgUrls([]);
+
     const loadImg = async () => {
       const listRef = ref(storage, `${userProfile?.email}/Images/Statuses`);
       let firstPage;
@@ -49,12 +53,15 @@ export default function PersonalPage({ userProfile }) {
       }
 
       firstPage.items.forEach(async (itemRef) => {
-        setImgUrls([]);
         const url = await getDownloadURL(itemRef);
         setImgUrls((prevState) => [...prevState, url]);
       });
     };
     loadImg();
+
+    return () => {
+      setImgUrls([]);
+    };
   }, [deviceInfo, userProfile?.email]);
 
   //Get User Statuses
@@ -75,7 +82,7 @@ export default function PersonalPage({ userProfile }) {
       <Route exact path={path}>
         <Container className="bg-white">
           <Row className="pt-3">
-            <Col md>
+            <Col md className="user-info">
               <Profile isUser={isUser} user={userProfile} />
               <Pictures imgUrls={imgUrls} user={userProfile} />
               <Friends users={users} userProfile={userProfile} />

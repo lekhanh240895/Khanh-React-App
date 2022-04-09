@@ -30,6 +30,11 @@ function CovidApp() {
 
       setSelectedCountryId("vn");
     });
+
+    return () => {
+      setCountries([]);
+      setSelectedCountryId("");
+    };
   }, []);
 
   const handleSelectCountry = (e) => {
@@ -61,7 +66,13 @@ function CovidApp() {
           .catch(() => setError("Failed to load data"));
       }
     }
+
+    return () => {
+      setReport([]);
+    };
   }, [countries, selectedCountryId]);
+
+  if (!selectedCountryId) return null;
 
   return (
     <Container className="p-3">

@@ -72,7 +72,7 @@ export default function Comment({
                 ) : (
                   <FontAwesomeIcon
                     icon={["far", key]}
-                    className="emoji-react"
+                    className="icon-react"
                     style={{ opacity: 1 }}
                   />
                 )}
@@ -115,7 +115,7 @@ export default function Comment({
                 ) : (
                   <FontAwesomeIcon
                     icon={["far", key]}
-                    className="emoji-react"
+                    className="icon-react"
                     style={{ opacity: 1, fontSize: 20 }}
                   />
                 )}
@@ -140,7 +140,7 @@ export default function Comment({
     <Row className="py-3 mb-3 bg-white">
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <span className="closed-modal-button">
+          <span className="closed-react-modal-button">
             <FontAwesomeIcon icon={["fas", "times"]} onClick={handleClose} />
           </span>
           <Tabs activeKey={tabKey} onSelect={(k) => setTabKey(k)}>
@@ -193,7 +193,7 @@ export default function Comment({
               )}
 
               {comment.attachments?.length === 1 && (
-                <div className="m-1 p-2">
+                <div className="m-1 p-2 comment-image-wrapper">
                   <Image src={comment.attachments[0]} alt="comment-upload" />
                 </div>
               )}
@@ -201,7 +201,7 @@ export default function Comment({
 
             {comment.people.length > 0 && (
               <div
-                className="d-flex align-items-end my-2 comment-react"
+                className="d-flex align-items-end my-2 comment-react-wrapper "
                 onClick={handleShow}
                 style={{ cursor: "pointer" }}
               >
@@ -213,20 +213,12 @@ export default function Comment({
                           {key === "thumbs-up" ? (
                             <FontAwesomeIcon
                               icon={["fas", "thumbs-up"]}
-                              className="status-liked"
-                              style={{
-                                padding: 5,
-                                color: "#fff",
-                                background: "#0d6efd",
-                                borderRadius: "50%",
-                                width: 20,
-                                height: 20,
-                              }}
+                              className="comment-liked"
                             />
                           ) : (
                             <FontAwesomeIcon
                               icon={["far", key]}
-                              className="status-react"
+                              className="comment-reacted icon-react"
                               style={{ opacity: 1, fontSize: 18 }}
                             />
                           )}
@@ -254,7 +246,7 @@ export default function Comment({
                 <div>
                   <FontAwesomeIcon
                     icon={["far", "grin-hearts"]}
-                    className="me-1 emoji-react"
+                    className="me-1 icon-react"
                     onClick={() => {
                       onReactComment("grin-hearts");
                       setTabKey("grin-hearts");
@@ -262,7 +254,7 @@ export default function Comment({
                   />
                   <FontAwesomeIcon
                     icon={["far", "flushed"]}
-                    className="me-1 emoji-react"
+                    className="me-1 icon-react"
                     onClick={() => {
                       onReactComment("flushed");
                       setTabKey("flushed");
@@ -270,7 +262,7 @@ export default function Comment({
                   />
                   <FontAwesomeIcon
                     icon={["far", "angry"]}
-                    className="me-1 emoji-react"
+                    className="me-1 icon-react"
                     onClick={() => {
                       onReactComment("angry");
                       setTabKey("angry");
@@ -279,7 +271,7 @@ export default function Comment({
 
                   <FontAwesomeIcon
                     icon={["far", "grin-beam-sweat"]}
-                    className="me-1 emoji-react"
+                    className="me-1 icon-react"
                     onClick={() => {
                       onReactComment("grin-beam-sweat");
                       setTabKey("grin-beam-sweat");
@@ -288,7 +280,7 @@ export default function Comment({
 
                   <FontAwesomeIcon
                     icon={["far", "grin-squint-tears"]}
-                    className="me-1 emoji-react"
+                    className="me-1 icon-react"
                     onClick={() => {
                       onReactComment("grin-squint-tears");
                       setTabKey("grin-squint-tears");
@@ -314,20 +306,12 @@ export default function Comment({
                       {userReact?.react === "thumbs-up" ? (
                         <FontAwesomeIcon
                           icon={["fas", "thumbs-up"]}
-                          className="status-liked me-1"
-                          style={{
-                            padding: 4,
-                            color: "#fff",
-                            background: "#0d6efd",
-                            borderRadius: "50%",
-                            width: 18,
-                            height: 18,
-                          }}
+                          className="comment-liked me-1"
                         />
                       ) : (
                         <FontAwesomeIcon
                           icon={["far", userReact.react]}
-                          className="status-react me-1"
+                          className="comment-reacted icon-react me-1"
                           style={{ opacity: 1, fontSize: 16 }}
                         />
                       )}
