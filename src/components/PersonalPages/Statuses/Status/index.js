@@ -14,6 +14,7 @@ import { Modal, Tabs, Tab, Image } from "react-bootstrap";
 import { useAppContext } from "../../../../contexts/AppContext";
 import "./index.css";
 import { formatRelative } from "date-fns";
+// import EditCommentForm from "../../EditCommentForm";
 
 const Status = ({
   status,
@@ -23,7 +24,8 @@ const Status = ({
   onDeleteComment,
   onReactStatus,
 }) => {
-  const { setSelectedStatusId, setPhotoIndex, userDoc } = useAppContext();
+  const { setSelectedStatusId, setPhotoIndex, userDoc, setShowEditPost } =
+    useAppContext();
 
   const isStatusOfUser =
     status.postUid === userDoc?.uid || status.uid === userDoc?.uid;
@@ -73,7 +75,10 @@ const Status = ({
   };
 
   /* Not Yet */
-  const handleEditStatus = () => {};
+  const handleEditStatus = () => {
+    setShowEditPost(true);
+    setSelectedStatusId(status.id);
+  };
 
   const location = useLocation();
 
@@ -89,6 +94,8 @@ const Status = ({
 
     return formattedDate;
   };
+
+  // const [showEditComment, setShowEditComment] = useState(false);
   return (
     <Card className="mb-3">
       {/* StatusReactModal */}
@@ -307,6 +314,7 @@ const Status = ({
             {isStatusOfUser && (
               <Tooltip
                 placement="bottomRight"
+                overlayStyle={{ zIndex: 1000 }}
                 title={
                   <div
                     style={{
@@ -586,6 +594,22 @@ const Status = ({
           }}
         >
           {status.comments?.map((comment) => (
+            // showEditComment ? (
+            //   <EditCommentForm status={status} />
+            // ) : (
+            //   <Comment
+            //     isStatusOfUser={isStatusOfUser}
+            //     key={comment.id}
+            //     comment={comment}
+            //     onDeleteComment={() => onDeleteComment(status, comment)}
+            //     userDoc={userDoc}
+            //     onReactComment={(emoReact) =>
+            //       onReactComment(status, comment, emoReact)
+            //     }
+            //     setShowEditComment={setShowEditComment}
+            //   />
+            // )
+
             <Comment
               isStatusOfUser={isStatusOfUser}
               key={comment.id}
@@ -595,6 +619,7 @@ const Status = ({
               onReactComment={(emoReact) =>
                 onReactComment(status, comment, emoReact)
               }
+              status={status}
             />
           ))}
 

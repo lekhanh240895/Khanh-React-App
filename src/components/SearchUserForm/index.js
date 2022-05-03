@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppContext } from "../../contexts/AppContext";
@@ -48,13 +48,28 @@ export default function SearchUserForm() {
     inputRef.current?.focus();
   };
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  });
+
   const handleChange = (e) => {
     setQuery(e.target.value);
   };
 
-  const searchUsers = users.filter((user) =>
-    user.displayName.toLowerCase().includes(query.toLowerCase())
-  );
+  const searchUsers = users.filter((user) => {
+    const newStr1 = query
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+    const newStr2 = user.displayName
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+    return newStr2.includes(newStr1);
+  });
 
   const handleSearch = (user) => {
     setSearches(searches.concat(user));
@@ -83,20 +98,37 @@ export default function SearchUserForm() {
     );
   };
 
+  function useOutsideAlerter(ref) {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setShowSearchBar(false);
+          setQuery("");
+        }
+      }
+      // Bind the event listener
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+  const divRef = React.useRef();
+  useOutsideAlerter(divRef);
+
   return (
     <Form className="d-flex align-items-center mx-2 pt-2 p-lg-1">
       <div
         className="d-flex justify-content-between"
         style={{ position: "relative" }}
+        ref={divRef}
       >
         <span
-          style={{
-            backgroundColor: "#F0F2F5",
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-          }}
-          className="d-flex justify-content-center align-items-center me-2"
+          className="me-2 icon-background"
           onClick={() => setShowSearchBar(!showSearchBar)}
         >
           <FontAwesomeIcon
@@ -126,15 +158,7 @@ export default function SearchUserForm() {
             <div className="d-flex justify-content-between">
               <span
                 onClick={() => setShowSearchBar(!showSearchBar)}
-                style={{
-                  backgroundColor: "#F0F2F5",
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  padding: "20px",
-                  cursor: "pointer",
-                }}
-                className="d-flex justify-content-center align-items-center me-2"
+                className="me-2 icon-background"
               >
                 <FontAwesomeIcon
                   icon={["fas", "arrow-left"]}
@@ -174,7 +198,10 @@ export default function SearchUserForm() {
                       className="d-flex justify-content-between my-2"
                       key={user.uid}
                     >
-                      <Link to={`/${user.email}`}>
+                      <Link
+                        to={`/${user.email}`}
+                        onClick={() => setShowSearchBar(false)}
+                      >
                         <div
                           className="d-flex align-items-center justify-content-between"
                           onClick={() => handleSearch(user)}

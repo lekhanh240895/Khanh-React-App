@@ -37,6 +37,7 @@ export const AppProvider = ({ children }) => {
   const [selectedStatusId, setSelectedStatusId] = useState("");
   const [showUploadAvatarModal, setShowUploadAvatarModal] = useState(false);
   const [showUploadImagesModal, setShowUploadImagesModal] = useState(false);
+  const [showEditPost, setShowEditPost] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -276,6 +277,8 @@ export const AppProvider = ({ children }) => {
     setPhotoIndex,
     scrollPosition,
     setScrollPosition,
+    showEditPost,
+    setShowEditPost,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

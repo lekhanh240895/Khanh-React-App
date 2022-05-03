@@ -1,0 +1,20 @@
+.edit-comment_remove-image-icon {
+  position: absolute;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+  right: 10px;
+  color: #747272;
+  font-size: 15px;
+  opacity: 0.5;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #e6e6e6;
+}
+
+.edit-comment_remove-image-icon:hover {
+  opacity: 1;
+}

@@ -43,6 +43,7 @@ import UploadImageChatModal from "./Modals/UploadImageChatModal";
 import UploadImageStatusModal from "./Modals/UploadImageStatusModal";
 import UploadImageCommentModal from "./Modals/UploadImageCommentModal";
 import UploadAvatarModal from "./Modals/UploadAvatarModal";
+import EditPostModal from "./Modals/EditPostModal";
 
 export const App = () => {
   const { users } = useAppContext();
@@ -124,6 +125,7 @@ export const App = () => {
         <UploadImageStatusModal />
         <UploadImageCommentModal />
         <UploadAvatarModal />
+        <EditPostModal />
 
         {user && <ChatIcon />}
         <ScrollTopArrow />

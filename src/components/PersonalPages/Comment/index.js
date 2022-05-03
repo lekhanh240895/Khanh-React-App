@@ -7,6 +7,7 @@ import { find, groupBy } from "lodash";
 import UserAvatar from "../UserAvatar";
 import { Image } from "antd";
 import "./index.css";
+import EditCommentForm from "../EditCommentForm";
 
 export default function Comment({
   comment,
@@ -14,6 +15,7 @@ export default function Comment({
   userDoc,
   onReactComment,
   isStatusOfUser,
+  status,
 }) {
   const userReact = find(comment.people, { uid: userDoc?.uid });
   const getReactName = (react) => {
@@ -133,260 +135,283 @@ export default function Comment({
     return renderReacts;
   };
 
-  /* Not Yet */
-  const handleEditComment = () => {};
+  const handleEditComment = () => {
+    setShowEditComment(true);
+  };
+
+  const [showEditComment, setShowEditComment] = useState(false);
 
   return (
-    <Row className="py-3 mb-3 bg-white">
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Body>
-          <span className="closed-react-modal-button">
-            <FontAwesomeIcon icon={["fas", "times"]} onClick={handleClose} />
-          </span>
-          <Tabs activeKey={tabKey} onSelect={(k) => setTabKey(k)}>
-            {renderCommentReacts()}
-          </Tabs>
-        </Modal.Body>
-      </Modal>
+    <>
+      {showEditComment ? (
+        <EditCommentForm
+          status={status}
+          comment={comment}
+          setShowEditComment={setShowEditComment}
+        />
+      ) : (
+        <Row className="py-3 mb-3 bg-white">
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Body>
+              <span className="closed-react-modal-button">
+                <FontAwesomeIcon
+                  icon={["fas", "times"]}
+                  onClick={handleClose}
+                />
+              </span>
+              <Tabs activeKey={tabKey} onSelect={(k) => setTabKey(k)}>
+                {renderCommentReacts()}
+              </Tabs>
+            </Modal.Body>
+          </Modal>
 
-      <Col xs={10}>
-        <UserAvatar
-          email={comment.email}
-          photoURL={comment.photoURL}
-          width="50px"
-          height="50px"
-          float="left"
-          textSize="25px"
-        >
-          {comment.displayName?.charAt(0)}
-        </UserAvatar>
-
-        <div style={{ paddingLeft: "60px" }}>
-          <div className="comment-section" style={{ position: "relative" }}>
-            <div
-              style={{
-                fontSize: "18px",
-                fontWeight: 600,
-              }}
+          <Col xs={10}>
+            <UserAvatar
+              email={comment.email}
+              photoURL={comment.photoURL}
+              width="50px"
+              height="50px"
+              float="left"
+              textSize="25px"
             >
-              {comment.displayName}
-            </div>
+              {comment.displayName?.charAt(0)}
+            </UserAvatar>
 
-            <div style={{ fontSize: "18px" }}>{comment.content}</div>
-
-            <div>
-              {comment.attachments?.length >= 2 && (
-                <Row className="m-1 d-flex">
-                  <Image.PreviewGroup>
-                    {comment.attachments.map((img) => (
-                      <Col
-                        key={img}
-                        xs={6}
-                        md={4}
-                        className="p-2 flex-grow-1 comment-image-wrapper"
-                      >
-                        <Image src={img} alt="comment-upload" />
-                      </Col>
-                    ))}
-                  </Image.PreviewGroup>
-                </Row>
-              )}
-
-              {comment.attachments?.length === 1 && (
-                <div className="m-1 p-2 comment-image-wrapper">
-                  <Image src={comment.attachments[0]} alt="comment-upload" />
-                </div>
-              )}
-            </div>
-
-            {comment.people.length > 0 && (
-              <div
-                className="d-flex align-items-end my-2 comment-react-wrapper "
-                onClick={handleShow}
-                style={{ cursor: "pointer" }}
-              >
-                <div style={{ cursor: "pointer" }}>
-                  <div className="me-1">
-                    {keys.map((key) => {
-                      return (
-                        <span key={key}>
-                          {key === "thumbs-up" ? (
-                            <FontAwesomeIcon
-                              icon={["fas", "thumbs-up"]}
-                              className="comment-liked"
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={["far", key]}
-                              className="comment-reacted icon-react"
-                              style={{ opacity: 1, fontSize: 18 }}
-                            />
-                          )}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <Tooltip
-                  placement="bottom"
-                  title={comment.people.map((person) => (
-                    <div key={person.uid}>{person.displayName}</div>
-                  ))}
+            <div style={{ paddingLeft: "60px" }}>
+              <div className="comment-section" style={{ position: "relative" }}>
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                  }}
                 >
-                  <span style={{ fontSize: 16 }}>{comment.people.length}</span>
-                </Tooltip>
-              </div>
-            )}
-          </div>
-
-          <div className="d-flex ms-2 mt-1">
-            <Tooltip
-              title={
-                <div>
-                  <FontAwesomeIcon
-                    icon={["far", "grin-hearts"]}
-                    className="me-1 icon-react"
-                    onClick={() => {
-                      onReactComment("grin-hearts");
-                      setTabKey("grin-hearts");
-                    }}
-                  />
-                  <FontAwesomeIcon
-                    icon={["far", "flushed"]}
-                    className="me-1 icon-react"
-                    onClick={() => {
-                      onReactComment("flushed");
-                      setTabKey("flushed");
-                    }}
-                  />
-                  <FontAwesomeIcon
-                    icon={["far", "angry"]}
-                    className="me-1 icon-react"
-                    onClick={() => {
-                      onReactComment("angry");
-                      setTabKey("angry");
-                    }}
-                  />
-
-                  <FontAwesomeIcon
-                    icon={["far", "grin-beam-sweat"]}
-                    className="me-1 icon-react"
-                    onClick={() => {
-                      onReactComment("grin-beam-sweat");
-                      setTabKey("grin-beam-sweat");
-                    }}
-                  />
-
-                  <FontAwesomeIcon
-                    icon={["far", "grin-squint-tears"]}
-                    className="me-1 icon-react"
-                    onClick={() => {
-                      onReactComment("grin-squint-tears");
-                      setTabKey("grin-squint-tears");
-                    }}
-                  />
+                  {comment.displayName}
                 </div>
-              }
-              placement="top"
-              mouseLeaveDelay={0.2}
-              color="white"
-            >
-              <div
-                className="me-3"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  onReactComment("thumbs-up");
-                  setTabKey("thumbs-up");
-                }}
-              >
-                {userReact ? (
-                  <div>
-                    <span>
-                      {userReact?.react === "thumbs-up" ? (
-                        <FontAwesomeIcon
-                          icon={["fas", "thumbs-up"]}
-                          className="comment-liked me-1"
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={["far", userReact.react]}
-                          className="comment-reacted icon-react me-1"
-                          style={{ opacity: 1, fontSize: 16 }}
-                        />
-                      )}
-                    </span>
-                    <span>{getReactName(userReact?.react)}</span>
-                  </div>
-                ) : (
-                  <div>
-                    <FontAwesomeIcon
-                      icon={["far", "thumbs-up"]}
-                      className="me-1"
-                    />
-                    <span>Like</span>
+
+                <div style={{ fontSize: "18px" }}>{comment.content}</div>
+
+                <div>
+                  {comment.attachments?.length >= 2 && (
+                    <Row className="m-1 d-flex">
+                      <Image.PreviewGroup>
+                        {comment.attachments.map((img) => (
+                          <Col
+                            key={img}
+                            xs={6}
+                            md={4}
+                            className="p-2 flex-grow-1 comment-image-wrapper"
+                          >
+                            <Image src={img} alt="comment-upload" />
+                          </Col>
+                        ))}
+                      </Image.PreviewGroup>
+                    </Row>
+                  )}
+
+                  {comment.attachments?.length === 1 && (
+                    <div className="m-1 p-2 comment-image-wrapper">
+                      <Image
+                        src={comment.attachments[0]}
+                        alt="comment-upload"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {comment.people.length > 0 && (
+                  <div
+                    className="d-flex align-items-end my-2 comment-react-wrapper "
+                    onClick={handleShow}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div style={{ cursor: "pointer" }}>
+                      <div className="me-1">
+                        {keys.map((key) => {
+                          return (
+                            <span key={key}>
+                              {key === "thumbs-up" ? (
+                                <FontAwesomeIcon
+                                  icon={["fas", "thumbs-up"]}
+                                  className="comment-liked"
+                                />
+                              ) : (
+                                <FontAwesomeIcon
+                                  icon={["far", key]}
+                                  className="comment-reacted icon-react"
+                                  style={{ opacity: 1, fontSize: 18 }}
+                                />
+                              )}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <Tooltip
+                      placement="bottom"
+                      title={comment.people.map((person) => (
+                        <div key={person.uid}>{person.displayName}</div>
+                      ))}
+                    >
+                      <span style={{ fontSize: 16 }}>
+                        {comment.people.length}
+                      </span>
+                    </Tooltip>
                   </div>
                 )}
               </div>
-            </Tooltip>
 
-            <span
-              style={{
-                fontStyle: "italic",
-              }}
-            >
-              <Moment fromNow unix>
-                {comment.commentedAt.seconds}
-              </Moment>
-            </span>
-          </div>
-        </div>
-      </Col>
+              <div className="d-flex ms-2 mt-1">
+                <Tooltip
+                  title={
+                    <div>
+                      <FontAwesomeIcon
+                        icon={["far", "grin-hearts"]}
+                        className="me-1 icon-react"
+                        onClick={() => {
+                          onReactComment("grin-hearts");
+                          setTabKey("grin-hearts");
+                        }}
+                      />
+                      <FontAwesomeIcon
+                        icon={["far", "flushed"]}
+                        className="me-1 icon-react"
+                        onClick={() => {
+                          onReactComment("flushed");
+                          setTabKey("flushed");
+                        }}
+                      />
+                      <FontAwesomeIcon
+                        icon={["far", "angry"]}
+                        className="me-1 icon-react"
+                        onClick={() => {
+                          onReactComment("angry");
+                          setTabKey("angry");
+                        }}
+                      />
 
-      <Col xs={2}>
-        {(isStatusOfUser || isCommentOfUser) && (
-          <Tooltip
-            placement="bottomRight"
-            title={
-              <span style={{ cursor: "pointer", color: "#000", fontSize: 16 }}>
-                <Row
-                  onClick={onDeleteComment}
-                  className="status-action m-1 p-1"
+                      <FontAwesomeIcon
+                        icon={["far", "grin-beam-sweat"]}
+                        className="me-1 icon-react"
+                        onClick={() => {
+                          onReactComment("grin-beam-sweat");
+                          setTabKey("grin-beam-sweat");
+                        }}
+                      />
+
+                      <FontAwesomeIcon
+                        icon={["far", "grin-squint-tears"]}
+                        className="me-1 icon-react"
+                        onClick={() => {
+                          onReactComment("grin-squint-tears");
+                          setTabKey("grin-squint-tears");
+                        }}
+                      />
+                    </div>
+                  }
+                  placement="top"
+                  mouseLeaveDelay={0.2}
+                  color="white"
                 >
-                  <Col xs={3}>
-                    <FontAwesomeIcon icon={["far", "trash-alt"]} />
-                  </Col>
-                  <Col xs>
-                    <span>Delete comment</span>
-                  </Col>
-                </Row>
+                  <div
+                    className="me-3"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      onReactComment("thumbs-up");
+                      setTabKey("thumbs-up");
+                    }}
+                  >
+                    {userReact ? (
+                      <div>
+                        <span>
+                          {userReact?.react === "thumbs-up" ? (
+                            <FontAwesomeIcon
+                              icon={["fas", "thumbs-up"]}
+                              className="comment-liked me-1"
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={["far", userReact.react]}
+                              className="comment-reacted icon-react me-1"
+                              style={{ opacity: 1, fontSize: 16 }}
+                            />
+                          )}
+                        </span>
+                        <span>{getReactName(userReact?.react)}</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <FontAwesomeIcon
+                          icon={["far", "thumbs-up"]}
+                          className="me-1"
+                        />
+                        <span>Like</span>
+                      </div>
+                    )}
+                  </div>
+                </Tooltip>
 
-                <Row
-                  onClick={handleEditComment}
-                  className="status-action m-1 p-1"
+                <span
+                  style={{
+                    fontStyle: "italic",
+                  }}
                 >
-                  <Col xs={3}>
-                    <FontAwesomeIcon icon={["far", "edit"]} />
-                  </Col>
+                  <Moment fromNow unix>
+                    {comment.commentedAt.seconds}
+                  </Moment>
+                </span>
+              </div>
+            </div>
+          </Col>
 
-                  <Col xs>
-                    <span>Edit comment</span>
-                  </Col>
-                </Row>
-              </span>
-            }
-            trigger="click"
-            color="#fff"
-          >
-            <span
-              style={{ cursor: "pointer", fontSize: 16 }}
-              className="status-option-icon"
-            >
-              <FontAwesomeIcon icon={["fas", "ellipsis-h"]} />
-            </span>
-          </Tooltip>
-        )}
-      </Col>
-    </Row>
+          <Col xs={2}>
+            {(isStatusOfUser || isCommentOfUser) && (
+              <Tooltip
+                placement="bottomRight"
+                title={
+                  <span
+                    style={{ cursor: "pointer", color: "#000", fontSize: 16 }}
+                  >
+                    <Row
+                      onClick={onDeleteComment}
+                      className="status-action m-1 p-1"
+                    >
+                      <Col xs={3}>
+                        <FontAwesomeIcon icon={["far", "trash-alt"]} />
+                      </Col>
+                      <Col xs>
+                        <span>Delete comment</span>
+                      </Col>
+                    </Row>
+
+                    <Row
+                      onClick={handleEditComment}
+                      className="status-action m-1 p-1"
+                    >
+                      <Col xs={3}>
+                        <FontAwesomeIcon icon={["far", "edit"]} />
+                      </Col>
+
+                      <Col xs>
+                        <span>Edit comment</span>
+                      </Col>
+                    </Row>
+                  </span>
+                }
+                trigger="click"
+                color="#fff"
+              >
+                <span
+                  style={{ cursor: "pointer", fontSize: 16 }}
+                  className="status-option-icon"
+                >
+                  <FontAwesomeIcon icon={["fas", "ellipsis-h"]} />
+                </span>
+              </Tooltip>
+            )}
+          </Col>
+        </Row>
+      )}
+    </>
   );
 }
