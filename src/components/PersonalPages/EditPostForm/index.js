@@ -98,64 +98,71 @@ const EditPostForm = ({ status }, cRef) => {
 
   return (
     <Form onSubmit={(e) => e.preventDefault()}>
-      <Form.Control
-        defaultValue={status.content}
-        style={{ border: "none" }}
-        ref={inputRef}
-        className="mb-2"
-      />
-
-      {urls?.length >= 2 && (
-        <Row className="m-1">
-          {urls.map((url, index) => (
-            <Col key={url} xs={6} md={4} className="p-2 flex-grow-1">
-              <div className="status-photo-wrapper">
-                <Image fluid src={url} alt={"status-upload"} rounded />
-                <span className="edit-post_remove-icon">
-                  <FontAwesomeIcon
-                    icon={["fas", "times"]}
-                    size="lg"
-                    onClick={() => handleDeletePhoto(url)}
-                  />
-                </span>
-              </div>
-            </Col>
-          ))}
-        </Row>
-      )}
-
-      {urls?.length === 1 && (
-        <div className="m-1 p-2 status-photo-wrapper">
-          <Image fluid src={urls[0]} alt={"status-upload"} rounded />
-          <span className="edit-post_remove-icon">
-            <FontAwesomeIcon
-              icon={["fas", "times"]}
-              size="lg"
-              onClick={() => handleDeletePhoto(urls[0])}
-            />
-          </span>
-        </div>
-      )}
-
-      <div className="d-flex justify-content-between align-items-center mt-3">
-        <span style={{ fontSize: 18, fontWeight: 500 }}>Add to this post</span>
-        <Form.Label
-          className="text-success me-2 icon-background"
-          htmlFor="upload-photo"
-        >
-          <FontAwesomeIcon icon={["fas", "images"]} style={{ fontSize: 20 }} />
-        </Form.Label>
-
+      <div style={{ height: "50vh", overflowY: "scroll" }} className="p-2">
         <Form.Control
-          id="upload-photo"
-          type="file"
-          multiple
-          onChange={(e) => {
-            handleInputChange(e);
-          }}
-          accept=".jpg, .jpeg, .png"
-          style={{ display: "none" }}
+          defaultValue={status.content}
+          style={{ border: "none" }}
+          ref={inputRef}
+          className="mb-2"
         />
+
+        {urls?.length >= 2 && (
+          <Row className="m-1">
+            {urls.map((url, index) => (
+              <Col key={url} xs={6} md={4} className="p-2 flex-grow-1">
+                <div className="status-photo-wrapper">
+                  <Image fluid src={url} alt={"status-upload"} rounded />
+                  <span className="edit-post_remove-icon">
+                    <FontAwesomeIcon
+                      icon={["fas", "times"]}
+                      size="lg"
+                      onClick={() => handleDeletePhoto(url)}
+                    />
+                  </span>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        )}
+
+        {urls?.length === 1 && (
+          <div className="m-1 p-2 status-photo-wrapper">
+            <Image fluid src={urls[0]} alt={"status-upload"} rounded />
+            <span className="edit-post_remove-icon">
+              <FontAwesomeIcon
+                icon={["fas", "times"]}
+                size="lg"
+                onClick={() => handleDeletePhoto(urls[0])}
+              />
+            </span>
+          </div>
+        )}
+
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <span style={{ fontSize: 18, fontWeight: 500 }}>
+            Add to this post
+          </span>
+          <Form.Label
+            className="text-success me-2 icon-background"
+            htmlFor="upload-photo"
+          >
+            <FontAwesomeIcon
+              icon={["fas", "images"]}
+              style={{ fontSize: 20 }}
+            />
+          </Form.Label>
+
+          <Form.Control
+            id="upload-photo"
+            type="file"
+            multiple
+            onChange={(e) => {
+              handleInputChange(e);
+            }}
+            accept=".jpg, .jpeg, .png"
+            style={{ display: "none" }}
+          />
+        </div>
       </div>
     </Form>
   );

@@ -41,6 +41,7 @@ export const AppProvider = ({ children }) => {
   const [isUser, setIsUser] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [showChatWindow, setShowChatWindow] = useState(false);
 
   const addDocument = async (FirestoreCollection, data) => {
     await addDoc(collection(db, FirestoreCollection), {
@@ -279,6 +280,8 @@ export const AppProvider = ({ children }) => {
     setScrollPosition,
     showEditPost,
     setShowEditPost,
+    showChatWindow,
+    setShowChatWindow,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

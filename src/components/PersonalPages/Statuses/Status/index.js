@@ -594,22 +594,6 @@ const Status = ({
           }}
         >
           {status.comments?.map((comment) => (
-            // showEditComment ? (
-            //   <EditCommentForm status={status} />
-            // ) : (
-            //   <Comment
-            //     isStatusOfUser={isStatusOfUser}
-            //     key={comment.id}
-            //     comment={comment}
-            //     onDeleteComment={() => onDeleteComment(status, comment)}
-            //     userDoc={userDoc}
-            //     onReactComment={(emoReact) =>
-            //       onReactComment(status, comment, emoReact)
-            //     }
-            //     setShowEditComment={setShowEditComment}
-            //   />
-            // )
-
             <Comment
               isStatusOfUser={isStatusOfUser}
               key={comment.id}

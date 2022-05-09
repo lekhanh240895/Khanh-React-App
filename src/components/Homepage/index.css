@@ -1,8 +1,6 @@
 .homepage {
-  width: 100%;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 0;
+  width: 100vw;
+  position: relative;
+  margin-left: -50vw;
+  left: 50%;
 }

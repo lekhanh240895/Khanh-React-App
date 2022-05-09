@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./ScrollTopArrow.css";
+import "./index.css";
 
 export const ScrollTopArrow = ({ showBelow = 200 }) => {
   const [showScroll, setShowScroll] = useState(false);

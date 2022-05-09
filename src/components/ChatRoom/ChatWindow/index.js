@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Button, Form, Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppContext } from "../../../contexts/AppContext";
@@ -30,6 +30,12 @@ function ChatWindow() {
 
   const divRef = useRef(null);
   const messageRef = useRef(null);
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.focus();
+    }
+  });
 
   const [showEmoBar, setShowEmoBar] = useState(false);
 
@@ -88,6 +94,135 @@ function ChatWindow() {
     });
   };
 
+  const renderHeader = () => {
+    if (selectedRoom.type === "group") {
+      return (
+        <div
+          className="header_info d-flex justify-content-between align-items-center"
+          style={{ positon: "relative", height: "10vh" }}
+        >
+          <div>
+            <h4 className="header-title">{selectedRoom.name}</h4>
+            <span className="header-description">
+              {selectedRoom.description}
+            </span>
+          </div>
+
+          <ButtonGroup>
+            <Button
+              variant="white"
+              onClick={() => setIsInviteMemberShowed(true)}
+            >
+              <FontAwesomeIcon icon={["fas", "user-plus"]} className="me-2" />
+              <span>Invite</span>
+            </Button>
+
+            <div className="d-flex align-items-center">
+              <Avatar.Group
+                maxCount="2"
+                size="large"
+                maxStyle={{ fontSize: "18px" }}
+              >
+                {members.map((member) => (
+                  <div style={{ position: "relative" }} key={member.uid}>
+                    <Tooltip title={member.displayName} placement="top">
+                      <Avatar
+                        src={member.photoURL}
+                        style={{
+                          backgroundColor: "pink",
+                          fontSize: "20px",
+                        }}
+                      >
+                        {member.displayName.charAt(0).toUpperCase()}
+                      </Avatar>
+                    </Tooltip>
+
+                    {member.isOnline && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: "-5px",
+                          right: "-3px",
+                          zIndex: 99,
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={["fas", "circle"]}
+                          style={{
+                            width: 15,
+                            height: 15,
+                            color: "#00c900",
+                          }}
+                        />
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </Avatar.Group>
+            </div>
+          </ButtonGroup>
+        </div>
+      );
+    }
+
+    const otherMembers = members.filter(
+      (member) => member.uid !== userDoc?.uid
+    );
+    return (
+      <div className="d-flex justify-content-center align-items-center">
+        <div
+          className="header_info d-flex justify-content-between align-items-center "
+          style={{ positon: "relative", height: "10vh" }}
+        >
+          {otherMembers.map((member) => (
+            <div
+              style={{ position: "relative" }}
+              key={member.uid}
+              className="d-flex align-items-center "
+            >
+              <Avatar
+                src={member.photoURL}
+                style={{
+                  backgroundColor: "pink",
+                  fontSize: "30px",
+                  width: "60px",
+                  height: "60px",
+                }}
+                className="d-flex justify-content-center align-items-center"
+              >
+                {member.displayName.charAt(0).toUpperCase()}
+              </Avatar>
+
+              {member.isOnline && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 45,
+                    left: 45,
+                    zIndex: 99,
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={["fas", "circle"]}
+                    style={{
+                      width: 18,
+                      height: 18,
+                      color: "#00c900",
+                    }}
+                  />
+                </span>
+              )}
+
+              <span className="mx-2" style={{ fontSize: "24px" }}>
+                {member.displayName}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className="bg-white"
@@ -99,64 +234,8 @@ function ChatWindow() {
       }}
     >
       {selectedRoomId ? (
-        <>
-          <div
-            className="header_info d-flex justify-content-between align-items-center"
-            style={{ positon: "relative", height: "10vh" }}
-          >
-            <div>
-              <h4 className="header-title">{selectedRoom.name}</h4>
-              <span className="header-description">
-                {selectedRoom.description}
-              </span>
-            </div>
-
-            <ButtonGroup>
-              <Button
-                variant="white"
-                onClick={() => setIsInviteMemberShowed(true)}
-              >
-                <FontAwesomeIcon icon={["fas", "user-plus"]} className="me-2" />
-                <span>Invite</span>
-              </Button>
-              <div className="d-flex align-items-center">
-                <Avatar.Group
-                  maxCount="2"
-                  size="large"
-                  maxStyle={{ fontSize: "18px" }}
-                >
-                  {members.map((member) => (
-                    <div style={{ position: "relative" }} key={member.uid}>
-                      <Tooltip title={member.displayName} placement="top">
-                        <Avatar
-                          src={member.photoURL}
-                          style={{ backgroundColor: "pink", fontSize: "20px" }}
-                        >
-                          {member.displayName.charAt(0)}
-                        </Avatar>
-                      </Tooltip>
-
-                      {member.isOnline && (
-                        <span
-                          style={{
-                            position: "absolute",
-                            bottom: "-5px",
-                            right: "-3px",
-                            zIndex: 99,
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            icon={["fas", "circle"]}
-                            style={{ width: 15, height: 15, color: "#00c900" }}
-                          />
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </Avatar.Group>
-              </div>
-            </ButtonGroup>
-          </div>
+        <div>
+          {renderHeader()}
 
           <hr />
 
@@ -291,7 +370,7 @@ function ChatWindow() {
               showSkinTones={false}
             />
           )}
-        </>
+        </div>
       ) : (
         <div className="text-center">
           <Alert

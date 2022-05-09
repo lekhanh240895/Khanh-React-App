@@ -2,11 +2,11 @@ import { orderBy } from "lodash";
 import React, { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useAppContext } from "../../contexts/AppContext";
-
 import StatusBar from "../PersonalPages/StatusBar";
 import Statuses from "../PersonalPages/Statuses";
 import RightPanel from "../PersonalPages/RightPanel/index";
 import "./index.css";
+import { SmallChatWindow } from "../SmallChatWindow";
 
 export default function Homepage() {
   const { userDoc, statuses } = useAppContext();
@@ -33,20 +33,21 @@ export default function Homepage() {
         <Statuses statuses={orderedStatuses} />
       </Col>
 
-      <Col
-        className="d-none d-md-block"
-        md={4}
-        lg={3}
-        style={{
-          maxHeight: "calc(100vh - 100px)",
-          height: "fit-content",
-          position: "sticky",
-          top: "0",
-          overflowY: "auto",
-          minWidth: "200px",
-        }}
-      >
+      <Col className="d-none d-md-block" md={4} lg={3}>
         <RightPanel />
+
+        <div
+          style={{
+            position: "fixed",
+            bottom: 0,
+            right: "15%",
+            zIndex: 99,
+            display: "flex",
+            flexDirection: "row-reverse",
+          }}
+        >
+          <SmallChatWindow />
+        </div>
       </Col>
     </Row>
   );

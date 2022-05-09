@@ -15,6 +15,7 @@ export default function AddRoomModal() {
     //Add Room to firebase
     addDocument("rooms", {
       ...data,
+      type: "group",
       members: [user?.uid],
     });
 

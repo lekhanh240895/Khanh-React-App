@@ -90,7 +90,6 @@ function EditCommentForm({ status, comment, setShowEditComment }) {
       );
     }
   };
-  console.log({ urls });
 
   const handleInputChange = (e) => {
     if (e.target.files.length > 0) {
@@ -135,6 +134,12 @@ function EditCommentForm({ status, comment, setShowEditComment }) {
   const divRef = React.useRef();
   useOutsideAlerter(divRef);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setShowEditComment(false);
+    }
+  };
+
   return (
     <Form onSubmit={handleSubmit(handleUpdateComment)} ref={divRef}>
       <div className="d-flex justify-content-between align-items-start p-3 pb-0 bg-white">
@@ -163,6 +168,7 @@ function EditCommentForm({ status, comment, setShowEditComment }) {
             }}
             style={{ padding: hasFocus && "30px 20px" }}
             defaultValue={comment.content}
+            onKeyDown={handleKeyDown}
           />
 
           <Tooltip title="Emotion icons" placement="top" arrowPointAtCenter>
@@ -255,13 +261,17 @@ function EditCommentForm({ status, comment, setShowEditComment }) {
       )}
 
       <div style={{ paddingLeft: "60px" }}>
-        Press to{" "}
         <span
-          onClick={() => setShowEditComment(false)}
-          className="text-primary"
           style={{ cursor: "pointer", fontStyle: "italic" }}
+          className="text-primary"
         >
-          cancel
+          Cick
+        </span>{" "}
+        <span onClick={() => setShowEditComment(false)}>
+          to cancel or press
+        </span>{" "}
+        <span style={{ fontStyle: "italic" }} className="text-primary">
+          Esc
         </span>
       </div>
     </Form>

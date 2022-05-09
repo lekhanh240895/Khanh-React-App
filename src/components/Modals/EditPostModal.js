@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { Modal, Button, Card, Row, Col } from "react-bootstrap";
+import { Modal, Button, Card } from "react-bootstrap";
 import { useAppContext } from "../../contexts/AppContext";
 import EditPostForm from "../PersonalPages/EditPostForm";
 
@@ -42,79 +42,73 @@ export default function EditPostModal() {
       <Modal.Header>
         <div className="text-center w-100">
           <h4>Edit post</h4>
+          <span className="closed-react-modal-button">
+            <FontAwesomeIcon icon={["fas", "times"]} onClick={handleClose} />
+          </span>
         </div>
-        <span className="closed-react-modal-button">
-          <FontAwesomeIcon icon={["fas", "times"]} onClick={handleClose} />
-        </span>
       </Modal.Header>
 
       <Modal.Body>
-        {/* <EditPostForm status={status} ref={inputRef} /> */}
         <Card className="mb-3">
           {/* StatusHeader */}
-          <Card.Header>
-            <Row className="my-2">
-              <Col
-                style={{ lineHeight: 0.5 }}
-                className="d-flex flex-column flex-md-row align-items-md-center"
-              >
-                <div>
-                  <UserAvatar
-                    float="left"
-                    email={status.postEmail}
-                    photoURL={status.postPhotoURL}
-                    width="50px"
-                    height="50px"
-                    textSize="30px"
-                  >
-                    {status.postDisplayName?.charAt(0)}
-                  </UserAvatar>
+          <Card.Header style={{ lineHeight: 0.5 }}>
+            <div className="my-2 d-flex flex-column flex-md-row align-items-md-center">
+              <div>
+                <UserAvatar
+                  float="left"
+                  email={status.postEmail}
+                  photoURL={status.postPhotoURL}
+                  width="50px"
+                  height="50px"
+                  textSize="30px"
+                >
+                  {status.postDisplayName?.charAt(0)}
+                </UserAvatar>
 
-                  <h4
-                    style={{
-                      paddingLeft: "60px",
-                      fontWeight: 600,
-                      fontSize: 22,
-                    }}
-                  >
-                    {status.postDisplayName}
-                  </h4>
+                <h4
+                  style={{
+                    paddingLeft: "60px",
+                    fontWeight: 600,
+                    fontSize: 22,
+                  }}
+                >
+                  {status.postDisplayName}
+                </h4>
 
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      fontStyle: "italic",
-                      paddingLeft: "60px",
-                    }}
+                <div
+                  style={{
+                    fontSize: "14px",
+                    fontStyle: "italic",
+                    paddingLeft: "60px",
+                  }}
+                >
+                  <span
+                    onClick={() =>
+                      sessionStorage.setItem("scrollPosition", window.scrollY)
+                    }
                   >
-                    <span
-                      onClick={() =>
-                        sessionStorage.setItem("scrollPosition", window.scrollY)
+                    <Tooltip
+                      title={
+                        <span
+                          style={{
+                            fontWeight: "500",
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {formatDate(status.createdAt?.seconds)}
+                        </span>
                       }
+                      placement="bottom"
+                      mouseLeaveDelay={0}
                     >
-                      <Tooltip
-                        title={
-                          <span
-                            style={{
-                              fontWeight: "500",
-                              fontStyle: "italic",
-                            }}
-                          >
-                            {formatDate(status.createdAt?.seconds)}
-                          </span>
-                        }
-                        placement="bottom"
-                        mouseLeaveDelay={0}
-                      >
-                        <Moment fromNow unix>
-                          {status.createdAt?.seconds}
-                        </Moment>
-                      </Tooltip>
-                    </span>
-                  </div>
+                      <Moment fromNow unix>
+                        {status.createdAt?.seconds}
+                      </Moment>
+                    </Tooltip>
+                  </span>
                 </div>
-              </Col>
-            </Row>
+              </div>
+            </div>
           </Card.Header>
 
           {/* StatusBody */}
