@@ -91,7 +91,7 @@ export default function RightPanel() {
     }
 
     const docRef = await addDoc(collection(db, "rooms"), {
-      name: "",
+      name: `${userDoc?.displayName}, ${user.displayName}`,
       members: [userDoc?.uid, user.uid],
       type: "invidual",
       createdAt: serverTimestamp(),

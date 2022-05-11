@@ -121,14 +121,14 @@ export const SmallChatWindow = () => {
     <Card
       style={{
         width: "325px",
-        height: "500px",
+        minHeight: "60vh",
         margin: "0 5px",
         border: "1px solid grey",
         backgroundColor: "#fff",
         borderRadius: "10px",
       }}
     >
-      <Card.Header className="my-1 d-flex flex-column flex-md-row align-items-md-center">
+      <Card.Header className="d-flex flex-column flex-md-row align-items-md-center">
         <Avatar.Group maxCount="2" size="large" maxStyle={{ fontSize: "18px" }}>
           {roomMembers?.map((member) => {
             return (
@@ -191,7 +191,7 @@ export const SmallChatWindow = () => {
       <Card.Body>
         <div
           className="messages d-flex flex-column"
-          style={{ zIndex: 1, height: "350px", overflowY: "auto" }}
+          style={{ zIndex: 1, height: "40vh", overflowY: "auto" }}
           ref={divRef}
         >
           {orderedMessages.map((message, index) => {
@@ -237,7 +237,7 @@ export const SmallChatWindow = () => {
         </div>
       </Card.Body>
 
-      <Card.Footer className="d-flex align-items-center" style={{ padding: 5 }}>
+      <Card.Footer className="d-flex align-items-center px-1">
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="d-flex justify-content-between align-items-center">
             <FontAwesomeIcon

@@ -8,7 +8,14 @@ import { useAppContext } from "../../../contexts/AppContext";
 export default function Sidebar() {
   const { showChatSidebar, setShowChatSidebar } = useAppContext();
   return (
-    <div className="room-sidebar" style={{ height: "85vh", padding: 10 }}>
+    <div
+      className="room-sidebar"
+      style={{
+        height: "85vh",
+        padding: 15,
+        overflowY: "auto",
+      }}
+    >
       <Offcanvas
         show={showChatSidebar}
         onHide={() => setShowChatSidebar(false)}
@@ -29,7 +36,7 @@ export default function Sidebar() {
       </Offcanvas>
 
       <Row>
-        <Col xs={24} className="mt-2 mb-4" style={{}}>
+        <Col xs={24} className="mt-2 mb-4">
           <UserInfo />
         </Col>
 

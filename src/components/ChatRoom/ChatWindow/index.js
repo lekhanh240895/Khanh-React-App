@@ -27,6 +27,7 @@ function ChatWindow() {
   } = useAppContext();
 
   const { register, handleSubmit, reset } = useForm();
+  const [input, setInput] = useState("");
 
   const divRef = useRef(null);
   const messageRef = useRef(null);
@@ -39,12 +40,10 @@ function ChatWindow() {
 
   const [showEmoBar, setShowEmoBar] = useState(false);
 
-  const { ref, ...rest } = register("message", {
-    required: true,
-  });
+  const { ref, ...rest } = register("message");
 
   const onEmojiClick = (emoji, event) => {
-    messageRef.current.value = messageRef.current.value.concat(emoji.native);
+    setInput(input.concat(emoji.native));
     messageRef.current.focus();
   };
 
@@ -64,19 +63,22 @@ function ChatWindow() {
   };
 
   const onSubmit = async (data) => {
-    await addDocument("messages", {
-      content: data.message,
-      roomId: selectedRoomId,
-      uid: userDoc.uid,
-      photoURL: userDoc.photoURL,
-      displayName: userDoc.displayName,
-    });
+    if (input.length > 0) {
+      await addDocument("messages", {
+        content: input,
+        roomId: selectedRoomId,
+        uid: userDoc.uid,
+        photoURL: userDoc.photoURL,
+        displayName: userDoc.displayName,
+      });
 
-    const H = divRef.current.scrollHeight;
-    divRef.current?.scrollTo({ top: H, behavior: "smooth" });
+      const H = divRef.current.scrollHeight;
+      divRef.current?.scrollTo({ top: H, behavior: "smooth" });
+      setInput("");
 
-    reset();
-    setShowEmoBar(false);
+      reset();
+      setShowEmoBar(false);
+    }
   };
 
   const handleDeleteMessage = (message) => {
@@ -94,15 +96,20 @@ function ChatWindow() {
     });
   };
 
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
   const renderHeader = () => {
     if (selectedRoom.type === "group") {
       return (
         <div
           className="header_info d-flex justify-content-between align-items-center"
-          style={{ positon: "relative", height: "10vh" }}
+          style={{ positon: "relative", height: "8vh" }}
         >
           <div>
             <h4 className="header-title">{selectedRoom.name}</h4>
+
             <span className="header-description">
               {selectedRoom.description}
             </span>
@@ -171,8 +178,8 @@ function ChatWindow() {
     return (
       <div className="d-flex justify-content-center align-items-center">
         <div
-          className="header_info d-flex justify-content-between align-items-center "
-          style={{ positon: "relative", height: "10vh" }}
+          className="header_info d-flex justify-content-between align-items-center"
+          style={{ positon: "relative", height: "8vh" }}
         >
           {otherMembers.map((member) => (
             <div
@@ -180,38 +187,40 @@ function ChatWindow() {
               key={member.uid}
               className="d-flex align-items-center "
             >
-              <Avatar
-                src={member.photoURL}
-                style={{
-                  backgroundColor: "pink",
-                  fontSize: "30px",
-                  width: "60px",
-                  height: "60px",
-                }}
-                className="d-flex justify-content-center align-items-center"
-              >
-                {member.displayName.charAt(0).toUpperCase()}
-              </Avatar>
-
-              {member.isOnline && (
-                <span
+              <div style={{ position: "relative" }}>
+                <Avatar
+                  src={member.photoURL}
                   style={{
-                    position: "absolute",
-                    top: 45,
-                    left: 45,
-                    zIndex: 99,
+                    backgroundColor: "pink",
+                    fontSize: "30px",
+                    width: "60px",
+                    height: "60px",
                   }}
+                  className="d-flex justify-content-center align-items-center"
                 >
-                  <FontAwesomeIcon
-                    icon={["fas", "circle"]}
+                  {member.displayName.charAt(0).toUpperCase()}
+                </Avatar>
+
+                {member.isOnline && (
+                  <span
                     style={{
-                      width: 18,
-                      height: 18,
-                      color: "#00c900",
+                      position: "absolute",
+                      bottom: "-5px",
+                      right: "-5px",
+                      zIndex: 99,
                     }}
-                  />
-                </span>
-              )}
+                  >
+                    <FontAwesomeIcon
+                      icon={["fas", "circle"]}
+                      style={{
+                        width: 18,
+                        height: 18,
+                        color: "#00c900",
+                      }}
+                    />
+                  </span>
+                )}
+              </div>
 
               <span className="mx-2" style={{ fontSize: "24px" }}>
                 {member.displayName}
@@ -231,6 +240,7 @@ function ChatWindow() {
         padding: "10px",
         position: "relative",
         margin: 0,
+        overflowY: "auto",
       }}
     >
       {selectedRoomId ? (
@@ -288,70 +298,63 @@ function ChatWindow() {
 
           <hr />
 
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              width: "calc(100% - 20px)",
-              zIndex: 9,
-            }}
-            className="p-1 mb-1"
-          >
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <div className="d-flex justify-content-between align-items-center">
-                <FontAwesomeIcon
-                  icon={["far", "grin"]}
-                  className="icon-react mx-2"
-                  style={{ fontSize: 24, zIndex: 0, cursor: "pointer" }}
-                  onClick={() => setShowEmoBar(!showEmoBar)}
-                />
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <div className="d-flex justify-content-between align-items-center pb-0">
+              <FontAwesomeIcon
+                icon={["far", "grin"]}
+                className="icon-react mx-2"
+                style={{ fontSize: 24, zIndex: 0, cursor: "pointer" }}
+                onClick={() => setShowEmoBar(!showEmoBar)}
+              />
 
-                <span
-                  className="text-success"
-                  style={{ fontSize: 24, cursor: "pointer" }}
+              <span
+                className="text-success"
+                style={{ fontSize: 24, cursor: "pointer" }}
+              >
+                <FontAwesomeIcon
+                  icon={["fas", "images"]}
+                  className="me-2"
+                  onClick={() => setShowUploadMessageImagesModal(true)}
+                />
+              </span>
+
+              <Form.Control
+                placeholder="Type something here"
+                ref={(e) => {
+                  ref(e);
+                  messageRef.current = e; // you can still assign to ref
+                }}
+                {...rest}
+                className="flex-grow-1"
+                onChange={handleInputChange}
+                value={input}
+              />
+
+              {messageRef.current?.value ? (
+                <Button
+                  type="submit"
+                  variant="outline-primary"
+                  className="border-0 px-2"
                 >
                   <FontAwesomeIcon
-                    icon={["fas", "images"]}
-                    className="me-2"
-                    onClick={() => setShowUploadMessageImagesModal(true)}
+                    icon={["fas", "paper-plane"]}
+                    style={{ fontSize: 24 }}
                   />
-                </span>
-
-                <Form.Control
-                  placeholder="Type something here"
-                  ref={(e) => {
-                    ref(e);
-                    messageRef.current = e; // you can still assign to ref
-                  }}
-                  {...rest}
-                />
-
-                {messageRef.current?.value ? (
-                  <Button
-                    type="submit"
-                    variant="outline-primary"
-                    className="border-0 px-2"
-                  >
-                    <FontAwesomeIcon
-                      icon={["fas", "paper-plane"]}
-                      style={{ fontSize: 24 }}
-                    />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleLike}
-                    variant="outline-primary"
-                    className="border-0 px-2"
-                  >
-                    <FontAwesomeIcon
-                      icon={["fas", "thumbs-up"]}
-                      style={{ fontSize: 24 }}
-                    />
-                  </Button>
-                )}
-              </div>
-            </Form>
-          </div>
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleLike}
+                  variant="outline-primary"
+                  className="border-0 px-2"
+                >
+                  <FontAwesomeIcon
+                    icon={["fas", "thumbs-up"]}
+                    style={{ fontSize: 24 }}
+                  />
+                </Button>
+              )}
+            </div>
+          </Form>
 
           {showEmoBar && (
             <NimblePicker
