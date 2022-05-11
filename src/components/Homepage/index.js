@@ -41,7 +41,7 @@ export default function Homepage() {
             position: "fixed",
             bottom: 0,
             right: "15%",
-            zIndex: 99999,
+            zIndex: 9999,
             display: "flex",
             flexDirection: "row-reverse",
           }}

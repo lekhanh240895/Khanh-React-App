@@ -111,7 +111,7 @@ export default function RightPanel() {
         maxHeight: "calc(100vh - 100px)",
         height: "fit-content",
         overflowY: "auto",
-        minWidth: "250px",
+        width: "20vw",
         position: "sticky",
         top: "70px",
       }}
