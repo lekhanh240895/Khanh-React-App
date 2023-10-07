@@ -1,0 +1,25 @@
+[debug] [2023-10-07T18:12:30.067Z] ----------------------------------------------------------------------
+[debug] [2023-10-07T18:12:30.068Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Le Khanh\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2023-10-07T18:12:30.068Z] CLI Version:   12.6.2
+[debug] [2023-10-07T18:12:30.068Z] Platform:      win32
+[debug] [2023-10-07T18:12:30.068Z] Node Version:  v18.15.0
+[debug] [2023-10-07T18:12:30.069Z] Time:          Sun Oct 08 2023 01:12:30 GMT+0700 (Indochina Time)
+[debug] [2023-10-07T18:12:30.069Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-10-07T18:12:30.121Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-10-07T18:12:30.121Z] > authorizing via signed-in user (lekhanh240895@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\Le Khanh\Desktop\React\Khanh-React-App
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
