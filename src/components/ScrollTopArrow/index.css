@@ -12,6 +12,7 @@
   animation-name: pop-up;
   animation-duration: 1s;
   animation-direction: alternate;
+  cursor: pointer;
 }
 
 #scrollArrow:hover {

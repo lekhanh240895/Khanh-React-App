@@ -121,7 +121,7 @@ export default function SearchUserForm() {
   useOutsideAlerter(divRef);
 
   return (
-    <Form className="d-flex align-items-center mx-2 pt-2 p-lg-1">
+    <Form className="d-flex align-items-center mx-2">
       <div
         className="d-flex justify-content-between"
         style={{ position: "relative" }}
@@ -148,7 +148,7 @@ export default function SearchUserForm() {
             borderRadius: "20px",
             height: "40px",
           }}
-          className="mb-3 d-lg-none"
+          className="d-none d-md-block"
           onChange={handleSearchInputChange}
           value={query}
         />

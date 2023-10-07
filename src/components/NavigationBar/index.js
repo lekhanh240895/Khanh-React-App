@@ -25,7 +25,7 @@ export default function NavigationBar() {
   return (
     <>
       {user && (
-        <Navbar expand="lg" className="navbar mb-4" sticky="top">
+        <Navbar expand="md" className="navbar mb-4" sticky="top">
           <Container fluid>
             <Navbar.Brand>
               <NavLink exact to={"/"} activeClassName="active-link-icon">
@@ -58,23 +58,23 @@ export default function NavigationBar() {
               </NavLink>
             </Navbar.Brand>
 
-            <Navbar.Brand>
+            {/* <Navbar.Brand>
               <NavLink to="/covid-app" activeClassName="active-link-icon">
                 <FontAwesomeIcon
                   icon={["fas", "virus-slash"]}
                   style={{ width: "40px", height: "40px" }}
                 />
               </NavLink>
-            </Navbar.Brand>
+            </Navbar.Brand> */}
 
-            <Navbar.Brand>
+            {/* <Navbar.Brand>
               <NavLink to="/todo-app-redux" activeClassName="active-link-icon">
                 <FontAwesomeIcon
                   icon={["far", "list-alt"]}
                   style={{ width: "40px", height: "40px" }}
                 />
               </NavLink>
-            </Navbar.Brand>
+            </Navbar.Brand> */}
 
             <Navbar.Toggle aria-controls="basic-navbar-nav">
               <FontAwesomeIcon
@@ -84,7 +84,7 @@ export default function NavigationBar() {
             </Navbar.Toggle>
 
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-lg-auto d-flex align-items-lg-center my-2 my-lg-0">
+              <Nav className="ms-md-auto d-flex align-items-md-center my-2 my-md-0">
                 <NavLink
                   to={`/${user?.email}`}
                   activeClassName="active-link-icon-text"
@@ -127,22 +127,22 @@ export default function NavigationBar() {
                     </span>
                   </div>
                 </NavLink>
-
+                {/* 
                 <NavLink
                   to="/todo-app"
                   activeClassName="active-link-icon-text"
                   className="mx-2 py-1"
                 >
                   <span>Todo App</span>
-                </NavLink>
+                </NavLink> */}
 
-                <NavLink
+                {/* <NavLink
                   to="/stories-app"
                   activeClassName="active-link-icon-text"
                   className="mx-2 py-1"
                 >
                   <span> Hacker News Stories App</span>
-                </NavLink>
+                </NavLink> */}
 
                 <SearchUserForm />
 

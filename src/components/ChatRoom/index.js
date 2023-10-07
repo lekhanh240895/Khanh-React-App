@@ -6,10 +6,10 @@ import { Col, Row } from "react-bootstrap";
 export default function ChatRoom() {
   return (
     <Row>
-      <Col className="d-none d-sm-block m-0" sm={4}>
+      <Col className="d-none d-md-block m-0" md={4}>
         <Sidebar />
       </Col>
-      <Col xs={12} sm={8}>
+      <Col xs={12} md={8}>
         <ChatWindow />
       </Col>
     </Row>

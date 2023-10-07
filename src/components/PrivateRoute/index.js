@@ -4,6 +4,7 @@ import { Route, Redirect } from "react-router-dom";
 
 export default function PrivateRoute({ children, ...rest }) {
   const { user } = useAuth();
+
   return (
     <Route
       {...rest}

@@ -28,12 +28,12 @@ export default function Homepage() {
 
   return (
     <Row className="homepage">
-      <Col xs={12} md={8} lg={9}>
+      <Col xs={12} lg={9}>
         <StatusBar userProfile={userDoc} />
         <Statuses statuses={orderedStatuses} />
       </Col>
 
-      <Col className="d-none d-md-block" md={4} lg={3}>
+      <Col className="d-none d-md-block" lg={3}>
         <RightPanel />
 
         <div

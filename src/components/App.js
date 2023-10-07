@@ -3,10 +3,6 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 //Other Projects
-import HackerNewStories from "./HackerNewStoriesApp";
-import TodoAppRedux from "./TodoAppRedux";
-import CovidApp from "./CovidApp";
-import TodoApp from "./TodoApp";
 import WorkCalendar from "./WorkCalendar";
 
 //Other Components
@@ -94,30 +90,15 @@ export const App = () => {
             <WorkCalendar />
           </PrivateRoute>
 
-          <PrivateRoute path="/todo-app-redux">
-            <TodoAppRedux />
-          </PrivateRoute>
-
-          <PrivateRoute path="/todo-app">
-            <TodoApp />
-          </PrivateRoute>
-
-          <PrivateRoute path="/stories-app">
-            <HackerNewStories />
-          </PrivateRoute>
-
           <PrivateRoute path="/messages">
             <ChatRoom />
           </PrivateRoute>
 
-          <PrivateRoute path="/covid-app">
-            <CovidApp />
-          </PrivateRoute>
-
-          <PrivateRoute path="*">
+          <Route path="*">
             <NoMatch />
-          </PrivateRoute>
+          </Route>
         </Switch>
+
         <AddRoomModal />
         <InviteMemberModal />
         <WorkTimesheetModal />
