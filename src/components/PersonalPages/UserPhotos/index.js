@@ -189,7 +189,7 @@ export default function UserPhotos() {
                     className="user-photo-modal-wrapper p-1"
                     key={status.id}
                   >
-                    {status.attachments.length > 1 &&
+                    {status.attachments.length > 0 &&
                       status.attachments.map((url, index) => (
                         <Link
                           to={{
@@ -211,7 +211,7 @@ export default function UserPhotos() {
                         </Link>
                       ))}
 
-                    {status.attachments.length === 1 && (
+                    {/* {status.attachments.length === 1 && (
                       <Link
                         to={{
                           pathname: `/photo/${status.id}`,
@@ -226,7 +226,7 @@ export default function UserPhotos() {
                           rounded
                         />
                       </Link>
-                    )}
+                    )} */}
                   </Col>
                 ))}
               </Row>

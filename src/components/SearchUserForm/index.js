@@ -128,7 +128,7 @@ export default function SearchUserForm() {
         ref={divRef}
       >
         <span
-          className="me-2 icon-background"
+          className="me-2 icon-background d-none d-md-flex"
           onClick={() => setShowSearchBar(!showSearchBar)}
         >
           <FontAwesomeIcon
@@ -148,7 +148,7 @@ export default function SearchUserForm() {
             borderRadius: "20px",
             height: "40px",
           }}
-          className="d-none d-md-block"
+          className="d-block d-md-none"
           onChange={handleSearchInputChange}
           value={query}
         />

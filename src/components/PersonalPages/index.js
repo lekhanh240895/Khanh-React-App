@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, Container } from "react-bootstrap";
 import "./index.css";
-import { storage } from "../../firebase/config";
-import { ref, getDownloadURL, list } from "firebase/storage";
+// import { storage } from "../../firebase/config";
+// import { ref, getDownloadURL, list } from "firebase/storage";
 import useDeviceInfo from "../hooks/useDeviceInfo";
 import { useAppContext } from "../../contexts/AppContext";
 import Pictures from "./Pictures";
@@ -35,34 +35,69 @@ export default function PersonalPage({ userProfile }) {
     return () => setIsUser(false);
   }, [userDoc, userProfile, setIsUser]);
 
+  const { statuses } = useAppContext();
+
   //Load Photos
+  // const deviceInfo = useDeviceInfo();
+
+  // useEffect(() => {
+  //   setImgUrls([]);
+
+  //   const loadImg = async () => {
+  //     const listRef = ref(storage, `${userProfile?.email}/Images/Statuses`);
+  //     let firstPage;
+
+  //     if (deviceInfo.isMobile) {
+  //       firstPage = await list(listRef, { maxResults: 6 });
+  //     } else if (deviceInfo.isTablet) {
+  //       firstPage = await list(listRef, { maxResults: 9 });
+  //     } else {
+  //       firstPage = await list(listRef, { maxResults: 12 });
+  //     }
+
+  //     firstPage.items.forEach(async (itemRef) => {
+  //       const url = await getDownloadURL(itemRef);
+  //       setImgUrls((prevState) => [...prevState, url]);
+  //     });
+  //   };
+
+  //   loadImg();
+
+  //   return () => {
+  //     setImgUrls([]);
+  //   };
+  // }, [deviceInfo, userProfile?.email]);
+
   const deviceInfo = useDeviceInfo();
+
   useEffect(() => {
-    setImgUrls([]);
+    const userPhotoStatuses = statuses.filter(
+      (status) =>
+        status.postUid === userProfile?.uid && status.attachments.length > 0
+    );
 
-    const loadImg = async () => {
-      const listRef = ref(storage, `${userProfile?.email}/Images/Statuses`);
-      let firstPage;
+    const orderUserPhotoStatuses = orderBy(
+      userPhotoStatuses,
+      "createdAt",
+      "desc"
+    );
 
+    const userImages = orderUserPhotoStatuses.reduce((acc, cur) => {
+      return acc.concat(cur.attachments);
+    }, []);
+
+    if (userImages.length > 0) {
       if (deviceInfo.isMobile) {
-        firstPage = await list(listRef, { maxResults: 6 });
+        setImgUrls(userImages.slice(0, 6));
       } else if (deviceInfo.isTablet) {
-        firstPage = await list(listRef, { maxResults: 9 });
+        setImgUrls(userImages.slice(0, 9));
       } else {
-        firstPage = await list(listRef, { maxResults: 12 });
+        setImgUrls(userImages.slice(0, 12));
       }
-
-      firstPage.items.forEach(async (itemRef) => {
-        const url = await getDownloadURL(itemRef);
-        setImgUrls((prevState) => [...prevState, url]);
-      });
-    };
-    loadImg();
-
-    return () => {
+    } else {
       setImgUrls([]);
-    };
-  }, [deviceInfo, userProfile?.email]);
+    }
+  }, [deviceInfo, statuses, userProfile?.uid]);
 
   //Get User Statuses
   const condition = useMemo(() => {

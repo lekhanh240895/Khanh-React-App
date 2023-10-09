@@ -47,6 +47,17 @@ function ChatWindow() {
     messageRef.current.focus();
   };
 
+  useEffect(() => {
+    handleScrollToBot();
+  });
+
+  const handleScrollToBot = () => {
+    if (divRef.current) {
+      const H = divRef.current.scrollHeight;
+      divRef.current?.scrollTo({ top: H, behavior: "smooth" });
+    }
+  };
+
   const handleLike = async () => {
     await addDocument("messages", {
       content: "like",
@@ -56,9 +67,7 @@ function ChatWindow() {
       displayName: userDoc.displayName,
     });
 
-    const H = divRef.current.scrollHeight;
-    divRef.current?.scrollTo({ top: H, behavior: "smooth" });
-
+    handleScrollToBot();
     setShowEmoBar(false);
   };
 
@@ -72,8 +81,7 @@ function ChatWindow() {
         displayName: userDoc.displayName,
       });
 
-      const H = divRef.current.scrollHeight;
-      divRef.current?.scrollTo({ top: H, behavior: "smooth" });
+      handleScrollToBot();
       setInput("");
 
       reset();

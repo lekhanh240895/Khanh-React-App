@@ -88,7 +88,7 @@ export default function NavigationBar() {
                 <NavLink
                   to={`/${user?.email}`}
                   activeClassName="active-link-icon-text"
-                  className="mx-2 py-1"
+                  className="mx-2 py-1 mb-2 mb-md-0"
                 >
                   <div className="d-flex align-items-center">
                     {user?.photoURL ? (

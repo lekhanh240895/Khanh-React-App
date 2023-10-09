@@ -76,6 +76,13 @@ export const SmallChatWindow = () => {
     setShowEmoBar(false);
   };
 
+  useEffect(() => {
+    if (divRef.current) {
+      const H = divRef.current.scrollHeight;
+      divRef.current?.scrollTo({ top: H, behavior: "smooth" });
+    }
+  });
+
   const onSubmit = async (data) => {
     await addDocument("messages", {
       content: data.message,
@@ -114,6 +121,8 @@ export const SmallChatWindow = () => {
       setSelectedRoomId("");
     }
   };
+
+  console.log("run");
 
   if (!selectedRoomId) return null;
 
