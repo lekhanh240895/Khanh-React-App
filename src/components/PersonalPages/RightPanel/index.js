@@ -114,6 +114,7 @@ export default function RightPanel() {
         width: "20vw",
         position: "sticky",
         top: "70px",
+        borderRadius: 5,
       }}
     >
       {showSearchBar ? (

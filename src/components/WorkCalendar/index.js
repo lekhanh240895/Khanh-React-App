@@ -17,10 +17,12 @@ export const WorkCalendar = () => {
     userWorkInMonth,
   } = useAppContext();
 
-  const onSelect = (value) => {
+  const onSelect = (value, { source }) => {
     setSelectedDate(value);
 
-    setIsWorkSheetModalShowed(true);
+    if (source === "date") {
+      setIsWorkSheetModalShowed(true);
+    }
   };
 
   const [showTime, setShowTime] = React.useState(false);
@@ -49,62 +51,57 @@ export const WorkCalendar = () => {
     return data || {};
   }
 
-  const dateCellRender = (value) => {
-    const data = getData(value);
+  const dateCellRender = (value, { type }) => {
+    if (type === "date") {
+      const data = getData(value);
 
-    return (
-      <div style={{ postion: "relative" }}>
-        <div key={data.date} style={{ padding: "10px 0" }}>
-          <Badge bg={bgStyle(data.workTime)}>{data.workTime}</Badge>
-        </div>
-
-        {(data.timeStart || data.timeFinish) && (
-          <div
-            className="poppup-timework"
-            style={{ display: !showTime && "none" }}
-          >
-            <span>{data.timeStart}</span>
-            <span className="mx-1">-</span>
-            <span>{data.timeFinish}</span>
+      return (
+        <div style={{ postion: "relative" }}>
+          <div key={data.date} style={{ padding: "10px 0" }}>
+            <Badge bg={bgStyle(data.workTime)}>{data.workTime}</Badge>
           </div>
-        )}
 
-        <div className="d-none d-sm-block">
           {(data.timeStart || data.timeFinish) && (
-            <Tooltip
-              title={
-                <div
-                  style={{
-                    color: "#000",
-                  }}
-                >
-                  <span>{data.timeStart}</span>
-                  <span className="mx-1">-</span>
-                  <span>{data.timeFinish}</span>
-                </div>
-              }
-              placement="top"
-              color="white"
+            <div
+              className="poppup-timework"
+              style={{ display: !showTime && "none" }}
             >
-              <div className="timework-icon">
-                <FontAwesomeIcon icon={["far", "clock"]} />
-              </div>
-            </Tooltip>
+              <span>{data.timeStart}</span>
+              <span className="mx-1">-</span>
+              <span>{data.timeFinish}</span>
+            </div>
           )}
+
+          <div className="d-none d-sm-block">
+            {(data.timeStart || data.timeFinish) && (
+              <Tooltip
+                title={
+                  <div
+                    style={{
+                      color: "#000",
+                    }}
+                  >
+                    <span>{data.timeStart}</span>
+                    <span className="mx-1">-</span>
+                    <span>{data.timeFinish}</span>
+                  </div>
+                }
+                placement="top"
+                color="white"
+              >
+                <div className="timework-icon">
+                  <FontAwesomeIcon icon={["far", "clock"]} />
+                </div>
+              </Tooltip>
+            )}
+          </div>
         </div>
-      </div>
-    );
-  };
-
-  function getMonthData(value) {
-    if (value.month() + 1 === userWorkInMonth?.month) {
-      return sumWork;
+      );
+    } else {
+      if (value.month() + 1 === userWorkInMonth?.month) {
+        return sumWork ? <h1>{sumWork}</h1> : null;
+      }
     }
-  }
-
-  const monthCellRender = (value) => {
-    const num = getMonthData(value);
-    return num ? <h1>{num}</h1> : null;
   };
 
   const sumWork = useMemo(
@@ -139,11 +136,7 @@ export const WorkCalendar = () => {
         Show working time in {selectedDate.format("MMMM")}
       </Button>
 
-      <Calendar
-        dateCellRender={dateCellRender}
-        monthCellRender={monthCellRender}
-        onSelect={onSelect}
-      />
+      <Calendar cellRender={dateCellRender} onSelect={onSelect} />
     </div>
   );
 };

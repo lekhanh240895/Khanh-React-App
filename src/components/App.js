@@ -54,7 +54,7 @@ export const App = () => {
     >
       <NavigationBar />
 
-      <Container>
+      <Container style={{ marginTop: 60, padding: 20 }}>
         <Switch>
           <Route path="/login">
             <Login />

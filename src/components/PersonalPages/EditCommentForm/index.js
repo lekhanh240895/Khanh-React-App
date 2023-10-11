@@ -171,7 +171,11 @@ function EditCommentForm({ status, comment, setShowEditComment }) {
             onKeyDown={handleKeyDown}
           />
 
-          <Tooltip title="Emotion icons" placement="top" arrowPointAtCenter>
+          <Tooltip
+            title="Emotion icons"
+            placement="top"
+            arrow={{ pointAtCenter: true }}
+          >
             <span
               style={{
                 position: "absolute",
@@ -190,7 +194,11 @@ function EditCommentForm({ status, comment, setShowEditComment }) {
             </span>
           </Tooltip>
 
-          <Tooltip title="Add images" placement="top" arrowPointAtCenter>
+          <Tooltip
+            title="Add images"
+            placement="top"
+            arrow={{ pointAtCenter: true }}
+          >
             <Form.Label htmlFor="upload-photo">
               <span
                 style={{

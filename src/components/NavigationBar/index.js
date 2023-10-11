@@ -25,7 +25,12 @@ export default function NavigationBar() {
   return (
     <>
       {user && (
-        <Navbar expand="md" className="navbar mb-4" sticky="top">
+        <Navbar
+          expand="md"
+          className="navbar"
+          fixed="top"
+          style={{ height: 60 }}
+        >
           <Container fluid>
             <Navbar.Brand>
               <NavLink exact to={"/"} activeClassName="active-link-icon">

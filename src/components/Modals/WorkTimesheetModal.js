@@ -42,7 +42,7 @@ export default function WorkTimesheetModal() {
           {
             date: selectedDate?.date(),
             workTime: Number(workTime),
-            timeStart: timeStart || "",
+            timeStart: timeStart.format("HH:mm") || "",
             timeFinish: timeFinish?.format("HH:mm") || "",
           },
         ],

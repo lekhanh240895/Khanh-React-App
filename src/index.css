@@ -4,6 +4,7 @@ body {
   font-family: "Roboto", Arial, Helvetica, sans-serif;
   background: #83a4d4; /* Fallback for older browser */
   background: linear-gradient(to left, #b6fbff, rgba(255, 192, 203, 0.527));
+  height: auto;
 }
 
 h1 {

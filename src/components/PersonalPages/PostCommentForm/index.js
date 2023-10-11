@@ -95,7 +95,11 @@ function PostCommentForm({ status }) {
             style={{ padding: hasFocus && "30px 20px" }}
           />
 
-          <Tooltip title="Emotion icons" placement="top" arrowPointAtCenter>
+          <Tooltip
+            title="Emotion icons"
+            placement="top"
+            arrow={{ pointAtCenter: true }}
+          >
             <span
               style={{
                 position: "absolute",
@@ -114,7 +118,11 @@ function PostCommentForm({ status }) {
             </span>
           </Tooltip>
 
-          <Tooltip title="Add images" placement="top" arrowPointAtCenter>
+          <Tooltip
+            title="Add images"
+            placement="top"
+            arrow={{ pointAtCenter: true }}
+          >
             <span
               onClick={handleUploadImgComment}
               style={{

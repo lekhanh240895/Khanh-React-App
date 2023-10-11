@@ -113,7 +113,7 @@ function ChatWindow() {
       return (
         <div
           className="header_info d-flex justify-content-between align-items-center"
-          style={{ positon: "relative", height: "8vh" }}
+          style={{ positon: "relative" }}
         >
           <div>
             <h4 className="header-title">{selectedRoom.name}</h4>
@@ -244,11 +244,11 @@ function ChatWindow() {
     <div
       className="bg-white"
       style={{
-        height: "85vh",
         padding: "10px",
         position: "relative",
         margin: 0,
         overflowY: "auto",
+        borderRadius: 5,
       }}
     >
       {selectedRoomId ? (

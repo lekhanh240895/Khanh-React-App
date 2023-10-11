@@ -11,9 +11,9 @@ export default function Sidebar() {
     <div
       className="room-sidebar"
       style={{
-        height: "85vh",
         padding: 15,
         overflowY: "auto",
+        borderRadius: 5,
       }}
     >
       <Offcanvas

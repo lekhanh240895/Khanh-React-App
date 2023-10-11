@@ -122,8 +122,6 @@ export const SmallChatWindow = () => {
     }
   };
 
-  console.log("run");
-
   if (!selectedRoomId) return null;
 
   return (
